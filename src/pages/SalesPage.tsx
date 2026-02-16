@@ -1,0 +1,62 @@
+import { useState } from 'react';
+import PageHeader from '@/components/PageHeader';
+import { useLivestock } from '@/context/LivestockContext';
+import { Button } from '@/components/ui/button';
+import { Input } from '@/components/ui/input';
+import { Label } from '@/components/ui/label';
+import { Dialog, DialogContent, DialogHeader, DialogTitle, DialogTrigger } from '@/components/ui/dialog';
+import { Plus } from 'lucide-react';
+
+const SalesPage = () => {
+  const { sales, addSale, getTotalSales } = useLivestock();
+  const [open, setOpen] = useState(false);
+  const [desc, setDesc] = useState('');
+  const [amount, setAmount] = useState('');
+  const [date, setDate] = useState('');
+  const [qty, setQty] = useState('1');
+
+  const handleAdd = () => {
+    addSale({ id: Date.now().toString(), date, description: desc, amount: Number(amount), quantity: Number(qty) });
+    setOpen(false);
+    setDesc(''); setAmount(''); setDate(''); setQty('1');
+  };
+
+  return (
+    <div className="min-h-screen bg-background p-4 sm:p-6">
+      <div className="max-w-2xl mx-auto">
+        <PageHeader title="المبيعات" subtitle={`الإجمالي: ${getTotalSales().toLocaleString()} ر.س`} backTo="/" />
+
+        <Dialog open={open} onOpenChange={setOpen}>
+          <DialogTrigger asChild>
+            <Button className="w-full mb-4 gap-2"><Plus className="w-4 h-4" /> إضافة بيع</Button>
+          </DialogTrigger>
+          <DialogContent>
+            <DialogHeader><DialogTitle>إضافة عملية بيع</DialogTitle></DialogHeader>
+            <div className="space-y-3 mt-3">
+              <div><Label>الوصف</Label><Input value={desc} onChange={e => setDesc(e.target.value)} /></div>
+              <div><Label>المبلغ</Label><Input type="number" value={amount} onChange={e => setAmount(e.target.value)} /></div>
+              <div><Label>العدد</Label><Input type="number" value={qty} onChange={e => setQty(e.target.value)} /></div>
+              <div><Label>التاريخ</Label><Input type="date" value={date} onChange={e => setDate(e.target.value)} /></div>
+              <Button onClick={handleAdd} className="w-full">حفظ</Button>
+            </div>
+          </DialogContent>
+        </Dialog>
+
+        <div className="space-y-3">
+          {sales.length === 0 && <p className="text-center text-muted-foreground py-8">لا توجد مبيعات مسجلة</p>}
+          {sales.map(s => (
+            <div key={s.id} className="rounded-xl bg-card p-4 card-shadow flex justify-between items-center">
+              <div>
+                <p className="font-semibold text-card-foreground">{s.description}</p>
+                <p className="text-xs text-muted-foreground">{s.date} • {s.quantity} رأس</p>
+              </div>
+              <span className="font-bold text-success">{s.amount.toLocaleString()} ر.س</span>
+            </div>
+          ))}
+        </div>
+      </div>
+    </div>
+  );
+};
+
+export default SalesPage;
