@@ -47,7 +47,7 @@ const AnimalDetailPage = () => {
   }
 
   const bgColor = ANIMAL_COLORS[animal.color] || '#F5F0E8';
-  const isDark = ['أسود', 'بني', 'أحمر', 'حمراء غامق'].includes(animal.color);
+  const isDark = ['بني', 'أزرق', 'بنفسجي'].includes(animal.color);
   const backPath = animal.category === 'goat'
     ? '/flock/goat'
     : `/flock/sheep/${animal.breed}`;
@@ -117,8 +117,8 @@ const AnimalDetailPage = () => {
               </span>
               <div className={`mt-2 space-y-1 ${isDark ? 'text-primary-foreground/80' : 'text-muted-foreground'}`}>
                 <p className="flex items-center gap-2 text-sm">
-                  <Palette className="w-4 h-4" /> {animal.color}
-                </p>
+                   <Palette className="w-4 h-4" /> لون التاق: {animal.color}
+                 </p>
                 <p className="flex items-center gap-2 text-sm">
                   {GENDER_LABELS[animal.gender]}
                 </p>
@@ -145,12 +145,17 @@ const AnimalDetailPage = () => {
                 </DialogHeader>
                 <div className="space-y-4 mt-4">
                   <div>
-                    <Label>اللون</Label>
+                     <Label>لون التاق</Label>
                     <Select value={editColor} onValueChange={setEditColor}>
                       <SelectTrigger><SelectValue /></SelectTrigger>
                       <SelectContent>
                         {Object.keys(ANIMAL_COLORS).map(c => (
-                          <SelectItem key={c} value={c}>{c}</SelectItem>
+                          <SelectItem key={c} value={c}>
+                            <span className="flex items-center gap-2">
+                              <span className="w-3 h-3 rounded-full inline-block border" style={{ backgroundColor: ANIMAL_COLORS[c] }} />
+                              {c}
+                            </span>
+                          </SelectItem>
                         ))}
                       </SelectContent>
                     </Select>
@@ -201,6 +206,32 @@ const AnimalDetailPage = () => {
                 <Label>تاريخ الولادة</Label>
                 <Input type="date" value={birthDate} onChange={e => setBirthDate(e.target.value)} />
               </div>
+              <div>
+                <Label>تاريخ ميلاد الأم</Label>
+                <div className="flex items-center gap-2">
+                  <Input
+                    type="date"
+                    value={animal.birthDate === 'غير معروف' ? '' : animal.birthDate}
+                    disabled
+                    className="flex-1"
+                  />
+                  {!animal.birthDate && (
+                    <Button
+                      type="button"
+                      variant="outline"
+                      size="sm"
+                      onClick={() => {
+                        updateAnimal({ ...animal, birthDate: 'غير معروف' });
+                      }}
+                    >
+                      غير معروف
+                    </Button>
+                  )}
+                </div>
+                {animal.birthDate === 'غير معروف' && (
+                  <p className="text-xs text-muted-foreground mt-1">تاريخ ميلاد الأم: غير معروف</p>
+                )}
+              </div>
               
               {offspringList.map((o, index) => (
                 <div key={index} className="rounded-lg bg-muted p-3 space-y-3">
@@ -217,12 +248,17 @@ const AnimalDetailPage = () => {
                       </Select>
                     </div>
                     <div>
-                      <Label className="text-xs">اللون</Label>
+                     <Label className="text-xs">لون التاق</Label>
                       <Select value={o.color} onValueChange={v => updateOffspringField(index, 'color', v)}>
                         <SelectTrigger><SelectValue /></SelectTrigger>
                         <SelectContent>
                           {Object.keys(ANIMAL_COLORS).map(c => (
-                            <SelectItem key={c} value={c}>{c}</SelectItem>
+                            <SelectItem key={c} value={c}>
+                              <span className="flex items-center gap-2">
+                                <span className="w-3 h-3 rounded-full inline-block border" style={{ backgroundColor: ANIMAL_COLORS[c] }} />
+                                {c}
+                              </span>
+                            </SelectItem>
                           ))}
                         </SelectContent>
                       </Select>

@@ -22,7 +22,7 @@ const AnimalGrid = ({ breed, category }: AnimalGridProps) => {
     <div className="grid grid-cols-3 sm:grid-cols-4 md:grid-cols-5 gap-3">
       {filtered.map((animal) => {
         const bgColor = ANIMAL_COLORS[animal.color] || '#F5F0E8';
-        const isDark = ['أسود', 'بني', 'أحمر', 'حمراء غامق'].includes(animal.color);
+        const isDark = ['بني', 'أزرق', 'بنفسجي'].includes(animal.color);
 
         return (
           <button

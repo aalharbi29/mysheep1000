@@ -58,18 +58,21 @@ export interface Purchase {
   quantity: number;
 }
 
-export const ANIMAL_COLORS: Record<string, string> = {
+export const TAG_COLORS: Record<string, string> = {
   'أبيض': '#F5F0E8',
-  'أسود': '#2D2D2D',
+  'أحمر': '#E53E3E',
+  'أصفر': '#ECC94B',
+  'أخضر': '#38A169',
+  'أزرق': '#3182CE',
+  'وردي': '#ED64A6',
+  'بنفسجي': '#805AD5',
+  'برتقالي': '#DD6B20',
+  'رمادي': '#A0AEC0',
   'بني': '#8B6914',
-  'أحمر': '#C44536',
-  'رمادي': '#8E8E8E',
-  'أشقر': '#D4A853',
-  'مبرقع': '#E8D5B7',
-  'شعلاء': '#CD7F32',
-  'صفراء': '#DAA520',
-  'حمراء غامق': '#8B0000',
 };
+
+// Keep backward compat alias
+export const ANIMAL_COLORS = TAG_COLORS;
 
 export const CATEGORY_LABELS: Record<string, string> = {
   sheep: 'ضأن',
