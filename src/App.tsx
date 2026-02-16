@@ -26,9 +26,10 @@ const App = () => (
         <BrowserRouter>
           <Routes>
             <Route path="/" element={<Dashboard />} />
+            <Route path="/animal/:id" element={<AnimalDetailPage />} />
             <Route path="/flock/sheep/:breed" element={<AnimalCardsPage />} />
             <Route path="/flock/sheep" element={<BreedPage />} />
-            <Route path="/flock/goat" element={<BreedPage />} />
+            <Route path="/flock/goat" element={<AnimalCardsPage />} />
             <Route path="/flock" element={<FlockPage />} />
             <Route path="/expenses" element={<ExpensesPage />} />
             <Route path="/sales" element={<SalesPage />} />
