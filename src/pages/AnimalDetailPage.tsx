@@ -271,6 +271,7 @@ const AnimalDetailPage = () => {
                           <SelectItem value="flock">إضافة للقطيع</SelectItem>
                           <SelectItem value="sold">بيع</SelectItem>
                           <SelectItem value="died">نفوق</SelectItem>
+                          <SelectItem value="infant">رضيع</SelectItem>
                         </SelectContent>
                       </Select>
                     </div>

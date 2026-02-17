@@ -2,7 +2,7 @@ export type AnimalCategory = 'sheep' | 'goat';
 export type SheepBreed = 'harri' | 'najdi';
 export type AnimalGender = 'male' | 'female';
 
-export type OffspringFate = 'flock' | 'sold' | 'died';
+export type OffspringFate = 'flock' | 'sold' | 'died' | 'infant';
 
 export interface Offspring {
   id: string;
@@ -90,4 +90,5 @@ export const FATE_LABELS: Record<OffspringFate, string> = {
   flock: 'أضيف للقطيع',
   sold: 'تم بيعه',
   died: 'نفق',
+  infant: 'رضيع',
 };
