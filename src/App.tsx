@@ -7,6 +7,7 @@ import { LivestockProvider } from "@/context/LivestockContext";
 import Dashboard from "./pages/Dashboard";
 import FlockPage from "./pages/FlockPage";
 import BreedPage from "./pages/BreedPage";
+import SubCategoryPage from "./pages/SubCategoryPage";
 import AnimalCardsPage from "./pages/AnimalCardsPage";
 import AnimalDetailPage from "./pages/AnimalDetailPage";
 import ExpensesPage from "./pages/ExpensesPage";
@@ -27,9 +28,14 @@ const App = () => (
           <Routes>
             <Route path="/" element={<Dashboard />} />
             <Route path="/animal/:id" element={<AnimalDetailPage />} />
-            <Route path="/flock/sheep/:breed" element={<AnimalCardsPage />} />
+            {/* Sheep routes */}
             <Route path="/flock/sheep" element={<BreedPage />} />
-            <Route path="/flock/goat" element={<AnimalCardsPage />} />
+            <Route path="/flock/sheep/:breed" element={<SubCategoryPage />} />
+            <Route path="/flock/sheep/:breed/:subCategory" element={<AnimalCardsPage />} />
+            {/* Goat routes */}
+            <Route path="/flock/goat" element={<SubCategoryPage />} />
+            <Route path="/flock/goat/:subCategory" element={<AnimalCardsPage />} />
+            {/* Main */}
             <Route path="/flock" element={<FlockPage />} />
             <Route path="/expenses" element={<ExpensesPage />} />
             <Route path="/sales" element={<SalesPage />} />

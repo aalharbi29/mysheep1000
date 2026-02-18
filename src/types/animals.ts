@@ -3,6 +3,7 @@ export type SheepBreed = 'harri' | 'najdi';
 export type AnimalGender = 'male' | 'female';
 
 export type OffspringFate = 'flock' | 'sold' | 'died' | 'infant';
+export type AnimalSubCategory = 'mothers' | 'young' | 'rams';
 
 export interface Offspring {
   id: string;
@@ -25,13 +26,27 @@ export interface Animal {
   category: AnimalCategory;
   breed: SheepBreed | 'goat';
   gender: AnimalGender;
+  subCategory: AnimalSubCategory;
   color: string;
   birthDate: string;
   motherNumber?: number;
+  motherBreed?: string;
   fatherNumber?: number;
   birthRecords: BirthRecord[];
   notes?: string;
 }
+
+export const SUB_CATEGORY_LABELS: Record<AnimalSubCategory, string> = {
+  mothers: 'الأمهات',
+  young: 'البهم',
+  rams: 'الفحول',
+};
+
+export const SUB_CATEGORY_ICONS: Record<AnimalSubCategory, string> = {
+  mothers: '🐑',
+  young: '🐣',
+  rams: '🐏',
+};
 
 export interface Expense {
   id: string;

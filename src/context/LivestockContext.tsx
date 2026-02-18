@@ -31,12 +31,14 @@ function generateInitialAnimals(): Animal[] {
 
   breeds.forEach(breed => {
     for (let i = 1; i <= 100; i++) {
+      const gender = i % 5 === 0 ? 'male' : 'female';
       animals.push({
         id: `${breed}-${i}`,
         number: i,
         category: categories[breed],
         breed,
-        gender: i % 5 === 0 ? 'male' : 'female',
+        gender: gender as 'male' | 'female',
+        subCategory: gender === 'male' ? 'rams' : 'mothers',
         color: colors[i % colors.length],
         birthDate: '',
         birthRecords: [],
