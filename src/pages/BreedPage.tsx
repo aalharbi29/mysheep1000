@@ -1,6 +1,5 @@
-import { useNavigate, useLocation } from 'react-router-dom';
+import { useNavigate } from 'react-router-dom';
 import PageHeader from '@/components/PageHeader';
-import AnimalGrid from '@/components/AnimalGrid';
 import { useLivestock } from '@/context/LivestockContext';
 
 const breeds = [
@@ -9,22 +8,8 @@ const breeds = [
 ];
 
 const BreedPage = () => {
-  const location = useLocation();
   const navigate = useNavigate();
   const { animals } = useLivestock();
-
-  const isGoat = location.pathname.includes('goat');
-
-  if (isGoat) {
-    return (
-      <div className="min-h-screen bg-background p-4 sm:p-6">
-        <div className="max-w-2xl mx-auto">
-          <PageHeader title="ماعز" subtitle="بطاقات الماعز" backTo="/flock" />
-          <AnimalGrid breed="goat" category="goat" />
-        </div>
-      </div>
-    );
-  }
 
   return (
     <div className="min-h-screen bg-background p-4 sm:p-6">
