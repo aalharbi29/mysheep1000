@@ -1,64 +1,379 @@
-import { useState } from 'react';
+import { useState, useMemo } from 'react';
 import PageHeader from '@/components/PageHeader';
 import { useLivestock } from '@/context/LivestockContext';
 import { Button } from '@/components/ui/button';
 import { Input } from '@/components/ui/input';
 import { Label } from '@/components/ui/label';
 import { Dialog, DialogContent, DialogHeader, DialogTitle, DialogTrigger } from '@/components/ui/dialog';
-import { Plus } from 'lucide-react';
+import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from '@/components/ui/select';
+import { Plus, Trash2, ShoppingCart } from 'lucide-react';
+import { EXPENSE_CATEGORIES, ExpenseCategoryKey, ExpenseItem } from '@/types/animals';
+import { toast } from '@/hooks/use-toast';
 
 const ExpensesPage = () => {
   const { expenses, addExpense, getTotalExpenses } = useLivestock();
   const [open, setOpen] = useState(false);
-  const [desc, setDesc] = useState('');
-  const [amount, setAmount] = useState('');
-  const [date, setDate] = useState('');
-  const [category, setCategory] = useState('');
+  const [date, setDate] = useState(new Date().toISOString().split('T')[0]);
+  const [selectedCategory, setSelectedCategory] = useState<ExpenseCategoryKey | ''>('');
+  const [items, setItems] = useState<{ name: string; qty: string; price: string }[]>([]);
+  // permanent labor
+  const [workerName, setWorkerName] = useState('');
+  const [workerSalary, setWorkerSalary] = useState('');
+  const [workerBonus, setWorkerBonus] = useState('');
+  // temp labor
+  const [tempWorkType, setTempWorkType] = useState('');
+  const [tempAmount, setTempAmount] = useState('');
+  // custom item for any category
+  const [customItem, setCustomItem] = useState('');
+  // custom categories stored in localStorage
+  const [customCategories, setCustomCategories] = useState<Record<string, string[]>>(() => {
+    try {
+      return JSON.parse(localStorage.getItem('livestock_custom_expense_items') || '{}');
+    } catch { return {}; }
+  });
+  // filter
+  const [filterCategory, setFilterCategory] = useState<string>('all');
 
-  const handleAdd = () => {
-    addExpense({
-      id: Date.now().toString(),
-      date,
-      description: desc,
-      amount: Number(amount),
-      category,
-    });
-    setOpen(false);
-    setDesc(''); setAmount(''); setDate(''); setCategory('');
+  const categoryData = selectedCategory ? EXPENSE_CATEGORIES[selectedCategory] : null;
+
+  const allItemsForCategory = useMemo(() => {
+    if (!selectedCategory || !categoryData) return [];
+    const custom = customCategories[selectedCategory] || [];
+    return [...categoryData.items, ...custom];
+  }, [selectedCategory, categoryData, customCategories]);
+
+  const addItem = (itemName: string) => {
+    if (items.find(i => i.name === itemName)) return;
+    setItems(prev => [...prev, { name: itemName, qty: '1', price: '' }]);
   };
+
+  const removeItem = (idx: number) => setItems(prev => prev.filter((_, i) => i !== idx));
+
+  const updateItem = (idx: number, field: 'qty' | 'price', value: string) => {
+    setItems(prev => prev.map((item, i) => i === idx ? { ...item, [field]: value } : item));
+  };
+
+  const getItemTotal = (item: { qty: string; price: string }) => {
+    return (Number(item.qty) || 0) * (Number(item.price) || 0);
+  };
+
+  const grandTotal = items.reduce((sum, item) => sum + getItemTotal(item), 0);
+
+  const handleAddCustomItem = () => {
+    if (!customItem.trim() || !selectedCategory) return;
+    const updated = { ...customCategories };
+    if (!updated[selectedCategory]) updated[selectedCategory] = [];
+    if (!updated[selectedCategory].includes(customItem.trim())) {
+      updated[selectedCategory].push(customItem.trim());
+      setCustomCategories(updated);
+      localStorage.setItem('livestock_custom_expense_items', JSON.stringify(updated));
+    }
+    addItem(customItem.trim());
+    setCustomItem('');
+  };
+
+  const handleSave = () => {
+    if (!selectedCategory || !date) return;
+    const catLabel = categoryData?.label || selectedCategory;
+
+    if (selectedCategory === 'permanentLabor') {
+      if (!workerName || !workerSalary) return;
+      const total = Number(workerSalary) + Number(workerBonus || 0);
+      addExpense({
+        id: Date.now().toString(),
+        date,
+        description: `راتب: ${workerName}`,
+        amount: total,
+        category: catLabel,
+        subCategory: workerName,
+        items: [
+          { itemName: 'راتب', quantity: 1, unitPrice: Number(workerSalary), total: Number(workerSalary) },
+          ...(workerBonus ? [{ itemName: 'حافز', quantity: 1, unitPrice: Number(workerBonus), total: Number(workerBonus) }] : []),
+        ],
+      });
+      toast({ title: 'تم الحفظ', description: `تم إضافة راتب ${workerName}` });
+    } else if (selectedCategory === 'tempLabor') {
+      if (!tempWorkType || !tempAmount) return;
+      addExpense({
+        id: Date.now().toString(),
+        date,
+        description: tempWorkType,
+        amount: Number(tempAmount),
+        category: catLabel,
+        subCategory: tempWorkType,
+        items: [{ itemName: tempWorkType, quantity: 1, unitPrice: Number(tempAmount), total: Number(tempAmount) }],
+      });
+      toast({ title: 'تم الحفظ', description: `تم إضافة أجر عمالة مؤقتة` });
+    } else {
+      if (items.length === 0) return;
+      const expenseItems: ExpenseItem[] = items.map(i => ({
+        itemName: i.name,
+        quantity: Number(i.qty) || 0,
+        unitPrice: Number(i.price) || 0,
+        total: getItemTotal(i),
+      }));
+      // Add each item as separate expense for detailed tracking
+      expenseItems.forEach((ei, idx) => {
+        addExpense({
+          id: `${Date.now()}-${idx}`,
+          date,
+          description: ei.itemName,
+          amount: ei.total,
+          category: catLabel,
+          subCategory: ei.itemName,
+          items: [ei],
+        });
+      });
+      toast({ title: 'تم الحفظ', description: `تم إضافة ${expenseItems.length} صنف بإجمالي ${grandTotal.toLocaleString()} ر.س` });
+    }
+
+    resetForm();
+    setOpen(false);
+  };
+
+  const resetForm = () => {
+    setSelectedCategory('');
+    setItems([]);
+    setWorkerName(''); setWorkerSalary(''); setWorkerBonus('');
+    setTempWorkType(''); setTempAmount('');
+    setDate(new Date().toISOString().split('T')[0]);
+  };
+
+  // Group expenses by category for display
+  const groupedExpenses = useMemo(() => {
+    const groups: Record<string, typeof expenses> = {};
+    expenses.forEach(e => {
+      const cat = e.category || 'أخرى';
+      if (!groups[cat]) groups[cat] = [];
+      groups[cat].push(e);
+    });
+    return groups;
+  }, [expenses]);
+
+  const filteredExpenses = filterCategory === 'all' ? expenses : expenses.filter(e => e.category === filterCategory);
+  const categoryTotals = useMemo(() => {
+    const totals: Record<string, number> = {};
+    expenses.forEach(e => {
+      const cat = e.category || 'أخرى';
+      totals[cat] = (totals[cat] || 0) + e.amount;
+    });
+    return totals;
+  }, [expenses]);
 
   return (
     <div className="min-h-screen bg-background p-4 sm:p-6">
       <div className="max-w-2xl mx-auto">
         <PageHeader title="المصروفات" subtitle={`الإجمالي: ${getTotalExpenses().toLocaleString()} ر.س`} backTo="/" />
 
-        <Dialog open={open} onOpenChange={setOpen}>
+        {/* Category Summary Cards */}
+        {Object.keys(categoryTotals).length > 0 && (
+          <div className="grid grid-cols-2 gap-2 mb-4">
+            {Object.entries(categoryTotals).sort(([,a],[,b]) => b - a).map(([cat, total]) => {
+              const catInfo = Object.values(EXPENSE_CATEGORIES).find(c => c.label === cat);
+              return (
+                <div key={cat} className="rounded-xl bg-card p-3 card-shadow cursor-pointer border-2 border-transparent hover:border-primary/30 transition-colors"
+                  onClick={() => setFilterCategory(filterCategory === cat ? 'all' : cat)}>
+                  <div className="flex items-center gap-1 mb-1">
+                    <span>{catInfo?.icon || '📋'}</span>
+                    <span className="text-xs text-muted-foreground">{cat}</span>
+                  </div>
+                  <p className="text-lg font-bold text-destructive">{total.toLocaleString()} <span className="text-xs font-normal">ر.س</span></p>
+                </div>
+              );
+            })}
+          </div>
+        )}
+
+        {/* Add Button */}
+        <Dialog open={open} onOpenChange={(o) => { setOpen(o); if (!o) resetForm(); }}>
           <DialogTrigger asChild>
-            <Button className="w-full mb-4 gap-2"><Plus className="w-4 h-4" /> إضافة مصروف</Button>
+            <Button className="w-full mb-4 gap-2 h-12 text-base"><Plus className="w-5 h-5" /> إضافة مصروف</Button>
           </DialogTrigger>
-          <DialogContent>
-            <DialogHeader><DialogTitle>إضافة مصروف جديد</DialogTitle></DialogHeader>
-            <div className="space-y-3 mt-3">
-              <div><Label>الوصف</Label><Input value={desc} onChange={e => setDesc(e.target.value)} /></div>
-              <div><Label>المبلغ</Label><Input type="number" value={amount} onChange={e => setAmount(e.target.value)} /></div>
-              <div><Label>التاريخ</Label><Input type="date" value={date} onChange={e => setDate(e.target.value)} /></div>
-              <div><Label>التصنيف</Label><Input value={category} onChange={e => setCategory(e.target.value)} placeholder="علف، أدوية..." /></div>
-              <Button onClick={handleAdd} className="w-full">حفظ</Button>
+          <DialogContent className="max-w-lg max-h-[90vh] overflow-y-auto">
+            <DialogHeader><DialogTitle>إضافة مصروفات</DialogTitle></DialogHeader>
+            <div className="space-y-4 mt-3">
+              {/* Date */}
+              <div>
+                <Label>التاريخ</Label>
+                <Input type="date" value={date} onChange={e => setDate(e.target.value)} />
+              </div>
+
+              {/* Category Selection */}
+              <div>
+                <Label>نوع الصرف</Label>
+                <Select value={selectedCategory} onValueChange={(v) => { setSelectedCategory(v as ExpenseCategoryKey); setItems([]); }}>
+                  <SelectTrigger><SelectValue placeholder="اختر نوع الصرف" /></SelectTrigger>
+                  <SelectContent>
+                    {(Object.keys(EXPENSE_CATEGORIES) as ExpenseCategoryKey[]).map(key => (
+                      <SelectItem key={key} value={key}>
+                        {EXPENSE_CATEGORIES[key].icon} {EXPENSE_CATEGORIES[key].label}
+                      </SelectItem>
+                    ))}
+                  </SelectContent>
+                </Select>
+              </div>
+
+              {/* Permanent Labor Form */}
+              {selectedCategory === 'permanentLabor' && (
+                <div className="space-y-3 rounded-xl bg-muted/50 p-3">
+                  <div><Label>اسم العامل</Label><Input value={workerName} onChange={e => setWorkerName(e.target.value)} placeholder="مثال: محمد" /></div>
+                  <div><Label>الراتب الشهري</Label><Input type="number" value={workerSalary} onChange={e => setWorkerSalary(e.target.value)} placeholder="0" /></div>
+                  <div><Label>حافز (اختياري)</Label><Input type="number" value={workerBonus} onChange={e => setWorkerBonus(e.target.value)} placeholder="0" /></div>
+                  {workerSalary && (
+                    <div className="text-left font-bold text-primary">
+                      الإجمالي: {(Number(workerSalary) + Number(workerBonus || 0)).toLocaleString()} ر.س
+                    </div>
+                  )}
+                </div>
+              )}
+
+              {/* Temp Labor Form */}
+              {selectedCategory === 'tempLabor' && (
+                <div className="space-y-3 rounded-xl bg-muted/50 p-3">
+                  <div>
+                    <Label>نوع العمل</Label>
+                    <Select value={tempWorkType} onValueChange={setTempWorkType}>
+                      <SelectTrigger><SelectValue placeholder="اختر نوع العمل" /></SelectTrigger>
+                      <SelectContent>
+                        {[...EXPENSE_CATEGORIES.tempLabor.items, ...(customCategories.tempLabor || [])].map(item => (
+                          <SelectItem key={item} value={item}>{item}</SelectItem>
+                        ))}
+                      </SelectContent>
+                    </Select>
+                  </div>
+                  <div className="flex gap-2 items-end">
+                    <div className="flex-1"><Label>إضافة نوع عمل جديد</Label><Input value={customItem} onChange={e => setCustomItem(e.target.value)} placeholder="نوع عمل آخر" /></div>
+                    <Button size="sm" variant="outline" onClick={() => { if (customItem.trim()) { handleAddCustomItem(); setTempWorkType(customItem.trim()); } }}>إضافة</Button>
+                  </div>
+                  <div><Label>المبلغ</Label><Input type="number" value={tempAmount} onChange={e => setTempAmount(e.target.value)} placeholder="0" /></div>
+                </div>
+              )}
+
+              {/* Items Grid for feed/medicine/infrastructure */}
+              {selectedCategory && !['permanentLabor', 'tempLabor'].includes(selectedCategory) && (
+                <div className="space-y-3">
+                  <Label>اختر الأصناف</Label>
+                  <div className="flex flex-wrap gap-2">
+                    {allItemsForCategory.map(item => {
+                      const isSelected = items.find(i => i.name === item);
+                      return (
+                        <button
+                          key={item}
+                          onClick={() => isSelected ? removeItem(items.findIndex(i => i.name === item)) : addItem(item)}
+                          className={`px-3 py-1.5 rounded-full text-sm border transition-colors ${isSelected ? 'bg-primary text-primary-foreground border-primary' : 'bg-card border-border text-foreground hover:border-primary/50'}`}
+                        >
+                          {item}
+                        </button>
+                      );
+                    })}
+                  </div>
+
+                  {/* Custom item input */}
+                  <div className="flex gap-2 items-end">
+                    <div className="flex-1">
+                      <Label>إضافة صنف جديد</Label>
+                      <Input value={customItem} onChange={e => setCustomItem(e.target.value)} placeholder="صنف غير موجود" />
+                    </div>
+                    <Button size="sm" variant="outline" onClick={handleAddCustomItem}><Plus className="w-4 h-4" /></Button>
+                  </div>
+
+                  {/* Selected Items with qty & price */}
+                  {items.length > 0 && (
+                    <div className="space-y-2 mt-3">
+                      <Label>تفاصيل الأصناف المحددة</Label>
+                      {items.map((item, idx) => (
+                        <div key={item.name} className="rounded-lg bg-card border border-border p-3 space-y-2">
+                          <div className="flex justify-between items-center">
+                            <span className="font-semibold text-sm text-foreground">{item.name}</span>
+                            <button onClick={() => removeItem(idx)} className="text-destructive hover:text-destructive/80">
+                              <Trash2 className="w-4 h-4" />
+                            </button>
+                          </div>
+                          <div className="grid grid-cols-3 gap-2">
+                            <div>
+                              <Label className="text-xs">الكمية</Label>
+                              <Input type="number" value={item.qty} onChange={e => updateItem(idx, 'qty', e.target.value)} className="h-8 text-sm" />
+                            </div>
+                            <div>
+                              <Label className="text-xs">سعر الوحدة</Label>
+                              <Input type="number" value={item.price} onChange={e => updateItem(idx, 'price', e.target.value)} className="h-8 text-sm" placeholder="0" />
+                            </div>
+                            <div>
+                              <Label className="text-xs">الإجمالي</Label>
+                              <div className="h-8 flex items-center text-sm font-bold text-primary">
+                                {getItemTotal(item).toLocaleString()} ر.س
+                              </div>
+                            </div>
+                          </div>
+                        </div>
+                      ))}
+                    </div>
+                  )}
+                </div>
+              )}
+
+              {/* Grand Total */}
+              {selectedCategory && !['permanentLabor', 'tempLabor'].includes(selectedCategory) && items.length > 0 && (
+                <div className="rounded-xl bg-primary/10 p-4 text-center">
+                  <p className="text-sm text-muted-foreground mb-1">الإجمالي الكلي</p>
+                  <p className="text-2xl font-extrabold text-primary">{grandTotal.toLocaleString()} ر.س</p>
+                </div>
+              )}
+
+              <Button onClick={handleSave} className="w-full h-12 text-base" disabled={
+                !selectedCategory || !date ||
+                (selectedCategory === 'permanentLabor' && (!workerName || !workerSalary)) ||
+                (selectedCategory === 'tempLabor' && (!tempWorkType || !tempAmount)) ||
+                (!['permanentLabor', 'tempLabor'].includes(selectedCategory) && items.length === 0)
+              }>
+                <ShoppingCart className="w-5 h-5 ml-2" /> حفظ المصروفات
+              </Button>
             </div>
           </DialogContent>
         </Dialog>
 
-        <div className="space-y-3">
-          {expenses.length === 0 && <p className="text-center text-muted-foreground py-8">لا توجد مصروفات مسجلة</p>}
-          {expenses.map(e => (
-            <div key={e.id} className="rounded-xl bg-card p-4 card-shadow flex justify-between items-center">
-              <div>
-                <p className="font-semibold text-card-foreground">{e.description}</p>
-                <p className="text-xs text-muted-foreground">{e.date} {e.category && `• ${e.category}`}</p>
+        {/* Filter */}
+        {Object.keys(categoryTotals).length > 1 && (
+          <div className="flex gap-2 mb-3 overflow-x-auto pb-1">
+            <button onClick={() => setFilterCategory('all')}
+              className={`px-3 py-1 rounded-full text-xs whitespace-nowrap border transition-colors ${filterCategory === 'all' ? 'bg-primary text-primary-foreground border-primary' : 'bg-card border-border text-foreground'}`}>
+              الكل
+            </button>
+            {Object.keys(categoryTotals).map(cat => (
+              <button key={cat} onClick={() => setFilterCategory(cat)}
+                className={`px-3 py-1 rounded-full text-xs whitespace-nowrap border transition-colors ${filterCategory === cat ? 'bg-primary text-primary-foreground border-primary' : 'bg-card border-border text-foreground'}`}>
+                {cat}
+              </button>
+            ))}
+          </div>
+        )}
+
+        {/* Expenses List */}
+        <div className="space-y-2">
+          {filteredExpenses.length === 0 && <p className="text-center text-muted-foreground py-8">لا توجد مصروفات مسجلة</p>}
+          {filteredExpenses.slice().reverse().map(e => {
+            const catInfo = Object.values(EXPENSE_CATEGORIES).find(c => c.label === e.category);
+            return (
+              <div key={e.id} className="rounded-xl bg-card p-4 card-shadow">
+                <div className="flex justify-between items-start">
+                  <div className="flex-1">
+                    <div className="flex items-center gap-2 mb-1">
+                      <span>{catInfo?.icon || '📋'}</span>
+                      <span className="text-xs px-2 py-0.5 rounded-full bg-muted text-muted-foreground">{e.category}</span>
+                    </div>
+                    <p className="font-semibold text-card-foreground">{e.description}</p>
+                    <p className="text-xs text-muted-foreground mt-1">{e.date}</p>
+                    {e.items && e.items.length > 0 && (
+                      <p className="text-xs text-muted-foreground">
+                        {e.items.map(i => `${i.itemName} (${i.quantity}×${i.unitPrice.toLocaleString()})`).join(' • ')}
+                      </p>
+                    )}
+                  </div>
+                  <span className="font-bold text-destructive whitespace-nowrap mr-2">{e.amount.toLocaleString()} ر.س</span>
+                </div>
               </div>
-              <span className="font-bold text-destructive">{e.amount.toLocaleString()} ر.س</span>
-            </div>
-          ))}
+            );
+          })}
         </div>
       </div>
     </div>
