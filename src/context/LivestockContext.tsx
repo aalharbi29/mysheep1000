@@ -27,19 +27,18 @@ function generateInitialAnimals(): Animal[] {
   const animals: Animal[] = [];
   const breeds = ['harri', 'najdi', 'goat'] as const;
   const categories = { harri: 'sheep', najdi: 'sheep', goat: 'goat' } as const;
-  const colors = ['أبيض', 'أسود', 'بني', 'أشقر', 'رمادي'];
 
+  // Generate 100 mothers per breed, no rams initially
   breeds.forEach(breed => {
     for (let i = 1; i <= 100; i++) {
-      const gender = i % 5 === 0 ? 'male' : 'female';
       animals.push({
         id: `${breed}-${i}`,
         number: i,
         category: categories[breed],
         breed,
-        gender: gender as 'male' | 'female',
-        subCategory: gender === 'male' ? 'rams' : 'mothers',
-        color: colors[i % colors.length],
+        gender: 'female' as const,
+        subCategory: 'mothers',
+        color: 'أبيض',
         birthDate: '',
         birthRecords: [],
       });
