@@ -19,15 +19,19 @@ import { Input } from '@/components/ui/input';
 import { Label } from '@/components/ui/label';
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from '@/components/ui/select';
 import { Dialog, DialogContent, DialogHeader, DialogTitle, DialogTrigger } from '@/components/ui/dialog';
-import { Baby, Calendar, Palette, TreePine, Plus, Edit, ArrowRightLeft } from 'lucide-react';
+import { Baby, Calendar, Palette, TreePine, Plus, Edit, ArrowRightLeft, Trash2 } from 'lucide-react';
 
 const AnimalDetailPage = () => {
   const { id } = useParams<{ id: string }>();
-  const { getAnimalById, updateAnimal, addBirthRecord, addAnimal } = useLivestock();
+  const { getAnimalById, updateAnimal, addBirthRecord, updateBirthRecord, deleteBirthRecord, addAnimal, deleteAnimal } = useLivestock();
   const animal = getAnimalById(id || '');
   const [editOpen, setEditOpen] = useState(false);
   const [birthOpen, setBirthOpen] = useState(false);
   const [moveOpen, setMoveOpen] = useState(false);
+  const [editRecordOpen, setEditRecordOpen] = useState(false);
+  const [editingRecord, setEditingRecord] = useState<BirthRecord | null>(null);
+  const [editRecordDate, setEditRecordDate] = useState('');
+  const [editRecordOffspring, setEditRecordOffspring] = useState<Offspring[]>([]);
 
   // Edit form state
   const [editColor, setEditColor] = useState(animal?.color || '');
@@ -128,6 +132,41 @@ const AnimalDetailPage = () => {
   const handleMove = () => {
     updateAnimal({ ...animal, subCategory: moveTarget });
     setMoveOpen(false);
+  };
+
+  const handleEditRecord = (record: BirthRecord) => {
+    setEditingRecord(record);
+    setEditRecordDate(record.date);
+    setEditRecordOffspring([...record.offspring]);
+    setEditRecordOpen(true);
+  };
+
+  const handleSaveRecord = () => {
+    if (!editingRecord) return;
+    const updated: BirthRecord = {
+      ...editingRecord,
+      date: editRecordDate,
+      offspring: editRecordOffspring,
+    };
+    updateBirthRecord(animal.id, updated);
+    setEditRecordOpen(false);
+    setEditingRecord(null);
+  };
+
+  const handleDeleteRecord = (recordId: string) => {
+    if (confirm('هل أنت متأكد من حذف سجل الولادة هذا؟')) {
+      deleteBirthRecord(animal.id, recordId);
+    }
+  };
+
+  const updateEditOffspring = (index: number, field: string, value: string | number) => {
+    setEditRecordOffspring(prev =>
+      prev.map((o, i) => (i === index ? { ...o, [field]: value } : o))
+    );
+  };
+
+  const deleteEditOffspring = (index: number) => {
+    setEditRecordOffspring(prev => prev.filter((_, i) => i !== index));
   };
 
   return (
@@ -379,35 +418,119 @@ const AnimalDetailPage = () => {
             <div className="space-y-3">
               {animal.birthRecords.map((record) => (
                 <div key={record.id} className="rounded-xl bg-card p-4 card-shadow">
-                  <p className="text-sm font-semibold text-foreground mb-2">
-                    <Calendar className="w-4 h-4 inline ml-1" />
-                    {record.date}
-                    <span className="text-muted-foreground font-normal mr-2">
-                      ({record.offspring.length} مواليد)
-                    </span>
-                  </p>
+                  <div className="flex items-center justify-between mb-2">
+                    <p className="text-sm font-semibold text-foreground">
+                      <Calendar className="w-4 h-4 inline ml-1" />
+                      {record.date}
+                      <span className="text-muted-foreground font-normal mr-2">
+                        ({record.offspring.length} مواليد)
+                      </span>
+                    </p>
+                    <div className="flex gap-1">
+                      <Button size="sm" variant="ghost" className="h-7 w-7 p-0" onClick={() => handleEditRecord(record)}>
+                        <Edit className="w-3.5 h-3.5" />
+                      </Button>
+                      <Button size="sm" variant="ghost" className="h-7 w-7 p-0 text-destructive" onClick={() => handleDeleteRecord(record.id)}>
+                        <Trash2 className="w-3.5 h-3.5" />
+                      </Button>
+                    </div>
+                  </div>
                   <div className="grid grid-cols-2 gap-2">
-                    {record.offspring.map((off) => (
-                      <div
-                        key={off.id}
-                        className="rounded-lg p-2 text-xs"
-                        style={{ backgroundColor: ANIMAL_COLORS[off.color] || '#F5F0E8' }}
-                      >
-                        <span className="font-bold">#{off.number}</span>
-                        <span className="mx-1">•</span>
-                        <span>{GENDER_LABELS[off.gender]}</span>
-                        <span className="mx-1">•</span>
-                        <span>{off.color}</span>
-                        <span className="mx-1">•</span>
-                        <span>{FATE_LABELS[off.fate]}</span>
-                      </div>
-                    ))}
+                    {record.offspring.map((off) => {
+                      const offBg = ANIMAL_COLORS[off.color] || '#F5F0E8';
+                      const offDark = ['بني', 'أزرق', 'بنفسجي'].includes(off.color);
+                      return (
+                        <div
+                          key={off.id}
+                          className="rounded-lg p-2 text-xs"
+                          style={{ backgroundColor: offBg, color: offDark ? 'white' : undefined }}
+                        >
+                          <span className="font-bold">#{off.number}</span>
+                          <span className="mx-1">•</span>
+                          <span>{GENDER_LABELS[off.gender]}</span>
+                          <span className="mx-1">•</span>
+                          <span>{off.color}</span>
+                          <span className="mx-1">•</span>
+                          <span>{FATE_LABELS[off.fate]}</span>
+                        </div>
+                      );
+                    })}
                   </div>
                 </div>
               ))}
             </div>
           </section>
         )}
+
+        {/* Edit birth record dialog */}
+        <Dialog open={editRecordOpen} onOpenChange={setEditRecordOpen}>
+          <DialogContent className="max-h-[80vh] overflow-y-auto">
+            <DialogHeader>
+              <DialogTitle>تعديل سجل الولادة</DialogTitle>
+            </DialogHeader>
+            <div className="space-y-4 mt-4">
+              <div>
+                <Label>تاريخ الولادة</Label>
+                <Input type="date" value={editRecordDate} onChange={e => setEditRecordDate(e.target.value)} />
+              </div>
+              {editRecordOffspring.map((o, index) => (
+                <div key={o.id} className="rounded-lg p-3 space-y-3" style={{ backgroundColor: ANIMAL_COLORS[o.color] || '#F5F0E8' }}>
+                  <div className="flex items-center justify-between">
+                    <p className="text-sm font-semibold">مولود {index + 1}</p>
+                    <Button size="sm" variant="ghost" className="h-7 w-7 p-0 text-destructive" onClick={() => deleteEditOffspring(index)}>
+                      <Trash2 className="w-3.5 h-3.5" />
+                    </Button>
+                  </div>
+                  <div>
+                    <Label className="text-xs">رقم البطاقة</Label>
+                    <Input type="number" value={o.number || ''} onChange={e => updateEditOffspring(index, 'number', parseInt(e.target.value) || 0)} />
+                  </div>
+                  <div className="grid grid-cols-3 gap-2">
+                    <div>
+                      <Label className="text-xs">النوع</Label>
+                      <Select value={o.gender} onValueChange={v => updateEditOffspring(index, 'gender', v)}>
+                        <SelectTrigger><SelectValue /></SelectTrigger>
+                        <SelectContent>
+                          <SelectItem value="male">ذكر</SelectItem>
+                          <SelectItem value="female">أنثى</SelectItem>
+                        </SelectContent>
+                      </Select>
+                    </div>
+                    <div>
+                      <Label className="text-xs">لون التاق</Label>
+                      <Select value={o.color} onValueChange={v => updateEditOffspring(index, 'color', v)}>
+                        <SelectTrigger><SelectValue /></SelectTrigger>
+                        <SelectContent>
+                          {Object.keys(ANIMAL_COLORS).map(c => (
+                            <SelectItem key={c} value={c}>
+                              <span className="flex items-center gap-2">
+                                <span className="w-3 h-3 rounded-full inline-block border" style={{ backgroundColor: ANIMAL_COLORS[c] }} />
+                                {c}
+                              </span>
+                            </SelectItem>
+                          ))}
+                        </SelectContent>
+                      </Select>
+                    </div>
+                    <div>
+                      <Label className="text-xs">الإجراء</Label>
+                      <Select value={o.fate} onValueChange={v => updateEditOffspring(index, 'fate', v)}>
+                        <SelectTrigger><SelectValue /></SelectTrigger>
+                        <SelectContent>
+                          <SelectItem value="flock">إضافة للقطيع</SelectItem>
+                          <SelectItem value="sold">بيع</SelectItem>
+                          <SelectItem value="died">نفوق</SelectItem>
+                          <SelectItem value="infant">رضيع</SelectItem>
+                        </SelectContent>
+                      </Select>
+                    </div>
+                  </div>
+                </div>
+              ))}
+              <Button onClick={handleSaveRecord} className="w-full">حفظ التعديلات</Button>
+            </div>
+          </DialogContent>
+        </Dialog>
       </div>
     </div>
   );
