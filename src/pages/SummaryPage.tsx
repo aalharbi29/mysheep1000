@@ -1,10 +1,15 @@
+import { useState } from 'react';
 import PageHeader from '@/components/PageHeader';
 import { useLivestock } from '@/context/LivestockContext';
 import { CATEGORY_LABELS, FATE_LABELS, type OffspringFate } from '@/types/animals';
-import { Fence, TrendingUp, TrendingDown, Receipt, ShoppingCart, Baby, Skull, DollarSign, BarChart3 } from 'lucide-react';
+import { SavedReport, ReportData } from '@/types/reports';
+import { Fence, TrendingUp, TrendingDown, Receipt, ShoppingCart, Baby, Download, Save, FileText } from 'lucide-react';
+import { Button } from '@/components/ui/button';
+import { toast } from '@/hooks/use-toast';
 
 const SummaryPage = () => {
   const { animals, expenses, sales, purchases, getTotalExpenses, getTotalSales, getTotalPurchases } = useLivestock();
+  const [selectedYear, setSelectedYear] = useState(new Date().getFullYear());
 
   const totalExpenses = getTotalExpenses();
   const totalSales = getTotalSales();
@@ -50,10 +55,92 @@ const SummaryPage = () => {
   const purchasesQuantity = purchases.reduce((s, x) => s + x.quantity, 0);
   const avgPurchasePrice = purchasesCount > 0 ? totalPurchases / purchasesQuantity : 0;
 
+  const buildReportData = (): ReportData => ({
+    totalAnimals: animals.length, sheepCount, goatCount, harriCount, najdiCount,
+    mothersCount, youngCount, ramsCount, maleCount, femaleCount,
+    totalBirths, birthsByFate,
+    totalSales, salesCount, salesQuantity, avgSalePrice,
+    totalPurchases, purchasesCount, purchasesQuantity, avgPurchasePrice,
+    totalExpenses, expensesCount: expenses.length, expensesByCategory,
+    netProfit: net,
+  });
+
+  const handleSaveReport = () => {
+    const report: SavedReport = {
+      id: Date.now().toString(),
+      title: `تقرير سنة ${selectedYear}`,
+      year: selectedYear,
+      createdAt: new Date().toISOString(),
+      data: buildReportData(),
+    };
+    const existing = JSON.parse(localStorage.getItem('livestock_reports') || '[]');
+    existing.unshift(report);
+    localStorage.setItem('livestock_reports', JSON.stringify(existing));
+    toast({ title: 'تم حفظ التقرير', description: `تقرير سنة ${selectedYear} محفوظ في صفحة التقارير` });
+  };
+
+  const handleExport = () => {
+    const d = buildReportData();
+    const lines: string[] = [];
+    lines.push(`═══════════════════════════════════════`);
+    lines.push(`  تقرير سنة ${selectedYear} - ماشية`);
+    lines.push(`  التاريخ: ${new Date().toLocaleDateString('ar-SA')}`);
+    lines.push(`═══════════════════════════════════════`);
+    lines.push('');
+    lines.push(`── صافي ${d.netProfit >= 0 ? 'الربح' : 'الخسارة'}: ${Math.abs(d.netProfit).toLocaleString()} ر.س ──`);
+    lines.push('');
+    lines.push(`◆ القطيع: ${d.totalAnimals} رأس`);
+    lines.push(`  ضأن: ${d.sheepCount} | ماعز: ${d.goatCount}`);
+    lines.push(`  حري: ${d.harriCount} | نجدي: ${d.najdiCount}`);
+    lines.push(`  أمهات: ${d.mothersCount} | بهم: ${d.youngCount} | فحول: ${d.ramsCount}`);
+    lines.push(`  ذكور: ${d.maleCount} | إناث: ${d.femaleCount}`);
+    lines.push('');
+    lines.push(`◆ المواليد: ${d.totalBirths}`);
+    Object.entries(d.birthsByFate).forEach(([f, c]) => lines.push(`  ${FATE_LABELS[f as OffspringFate] || f}: ${c}`));
+    lines.push('');
+    lines.push(`◆ المبيعات: ${d.totalSales.toLocaleString()} ر.س (${d.salesCount} عملية، ${d.salesQuantity} رأس)`);
+    lines.push(`◆ المشتريات: ${d.totalPurchases.toLocaleString()} ر.س (${d.purchasesCount} عملية، ${d.purchasesQuantity} رأس)`);
+    lines.push(`◆ المصروفات: ${d.totalExpenses.toLocaleString()} ر.س (${d.expensesCount} مصروف)`);
+    if (Object.keys(d.expensesByCategory).length > 0) {
+      Object.entries(d.expensesByCategory).sort(([,a],[,b]) => b - a).forEach(([cat, amt]) => {
+        lines.push(`    ${cat}: ${amt.toLocaleString()} ر.س`);
+      });
+    }
+    lines.push(`\n═══════════════════════════════════════`);
+    const text = lines.join('\n');
+    const blob = new Blob(['\uFEFF' + text], { type: 'text/plain;charset=utf-8' });
+    const url = URL.createObjectURL(blob);
+    const a = document.createElement('a');
+    a.href = url;
+    a.download = `تقرير-${selectedYear}.txt`;
+    a.click();
+    URL.revokeObjectURL(url);
+    toast({ title: 'تم التصدير', description: 'تم تحميل الملف بنجاح' });
+  };
+
   return (
     <div className="min-h-screen bg-background p-4 sm:p-6">
       <div className="max-w-2xl mx-auto">
         <PageHeader title="الملخص" subtitle="تقرير شامل عن القطيع والمالية" backTo="/" />
+
+        {/* Action Buttons */}
+        <div className="flex gap-2 mb-4">
+          <select
+            value={selectedYear}
+            onChange={e => setSelectedYear(Number(e.target.value))}
+            className="rounded-lg bg-card border border-border px-3 py-2 text-sm text-foreground"
+          >
+            {Array.from({ length: 5 }, (_, i) => new Date().getFullYear() - i).map(y => (
+              <option key={y} value={y}>{y}</option>
+            ))}
+          </select>
+          <Button variant="outline" className="flex-1 gap-2" onClick={handleSaveReport}>
+            <Save className="w-4 h-4" /> حفظ التقرير
+          </Button>
+          <Button variant="outline" className="flex-1 gap-2" onClick={handleExport}>
+            <Download className="w-4 h-4" /> تصدير
+          </Button>
+        </div>
 
         {/* Net Profit/Loss Hero */}
         <div className={`rounded-2xl p-5 mb-6 card-shadow text-center ${net >= 0 ? 'bg-success/10' : 'bg-destructive/10'}`}>
