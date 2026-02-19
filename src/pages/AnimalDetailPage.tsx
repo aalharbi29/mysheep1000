@@ -19,7 +19,8 @@ import { Input } from '@/components/ui/input';
 import { Label } from '@/components/ui/label';
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from '@/components/ui/select';
 import { Dialog, DialogContent, DialogHeader, DialogTitle, DialogTrigger } from '@/components/ui/dialog';
-import { Baby, Calendar, Palette, TreePine, Plus, Edit, ArrowRightLeft, Trash2 } from 'lucide-react';
+import { Baby, Calendar, Palette, TreePine, Plus, Edit, ArrowRightLeft, Trash2, Skull, DollarSign, Home } from 'lucide-react';
+import { toast } from '@/hooks/use-toast';
 
 const AnimalDetailPage = () => {
   const { id } = useParams<{ id: string }>();
@@ -298,6 +299,54 @@ const AnimalDetailPage = () => {
             </p>
           )}
         </div>
+
+        {/* Fate management for young animals */}
+        {animal.subCategory === 'young' && (
+          <div className="rounded-xl bg-card p-4 mb-6 card-shadow">
+            <h3 className="text-sm font-bold text-foreground mb-3">🔄 تحديث حالة المولود</h3>
+            <div className="grid grid-cols-3 gap-2">
+              <Button
+                variant="outline"
+                className="gap-1 text-xs h-auto py-3 flex-col"
+                onClick={() => {
+                  if (confirm('هل تريد تسجيل نفوق هذا الحيوان؟')) {
+                    deleteAnimal(animal.id);
+                    toast({ title: '💀 تم تسجيل النفوق', description: `بطاقة رقم ${animal.number}` });
+                    window.history.back();
+                  }
+                }}
+              >
+                <Skull className="w-5 h-5 text-destructive" />
+                <span>نفوق</span>
+              </Button>
+              <Button
+                variant="outline"
+                className="gap-1 text-xs h-auto py-3 flex-col"
+                onClick={() => {
+                  if (confirm('هل تريد تسجيل بيع هذا الحيوان؟')) {
+                    deleteAnimal(animal.id);
+                    toast({ title: '💰 تم تسجيل البيع', description: `بطاقة رقم ${animal.number}` });
+                    window.history.back();
+                  }
+                }}
+              >
+                <DollarSign className="w-5 h-5 text-success" />
+                <span>بيع</span>
+              </Button>
+              <Button
+                variant="outline"
+                className="gap-1 text-xs h-auto py-3 flex-col"
+                onClick={() => {
+                  updateAnimal({ ...animal, subCategory: 'mothers' });
+                  toast({ title: '🐑 تم التحويل للأمهات', description: `بطاقة رقم ${animal.number}` });
+                }}
+              >
+                <Home className="w-5 h-5 text-primary" />
+                <span>تحويل للأمهات</span>
+              </Button>
+            </div>
+          </div>
+        )}
 
         {/* Birth registration - only for mothers */}
         {animal.subCategory === 'mothers' && (
