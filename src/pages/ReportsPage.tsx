@@ -1,9 +1,10 @@
 import { useState } from 'react';
 import PageHeader from '@/components/PageHeader';
 import { SavedReport } from '@/types/reports';
-import { FileText, Trash2, Download, Calendar } from 'lucide-react';
+import { FileText, Trash2, Download, Calendar, Image, FileDown, GitCompare } from 'lucide-react';
 import { Button } from '@/components/ui/button';
-import { FATE_LABELS } from '@/types/animals';
+import { generatePdfReport, downloadReportAsImage, generateComparisonPdf } from '@/lib/generatePdfReport';
+import { toast } from '@/hooks/use-toast';
 
 function loadReports(): SavedReport[] {
   try {
@@ -20,74 +21,9 @@ function deleteReport(id: string) {
   return reports;
 }
 
-function generateTextReport(report: SavedReport): string {
-  const d = report.data;
-  const lines: string[] = [];
-  lines.push(`═══════════════════════════════════════`);
-  lines.push(`  ${report.title}`);
-  lines.push(`  تاريخ الإنشاء: ${new Date(report.createdAt).toLocaleDateString('ar-SA')}`);
-  lines.push(`═══════════════════════════════════════`);
-  lines.push('');
-  lines.push(`── صافي ${d.netProfit >= 0 ? 'الربح' : 'الخسارة'}: ${Math.abs(d.netProfit).toLocaleString()} ر.س ──`);
-  lines.push('');
-  
-  lines.push(`◆ إحصائيات القطيع`);
-  lines.push(`  إجمالي القطيع: ${d.totalAnimals} رأس`);
-  lines.push(`  الضأن: ${d.sheepCount} | الماعز: ${d.goatCount}`);
-  lines.push(`  حري: ${d.harriCount} | نجدي: ${d.najdiCount}`);
-  lines.push(`  الأمهات: ${d.mothersCount} | البهم: ${d.youngCount} | الفحول: ${d.ramsCount}`);
-  lines.push(`  الذكور: ${d.maleCount} | الإناث: ${d.femaleCount}`);
-  lines.push('');
-  
-  lines.push(`◆ المواليد`);
-  lines.push(`  إجمالي المواليد: ${d.totalBirths}`);
-  Object.entries(d.birthsByFate).forEach(([fate, count]) => {
-    lines.push(`  ${FATE_LABELS[fate as keyof typeof FATE_LABELS] || fate}: ${count}`);
-  });
-  lines.push('');
-  
-  lines.push(`◆ المبيعات`);
-  lines.push(`  الإجمالي: ${d.totalSales.toLocaleString()} ر.س`);
-  lines.push(`  عدد العمليات: ${d.salesCount} | الرؤوس: ${d.salesQuantity}`);
-  lines.push(`  متوسط السعر: ${d.avgSalePrice > 0 ? d.avgSalePrice.toLocaleString(undefined, { maximumFractionDigits: 0 }) : '0'} ر.س`);
-  lines.push('');
-  
-  lines.push(`◆ المشتريات`);
-  lines.push(`  الإجمالي: ${d.totalPurchases.toLocaleString()} ر.س`);
-  lines.push(`  عدد العمليات: ${d.purchasesCount} | الرؤوس: ${d.purchasesQuantity}`);
-  lines.push(`  متوسط السعر: ${d.avgPurchasePrice > 0 ? d.avgPurchasePrice.toLocaleString(undefined, { maximumFractionDigits: 0 }) : '0'} ر.س`);
-  lines.push('');
-  
-  lines.push(`◆ المصروفات`);
-  lines.push(`  الإجمالي: ${d.totalExpenses.toLocaleString()} ر.س`);
-  lines.push(`  عدد المصروفات: ${d.expensesCount}`);
-  if (Object.keys(d.expensesByCategory).length > 0) {
-    lines.push(`  التفصيل:`);
-    Object.entries(d.expensesByCategory)
-      .sort(([, a], [, b]) => b - a)
-      .forEach(([cat, amount]) => {
-        lines.push(`    ${cat}: ${amount.toLocaleString()} ر.س`);
-      });
-  }
-  lines.push('');
-  lines.push(`═══════════════════════════════════════`);
-  
-  return lines.join('\n');
-}
-
-function downloadReport(report: SavedReport) {
-  const text = generateTextReport(report);
-  const blob = new Blob(['\uFEFF' + text], { type: 'text/plain;charset=utf-8' });
-  const url = URL.createObjectURL(blob);
-  const a = document.createElement('a');
-  a.href = url;
-  a.download = `${report.title}.txt`;
-  a.click();
-  URL.revokeObjectURL(url);
-}
-
 const ReportsPage = () => {
   const [reports, setReports] = useState<SavedReport[]>(loadReports);
+  const [selectedForCompare, setSelectedForCompare] = useState<Set<string>>(new Set());
 
   const handleDelete = (id: string) => {
     if (confirm('هل أنت متأكد من حذف هذا التقرير؟')) {
@@ -95,10 +31,35 @@ const ReportsPage = () => {
     }
   };
 
+  const toggleCompare = (id: string) => {
+    setSelectedForCompare(prev => {
+      const next = new Set(prev);
+      if (next.has(id)) next.delete(id);
+      else next.add(id);
+      return next;
+    });
+  };
+
+  const handleCompare = async () => {
+    const selected = reports.filter(r => selectedForCompare.has(r.id)).sort((a, b) => a.year - b.year);
+    if (selected.length < 2) {
+      toast({ title: 'اختر تقريرين على الأقل للمقارنة', variant: 'destructive' });
+      return;
+    }
+    await generateComparisonPdf(selected);
+    toast({ title: '📊 تم تصدير المقارنة', description: 'تم تحميل ملف PDF' });
+  };
+
   return (
     <div className="min-h-screen bg-background p-4 sm:p-6">
       <div className="max-w-2xl mx-auto">
         <PageHeader title="التقارير المحفوظة" subtitle={`${reports.length} تقرير`} backTo="/" />
+
+        {selectedForCompare.size >= 2 && (
+          <Button onClick={handleCompare} className="w-full mb-4 gap-2" variant="default">
+            <GitCompare className="w-4 h-4" /> مقارنة {selectedForCompare.size} تقارير (PDF)
+          </Button>
+        )}
 
         {reports.length === 0 && (
           <div className="text-center py-16">
@@ -110,15 +71,27 @@ const ReportsPage = () => {
 
         <div className="space-y-3">
           {reports.map(report => (
-            <div key={report.id} className="rounded-xl bg-card p-4 card-shadow">
+            <div
+              key={report.id}
+              className={`rounded-xl bg-card p-4 card-shadow transition-all ${selectedForCompare.has(report.id) ? 'ring-2 ring-primary' : ''}`}
+            >
               <div className="flex items-start justify-between mb-2">
                 <div className="flex items-center gap-2">
+                  <input
+                    type="checkbox"
+                    checked={selectedForCompare.has(report.id)}
+                    onChange={() => toggleCompare(report.id)}
+                    className="w-4 h-4 accent-primary rounded"
+                  />
                   <FileText className="w-5 h-5 text-primary" />
                   <h3 className="font-bold text-card-foreground">{report.title}</h3>
                 </div>
                 <div className="flex gap-1">
-                  <Button variant="ghost" size="icon" className="h-8 w-8" onClick={() => downloadReport(report)}>
-                    <Download className="w-4 h-4 text-primary" />
+                  <Button variant="ghost" size="icon" className="h-8 w-8" onClick={() => generatePdfReport(report)} title="تحميل PDF">
+                    <FileDown className="w-4 h-4 text-primary" />
+                  </Button>
+                  <Button variant="ghost" size="icon" className="h-8 w-8" onClick={() => downloadReportAsImage(report)} title="تحميل صورة">
+                    <Image className="w-4 h-4 text-primary" />
                   </Button>
                   <Button variant="ghost" size="icon" className="h-8 w-8" onClick={() => handleDelete(report.id)}>
                     <Trash2 className="w-4 h-4 text-destructive" />

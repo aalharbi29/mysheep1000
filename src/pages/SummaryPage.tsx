@@ -6,6 +6,7 @@ import { SavedReport, ReportData } from '@/types/reports';
 import { Fence, TrendingUp, TrendingDown, Receipt, ShoppingCart, Baby, Download, Save, FileText } from 'lucide-react';
 import { Button } from '@/components/ui/button';
 import { toast } from '@/hooks/use-toast';
+import { generatePdfReport } from '@/lib/generatePdfReport';
 
 const SummaryPage = () => {
   const { animals, expenses, sales, purchases, getTotalExpenses, getTotalSales, getTotalPurchases } = useLivestock();
@@ -79,43 +80,16 @@ const SummaryPage = () => {
     toast({ title: 'تم حفظ التقرير', description: `تقرير سنة ${selectedYear} محفوظ في صفحة التقارير` });
   };
 
-  const handleExport = () => {
-    const d = buildReportData();
-    const lines: string[] = [];
-    lines.push(`═══════════════════════════════════════`);
-    lines.push(`  تقرير سنة ${selectedYear} - ماشية`);
-    lines.push(`  التاريخ: ${new Date().toLocaleDateString('ar-SA')}`);
-    lines.push(`═══════════════════════════════════════`);
-    lines.push('');
-    lines.push(`── صافي ${d.netProfit >= 0 ? 'الربح' : 'الخسارة'}: ${Math.abs(d.netProfit).toLocaleString()} ر.س ──`);
-    lines.push('');
-    lines.push(`◆ القطيع: ${d.totalAnimals} رأس`);
-    lines.push(`  ضأن: ${d.sheepCount} | ماعز: ${d.goatCount}`);
-    lines.push(`  حري: ${d.harriCount} | نجدي: ${d.najdiCount}`);
-    lines.push(`  أمهات: ${d.mothersCount} | بهم: ${d.youngCount} | فحول: ${d.ramsCount}`);
-    lines.push(`  ذكور: ${d.maleCount} | إناث: ${d.femaleCount}`);
-    lines.push('');
-    lines.push(`◆ المواليد: ${d.totalBirths}`);
-    Object.entries(d.birthsByFate).forEach(([f, c]) => lines.push(`  ${FATE_LABELS[f as OffspringFate] || f}: ${c}`));
-    lines.push('');
-    lines.push(`◆ المبيعات: ${d.totalSales.toLocaleString()} ر.س (${d.salesCount} عملية، ${d.salesQuantity} رأس)`);
-    lines.push(`◆ المشتريات: ${d.totalPurchases.toLocaleString()} ر.س (${d.purchasesCount} عملية، ${d.purchasesQuantity} رأس)`);
-    lines.push(`◆ المصروفات: ${d.totalExpenses.toLocaleString()} ر.س (${d.expensesCount} مصروف)`);
-    if (Object.keys(d.expensesByCategory).length > 0) {
-      Object.entries(d.expensesByCategory).sort(([,a],[,b]) => b - a).forEach(([cat, amt]) => {
-        lines.push(`    ${cat}: ${amt.toLocaleString()} ر.س`);
-      });
-    }
-    lines.push(`\n═══════════════════════════════════════`);
-    const text = lines.join('\n');
-    const blob = new Blob(['\uFEFF' + text], { type: 'text/plain;charset=utf-8' });
-    const url = URL.createObjectURL(blob);
-    const a = document.createElement('a');
-    a.href = url;
-    a.download = `تقرير-${selectedYear}.txt`;
-    a.click();
-    URL.revokeObjectURL(url);
-    toast({ title: 'تم التصدير', description: 'تم تحميل الملف بنجاح' });
+  const handleExport = async () => {
+    const report: SavedReport = {
+      id: 'export-' + Date.now(),
+      title: `تقرير سنة ${selectedYear}`,
+      year: selectedYear,
+      createdAt: new Date().toISOString(),
+      data: buildReportData(),
+    };
+    await generatePdfReport(report);
+    toast({ title: 'تم التصدير', description: 'تم تحميل ملف PDF بنجاح' });
   };
 
   return (
