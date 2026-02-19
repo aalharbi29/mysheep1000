@@ -1,6 +1,6 @@
 import { useNavigate } from 'react-router-dom';
 import { useLivestock } from '@/context/LivestockContext';
-import { Fence, Receipt, ShoppingCart, TrendingUp, FileText } from 'lucide-react';
+import { Fence, Receipt, ShoppingCart, TrendingUp, FileText, Archive } from 'lucide-react';
 
 const cards = [
   { id: 'flock', label: 'القطيع', icon: Fence, path: '/flock', gradient: 'from-primary to-primary/80' },
@@ -8,6 +8,7 @@ const cards = [
   { id: 'sales', label: 'المبيعات', icon: TrendingUp, path: '/sales', gradient: 'from-success to-success/80' },
   { id: 'purchases', label: 'المشتريات', icon: ShoppingCart, path: '/purchases', gradient: 'from-info to-info/80' },
   { id: 'summary', label: 'الملخص', icon: FileText, path: '/summary', gradient: 'from-accent to-accent/80' },
+  { id: 'reports', label: 'التقارير', icon: Archive, path: '/reports', gradient: 'from-muted-foreground/60 to-muted-foreground/40' },
 ];
 
 const Dashboard = () => {
@@ -20,6 +21,7 @@ const Dashboard = () => {
     sales: `${getTotalSales().toLocaleString()} ر.س`,
     purchases: `${getTotalPurchases().toLocaleString()} ر.س`,
     summary: 'عرض التقرير',
+    reports: 'التقارير المحفوظة',
   };
 
   return (
