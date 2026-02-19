@@ -48,13 +48,52 @@ export const SUB_CATEGORY_ICONS: Record<AnimalSubCategory, string> = {
   rams: '🐏',
 };
 
+export interface ExpenseItem {
+  itemName: string;
+  quantity: number;
+  unitPrice: number;
+  total: number;
+}
+
 export interface Expense {
   id: string;
   date: string;
   description: string;
   amount: number;
   category: string;
+  subCategory?: string;
+  items?: ExpenseItem[];
 }
+
+export type ExpenseCategoryKey = 'feed' | 'medicine' | 'infrastructure' | 'permanentLabor' | 'tempLabor';
+
+export const EXPENSE_CATEGORIES: Record<ExpenseCategoryKey, { label: string; icon: string; items: string[] }> = {
+  feed: {
+    label: 'غذاء',
+    icon: '🌾',
+    items: ['شعير', 'شعير مضغوط', 'شعير مجروش', 'وافي تربية', 'وافي تسمين', 'اراسكو 18', 'اراسكو 21', 'حملان 24', 'ذرة مجروشة', 'برسيم', 'تبن', 'رودس', 'ذرة قصب', 'تمر', 'خبز'],
+  },
+  medicine: {
+    label: 'أدوية',
+    icon: '💊',
+    items: ['مضاد حيوي بنسلين', 'مضاد حيوي تيراميسين', 'مضاد حيوي اوكسي تتراسيكلين', 'ايفرمكتين (طفيليات)', 'البندازول (ديدان)', 'فيتامين AD3E', 'فيتامين B12', 'فيتامين B المركب', 'سيلينيوم + فيتامين E', 'كالسيوم', 'فوسفور', 'أملاح معدنية', 'حجر ملح', 'مضاد انتفاخ', 'مضاد إسهال', 'مطهر جروح', 'بخاخ مضاد ذباب', 'لقاح جدري', 'لقاح تسمم معوي', 'لقاح حمى مالطية', 'لقاح باستريلا'],
+  },
+  infrastructure: {
+    label: 'تجهيزات بنية تحتية',
+    icon: '🏗️',
+    items: ['بلك', 'اسمنت', 'بطحاء', 'خشب', 'حديد', 'هنقر', 'شباك', 'غرفة', 'مكيف', 'ثلاجة', 'اسطوانة غاز', 'رفع مخلفات أغنام', 'حرث أرض', 'بذور', 'سماد', 'ليات زراعية', 'محابس', 'خزان فيبر', 'خزان حديد'],
+  },
+  permanentLabor: {
+    label: 'أجور عمالة دائمة',
+    icon: '👷',
+    items: [],
+  },
+  tempLabor: {
+    label: 'أجور عمالة مؤقتة',
+    icon: '🔧',
+    items: ['بناء', 'تنزيل أعلاف', 'رفع مخلفات', 'فحوصات بيطرية', 'قص أظلاف', 'جز صوف', 'نقل أغنام', 'صيانة عامة'],
+  },
+};
 
 export interface Sale {
   id: string;
