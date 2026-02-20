@@ -27,7 +27,7 @@ import SellAnimalDialog from '@/components/SellAnimalDialog';
 const AnimalDetailPage = () => {
   const { id } = useParams<{ id: string }>();
   const navigate = useNavigate();
-  const { getAnimalById, updateAnimal, addBirthRecord, updateBirthRecord, deleteBirthRecord, addAnimal, deleteAnimal } = useLivestock();
+  const { getAnimalById, updateAnimal, addBirthRecord, updateBirthRecord, deleteBirthRecord, addAnimal, deleteAnimal, markAnimalDead } = useLivestock();
   const animal = getAnimalById(id || '');
   const [sellOpen, setSellOpen] = useState(false);
   const [editOpen, setEditOpen] = useState(false);
@@ -318,19 +318,27 @@ const AnimalDetailPage = () => {
           )}
         </div>
 
-        {/* Fate management for young animals */}
-        {animal.subCategory === 'young' && (
+        {/* Death/Sold status banner */}
+        {animal.status === 'dead' && (
+          <div className="rounded-xl bg-destructive/10 border border-destructive/30 p-4 mb-6 text-center">
+            <p className="text-lg font-bold text-destructive">💀 نافق</p>
+            {animal.deathDate && <p className="text-sm text-destructive/80">تاريخ النفوق: {animal.deathDate}</p>}
+          </div>
+        )}
+
+        {/* Fate management for all alive animals */}
+        {animal.status !== 'dead' && (
           <div className="rounded-xl bg-card p-4 mb-6 card-shadow">
-            <h3 className="text-sm font-bold text-foreground mb-3">🔄 تحديث حالة المولود</h3>
+            <h3 className="text-sm font-bold text-foreground mb-3">🔄 إجراءات</h3>
             <div className="grid grid-cols-3 gap-2">
               <Button
                 variant="outline"
                 className="gap-1 text-xs h-auto py-3 flex-col"
                 onClick={() => {
-                  if (confirm('هل تريد تسجيل نفوق هذا الحيوان؟')) {
-                    deleteAnimal(animal.id);
-                    toast({ title: '💀 تم تسجيل النفوق', description: `بطاقة رقم ${animal.number}` });
-                    window.history.back();
+                  const deathDate = prompt('أدخل تاريخ النفوق (مثال: 2025-01-15)');
+                  if (deathDate) {
+                    markAnimalDead(animal.id, deathDate);
+                    toast({ title: '💀 تم تسجيل النفوق', description: `بطاقة رقم ${animal.number} - ${deathDate}` });
                   }
                 }}
               >
@@ -345,17 +353,19 @@ const AnimalDetailPage = () => {
                 <DollarSign className="w-5 h-5 text-success" />
                 <span>بيع</span>
               </Button>
-              <Button
-                variant="outline"
-                className="gap-1 text-xs h-auto py-3 flex-col"
-                onClick={() => {
-                  updateAnimal({ ...animal, subCategory: 'mothers' });
-                  toast({ title: '🐑 تم التحويل للأمهات', description: `بطاقة رقم ${animal.number}` });
-                }}
-              >
-                <Home className="w-5 h-5 text-primary" />
-                <span>تحويل للأمهات</span>
-              </Button>
+              {animal.subCategory === 'young' && (
+                <Button
+                  variant="outline"
+                  className="gap-1 text-xs h-auto py-3 flex-col"
+                  onClick={() => {
+                    updateAnimal({ ...animal, subCategory: 'mothers' });
+                    toast({ title: '🐑 تم التحويل للأمهات', description: `بطاقة رقم ${animal.number}` });
+                  }}
+                >
+                  <Home className="w-5 h-5 text-primary" />
+                  <span>تحويل للأمهات</span>
+                </Button>
+              )}
             </div>
           </div>
         )}
