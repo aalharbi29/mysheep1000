@@ -27,6 +27,7 @@ const AnimalGrid = ({ breed, category, subCategory }: AnimalGridProps) => {
         </p>
       )}
       {filtered.map((animal) => {
+        const isDead = animal.status === 'dead';
         const bgColor = ANIMAL_COLORS[animal.color] || '#F5F0E8';
         const isDark = ['بني', 'أزرق', 'بنفسجي'].includes(animal.color);
 
@@ -34,9 +35,14 @@ const AnimalGrid = ({ breed, category, subCategory }: AnimalGridProps) => {
           <button
             key={animal.id}
             onClick={() => navigate(`/animal/${animal.id}`)}
-            className="rounded-xl p-3 text-center transition-all duration-200 card-shadow hover:card-shadow-hover hover:scale-[1.03] active:scale-[0.97] relative overflow-hidden"
+            className={`rounded-xl p-3 text-center transition-all duration-200 card-shadow hover:card-shadow-hover hover:scale-[1.03] active:scale-[0.97] relative overflow-hidden ${isDead ? 'opacity-60' : ''}`}
             style={{ backgroundColor: bgColor }}
           >
+            {isDead && (
+              <div className="absolute inset-0 flex items-center justify-center pointer-events-none z-10">
+                <span className="text-5xl font-black text-destructive opacity-70">✕</span>
+              </div>
+            )}
             <span className={`text-2xl font-extrabold block ${isDark ? 'text-primary-foreground' : 'text-foreground'}`}>
               {animal.number}
             </span>
@@ -46,7 +52,12 @@ const AnimalGrid = ({ breed, category, subCategory }: AnimalGridProps) => {
             <span className={`text-[10px] block ${isDark ? 'text-primary-foreground/70' : 'text-muted-foreground/80'}`}>
               {GENDER_LABELS[animal.gender]}
             </span>
-            {animal.birthDate && (
+            {isDead && animal.deathDate && (
+              <span className="text-[9px] block mt-0.5 text-destructive font-bold">
+                نفق: {animal.deathDate}
+              </span>
+            )}
+            {!isDead && animal.birthDate && (
               <span className={`text-[9px] block mt-0.5 ${isDark ? 'text-primary-foreground/60' : 'text-muted-foreground/60'}`}>
                 {animal.birthDate}
               </span>

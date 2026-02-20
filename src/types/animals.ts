@@ -20,6 +20,8 @@ export interface BirthRecord {
   offspring: Offspring[];
 }
 
+export type AnimalStatus = 'alive' | 'dead' | 'sold';
+
 export interface Animal {
   id: string;
   number: number;
@@ -34,6 +36,8 @@ export interface Animal {
   fatherNumber?: number;
   birthRecords: BirthRecord[];
   notes?: string;
+  status?: AnimalStatus;
+  deathDate?: string;
 }
 
 export const SUB_CATEGORY_LABELS: Record<AnimalSubCategory, string> = {

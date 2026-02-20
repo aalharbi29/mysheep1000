@@ -23,8 +23,8 @@ const SubCategoryPage = () => {
 
   const getCount = (sub: AnimalSubCategory) =>
     animals.filter(a => {
-      if (isGoat) return a.category === 'goat' && a.subCategory === sub;
-      return a.category === 'sheep' && a.breed === breed && a.subCategory === sub;
+      const match = isGoat ? a.category === 'goat' && a.subCategory === sub : a.category === 'sheep' && a.breed === breed && a.subCategory === sub;
+      return match && a.status !== 'dead';
     }).length;
 
   const basePath = isGoat ? '/flock/goat' : `/flock/sheep/${breed}`;

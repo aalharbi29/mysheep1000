@@ -1,5 +1,5 @@
 import React, { createContext, useContext, useState, useEffect, ReactNode } from 'react';
-import { Animal, Expense, Sale, Purchase, BirthRecord, Offspring } from '@/types/animals';
+import { Animal, Expense, Sale, Purchase, BirthRecord, Offspring, AnimalStatus } from '@/types/animals';
 
 interface LivestockContextType {
   animals: Animal[];
@@ -9,12 +9,15 @@ interface LivestockContextType {
   addAnimal: (animal: Animal) => void;
   updateAnimal: (animal: Animal) => void;
   deleteAnimal: (id: string) => void;
+  markAnimalDead: (id: string, deathDate: string) => void;
   addBirthRecord: (animalId: string, record: BirthRecord) => void;
   updateBirthRecord: (animalId: string, record: BirthRecord) => void;
   deleteBirthRecord: (animalId: string, recordId: string) => void;
   addExpense: (expense: Expense) => void;
   addSale: (sale: Sale) => void;
   updateSale: (sale: Sale) => void;
+  deleteSale: (id: string) => void;
+  cancelSale: (sale: Sale) => void;
   addPurchase: (purchase: Purchase) => void;
   getAnimalsByBreed: (category: string, breed: string) => Animal[];
   getAnimalById: (id: string) => Animal | undefined;
@@ -22,6 +25,8 @@ interface LivestockContextType {
   getTotalExpenses: () => number;
   getTotalSales: () => number;
   getTotalPurchases: () => number;
+  getAliveAnimalsCount: () => number;
+  getDeadAnimalsCount: () => number;
 }
 
 const LivestockContext = createContext<LivestockContextType | undefined>(undefined);
@@ -115,11 +120,19 @@ export function LivestockProvider({ children }: { children: ReactNode }) {
     localStorage.setItem('livestock_purchases', JSON.stringify(purchases));
   }, [purchases]);
 
-  const addAnimal = (animal: Animal) => setAnimals(prev => [...prev, animal]);
+  const addAnimal = (animal: Animal) => setAnimals(prev => [...prev, { ...animal, status: animal.status || 'alive' }]);
   const updateAnimal = (animal: Animal) =>
     setAnimals(prev => prev.map(a => (a.id === animal.id ? animal : a)));
   const deleteAnimal = (id: string) =>
     setAnimals(prev => prev.filter(a => a.id !== id));
+
+  const markAnimalDead = (id: string, deathDate: string) => {
+    setAnimals(prev =>
+      prev.map(a =>
+        a.id === id ? { ...a, status: 'dead' as AnimalStatus, deathDate } : a
+      )
+    );
+  };
 
   const addBirthRecord = (animalId: string, record: BirthRecord) => {
     setAnimals(prev =>
@@ -154,6 +167,29 @@ export function LivestockProvider({ children }: { children: ReactNode }) {
   const addExpense = (expense: Expense) => setExpenses(prev => [...prev, expense]);
   const addSale = (sale: Sale) => setSales(prev => [...prev, sale]);
   const updateSale = (sale: Sale) => setSales(prev => prev.map(s => s.id === sale.id ? sale : s));
+  const deleteSale = (id: string) => setSales(prev => prev.filter(s => s.id !== id));
+  
+  const cancelSale = (sale: Sale) => {
+    // Restore the animal if it was sold from a card
+    if (sale.animalId && sale.animalNumber && sale.animalBreed) {
+      const breed = sale.animalBreed;
+      const cat = breed === 'goat' ? 'goat' : 'sheep';
+      addAnimal({
+        id: sale.animalId,
+        number: sale.animalNumber,
+        category: cat as any,
+        breed: breed as any,
+        gender: 'male', // default, user can edit
+        subCategory: 'young',
+        color: 'أبيض',
+        birthDate: '',
+        birthRecords: [],
+        status: 'alive',
+      });
+    }
+    deleteSale(sale.id);
+  };
+  
   const addPurchase = (purchase: Purchase) => setPurchases(prev => [...prev, purchase]);
 
   const getAnimalsByBreed = (category: string, breed: string) =>
@@ -170,15 +206,19 @@ export function LivestockProvider({ children }: { children: ReactNode }) {
   const getTotalExpenses = () => expenses.reduce((sum, e) => sum + e.amount, 0);
   const getTotalSales = () => sales.reduce((sum, s) => sum + s.amount, 0);
   const getTotalPurchases = () => purchases.reduce((sum, p) => sum + p.amount, 0);
+  const getAliveAnimalsCount = () => animals.filter(a => a.status !== 'dead').length;
+  const getDeadAnimalsCount = () => animals.filter(a => a.status === 'dead').length;
 
   return (
     <LivestockContext.Provider
       value={{
         animals, expenses, sales, purchases,
-        addAnimal, updateAnimal, deleteAnimal, addBirthRecord, updateBirthRecord, deleteBirthRecord,
-        addExpense, addSale, updateSale, addPurchase,
+        addAnimal, updateAnimal, deleteAnimal, markAnimalDead,
+        addBirthRecord, updateBirthRecord, deleteBirthRecord,
+        addExpense, addSale, updateSale, deleteSale, cancelSale, addPurchase,
         getAnimalsByBreed, getAnimalById, getAnimalByNumber,
         getTotalExpenses, getTotalSales, getTotalPurchases,
+        getAliveAnimalsCount, getDeadAnimalsCount,
       }}
     >
       {children}

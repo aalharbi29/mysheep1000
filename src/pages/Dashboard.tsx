@@ -13,10 +13,13 @@ const cards = [
 
 const Dashboard = () => {
   const navigate = useNavigate();
-  const { animals, getTotalExpenses, getTotalSales, getTotalPurchases } = useLivestock();
+  const { animals, getTotalExpenses, getTotalSales, getTotalPurchases, getAliveAnimalsCount, getDeadAnimalsCount } = useLivestock();
 
+  const deadCount = getDeadAnimalsCount();
+  const aliveCount = getAliveAnimalsCount();
+  
   const stats: Record<string, string> = {
-    flock: `${animals.length} رأس`,
+    flock: `${aliveCount} رأس${deadCount > 0 ? ` (${deadCount} نافق)` : ''}`,
     expenses: `${getTotalExpenses().toLocaleString()} ر.س`,
     sales: `${getTotalSales().toLocaleString()} ر.س`,
     purchases: `${getTotalPurchases().toLocaleString()} ر.س`,

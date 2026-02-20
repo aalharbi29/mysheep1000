@@ -1,15 +1,17 @@
 import { useState } from 'react';
 import PageHeader from '@/components/PageHeader';
 import { useLivestock } from '@/context/LivestockContext';
+import { CATEGORY_LABELS } from '@/types/animals';
 import { Button } from '@/components/ui/button';
 import { Input } from '@/components/ui/input';
 import { Label } from '@/components/ui/label';
 import { Dialog, DialogContent, DialogHeader, DialogTitle, DialogTrigger } from '@/components/ui/dialog';
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from '@/components/ui/select';
-import { Plus } from 'lucide-react';
+import { Plus, Undo2 } from 'lucide-react';
+import { toast } from '@/hooks/use-toast';
 
 const SalesPage = () => {
-  const { sales, addSale, updateSale, getTotalSales } = useLivestock();
+  const { sales, addSale, updateSale, cancelSale, getTotalSales } = useLivestock();
   const [open, setOpen] = useState(false);
   const [desc, setDesc] = useState('');
   const [amount, setAmount] = useState('');
@@ -19,7 +21,6 @@ const SalesPage = () => {
   const [paymentType, setPaymentType] = useState<'cash' | 'debt'>('cash');
   const [amountPaid, setAmountPaid] = useState('');
 
-  // Update debt dialog
   const [updateOpen, setUpdateOpen] = useState(false);
   const [selectedSale, setSelectedSale] = useState<string | null>(null);
   const [newPayment, setNewPayment] = useState('');
@@ -42,6 +43,15 @@ const SalesPage = () => {
     const newPaid = sale.amountPaid + payment;
     updateSale({ ...sale, amountPaid: newPaid, remaining: sale.amount - newPaid > 0 ? sale.amount - newPaid : 0 });
     setUpdateOpen(false); setNewPayment(''); setSelectedSale(null);
+  };
+
+  const handleCancelSale = (saleId: string) => {
+    const sale = sales.find(s => s.id === saleId);
+    if (!sale) return;
+    if (confirm('هل أنت متأكد من إلغاء عملية البيع؟ سيتم إعادة الحيوان للقطيع.')) {
+      cancelSale(sale);
+      toast({ title: '↩️ تم إلغاء البيع', description: sale.animalNumber ? `تم إعادة بطاقة رقم ${sale.animalNumber} للقطيع` : 'تم حذف عملية البيع' });
+    }
   };
 
   const totalDebts = sales.filter(s => s.paymentType === 'debt' && s.remaining > 0);
@@ -88,7 +98,6 @@ const SalesPage = () => {
           </DialogContent>
         </Dialog>
 
-        {/* Update debt dialog */}
         <Dialog open={updateOpen} onOpenChange={setUpdateOpen}>
           <DialogContent>
             <DialogHeader><DialogTitle>تحديث المبلغ المقبوض</DialogTitle></DialogHeader>
@@ -108,6 +117,7 @@ const SalesPage = () => {
                   <p className="font-semibold text-card-foreground">{s.description}</p>
                   <p className="text-xs text-muted-foreground">{s.date} • {s.quantity} رأس</p>
                   {s.buyer && <p className="text-xs text-muted-foreground">المشتري: {s.buyer}</p>}
+                  {s.animalBreed && <p className="text-xs text-muted-foreground">السلالة: {CATEGORY_LABELS[s.animalBreed] || s.animalBreed}</p>}
                   {s.paymentType === 'debt' && (
                     <div className="mt-1 text-xs">
                       <span className="text-muted-foreground">مقبوض: {s.amountPaid.toLocaleString()}</span>
@@ -129,6 +139,14 @@ const SalesPage = () => {
                       </Button>
                     )}
                   </div>
+                  <Button
+                    size="sm"
+                    variant="ghost"
+                    className="h-6 text-[10px] px-2 mt-1 text-destructive gap-1"
+                    onClick={() => handleCancelSale(s.id)}
+                  >
+                    <Undo2 className="w-3 h-3" /> إلغاء البيع
+                  </Button>
                 </div>
               </div>
             </div>

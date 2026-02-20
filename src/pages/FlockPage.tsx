@@ -18,7 +18,7 @@ const FlockPage = () => {
 
         <div className="grid grid-cols-2 gap-4">
           {categories.map((cat) => {
-            const count = animals.filter(a => a.category === cat.id).length;
+            const count = animals.filter(a => a.category === cat.id && a.status !== 'dead').length;
             return (
               <button
                 key={cat.id}
