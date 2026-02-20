@@ -186,14 +186,15 @@ export async function generatePurchasesReport(purchases: Purchase[]) {
 // ========== FLOCK REPORT ==========
 function createFlockHtml(animals: Animal[]): HTMLDivElement {
   const c = createContainer();
-  const alive = animals.filter(a => a.status !== 'dead');
-  const dead = animals.filter(a => a.status === 'dead');
+  const confirmed = animals.filter(a => a.confirmed === true);
+  const alive = confirmed.filter(a => a.status !== 'dead');
+  const dead = confirmed.filter(a => a.status === 'dead');
   const sheep = alive.filter(a => a.category === 'sheep');
   const goats = alive.filter(a => a.category === 'goat');
   const mothers = alive.filter(a => a.subCategory === 'mothers');
   const young = alive.filter(a => a.subCategory === 'young');
   const rams = alive.filter(a => a.subCategory === 'rams');
-  const totalBirths = animals.reduce((s, a) => s + a.birthRecords.reduce((ss, r) => ss + r.offspring.length, 0), 0);
+  const totalBirths = confirmed.reduce((s, a) => s + a.birthRecords.reduce((ss, r) => ss + r.offspring.length, 0), 0);
 
   // Breed breakdown
   const breeds = new Set(alive.map(a => a.breed));
@@ -211,7 +212,7 @@ function createFlockHtml(animals: Animal[]): HTMLDivElement {
   c.innerHTML = `
     ${header('🐑 تقرير القطيع', `إجمالي ${alive.length} رأس حي`, '#6366f1')}
     ${summaryCards([
-      { label: 'إجمالي القطيع', value: `${alive.length} رأس`, color: '#6366f1' },
+      { label: 'إجمالي القطيع (مؤكد)', value: `${alive.length} رأس`, color: '#6366f1' },
       { label: 'الضأن', value: `${sheep.length} رأس`, color: '#ECC94B' },
       { label: 'الماعز', value: `${goats.length} رأس`, color: '#DD6B20' },
     ])}
@@ -223,7 +224,7 @@ function createFlockHtml(animals: Animal[]): HTMLDivElement {
     ${summaryCards([
       { label: 'المواليد', value: `${totalBirths}`, color: '#10b981' },
       { label: 'النافق', value: `${dead.length}`, color: '#ef4444' },
-      { label: 'نسبة النفوق', value: `${animals.length > 0 ? ((dead.length / animals.length) * 100).toFixed(1) : 0}%`, color: '#ef4444' },
+      { label: 'نسبة النفوق', value: `${confirmed.length > 0 ? ((dead.length / confirmed.length) * 100).toFixed(1) : 0}%`, color: '#ef4444' },
     ])}
     <h2 style="font-size:18px;font-weight:700;color:#6366f1;margin-bottom:12px;border-bottom:3px solid #6366f130;padding-bottom:8px;">📊 تفاصيل السلالات</h2>
     ${tableHtml(['السلالة', 'أمهات', 'بهم', 'فحول', 'الإجمالي'], breedRows, '#6366f1')}
