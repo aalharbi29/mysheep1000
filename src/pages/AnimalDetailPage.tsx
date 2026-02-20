@@ -20,7 +20,7 @@ import { Input } from '@/components/ui/input';
 import { Label } from '@/components/ui/label';
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from '@/components/ui/select';
 import { Dialog, DialogContent, DialogHeader, DialogTitle, DialogTrigger } from '@/components/ui/dialog';
-import { Baby, Calendar, Palette, TreePine, Plus, Edit, ArrowRightLeft, Trash2, Skull, DollarSign, Home } from 'lucide-react';
+import { Baby, Calendar, Palette, TreePine, Plus, Edit, Trash2, Skull, DollarSign, Home } from 'lucide-react';
 import { toast } from '@/hooks/use-toast';
 import SellAnimalDialog from '@/components/SellAnimalDialog';
 
@@ -32,7 +32,7 @@ const AnimalDetailPage = () => {
   const [sellOpen, setSellOpen] = useState(false);
   const [editOpen, setEditOpen] = useState(false);
   const [birthOpen, setBirthOpen] = useState(false);
-  const [moveOpen, setMoveOpen] = useState(false);
+  const [moveOpen, setMoveOpen] = useState(false); // kept for state but move UI removed
   const [editRecordOpen, setEditRecordOpen] = useState(false);
   const [editingRecord, setEditingRecord] = useState<BirthRecord | null>(null);
   const [editRecordDate, setEditRecordDate] = useState('');
@@ -192,25 +192,6 @@ const AnimalDetailPage = () => {
               <Button size="sm" variant="outline" className="gap-1" onClick={() => setSellOpen(true)}>
                 <DollarSign className="w-3 h-3" /> بيع
               </Button>
-              <Dialog open={moveOpen} onOpenChange={setMoveOpen}>
-                <DialogTrigger asChild>
-                  <Button size="sm" variant="outline" className="gap-1"><ArrowRightLeft className="w-3 h-3" /> نقل</Button>
-                </DialogTrigger>
-                <DialogContent>
-                  <DialogHeader><DialogTitle>نقل إلى قسم آخر</DialogTitle></DialogHeader>
-                  <div className="space-y-4 mt-4">
-                    <Select value={moveTarget} onValueChange={v => setMoveTarget(v as AnimalSubCategory)}>
-                      <SelectTrigger><SelectValue /></SelectTrigger>
-                      <SelectContent>
-                        <SelectItem value="mothers">الأمهات</SelectItem>
-                        <SelectItem value="young">البهم</SelectItem>
-                        <SelectItem value="rams">الفحول</SelectItem>
-                      </SelectContent>
-                    </Select>
-                    <Button onClick={handleMove} className="w-full">نقل</Button>
-                  </div>
-                </DialogContent>
-              </Dialog>
               <Dialog open={editOpen} onOpenChange={setEditOpen}>
                 <DialogTrigger asChild>
                   <Button size="sm" variant="outline" className="gap-1"><Edit className="w-3 h-3" /> تعديل</Button>

@@ -256,8 +256,8 @@ export function LivestockProvider({ children }: { children: ReactNode }) {
   const getTotalExpenses = () => expenses.reduce((sum, e) => sum + e.amount, 0);
   const getTotalSales = () => sales.reduce((sum, s) => sum + s.amount, 0);
   const getTotalPurchases = () => purchases.reduce((sum, p) => sum + p.amount, 0);
-  const getAliveAnimalsCount = () => animals.filter(a => a.status !== 'dead').length;
-  const getDeadAnimalsCount = () => animals.filter(a => a.status === 'dead').length;
+  const getAliveAnimalsCount = () => animals.filter(a => a.status !== 'dead' && a.confirmed === true).length;
+  const getDeadAnimalsCount = () => animals.filter(a => a.status === 'dead' && a.confirmed === true).length;
 
   return (
     <LivestockContext.Provider

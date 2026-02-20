@@ -22,6 +22,9 @@ export interface BirthRecord {
 }
 
 export type AnimalStatus = 'alive' | 'dead' | 'sold';
+export type AnimalAge = 'جذعه' | 'ثنيه' | 'رباع' | 'سدس' | 'تامة' | 'عودة' | 'غير معروف';
+
+export const AGE_OPTIONS: AnimalAge[] = ['جذعه', 'ثنيه', 'رباع', 'سدس', 'تامة', 'عودة', 'غير معروف'];
 
 export interface Animal {
   id: string;
@@ -39,6 +42,8 @@ export interface Animal {
   notes?: string;
   status?: AnimalStatus;
   deathDate?: string;
+  confirmed?: boolean;
+  ageCategory?: AnimalAge;
 }
 
 export const SUB_CATEGORY_LABELS: Record<AnimalSubCategory, string> = {
