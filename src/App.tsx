@@ -4,6 +4,7 @@ import { TooltipProvider } from "@/components/ui/tooltip";
 import { QueryClient, QueryClientProvider } from "@tanstack/react-query";
 import { BrowserRouter, Routes, Route } from "react-router-dom";
 import { LivestockProvider } from "@/context/LivestockContext";
+import DebtReminder from "@/components/DebtReminder";
 import Dashboard from "./pages/Dashboard";
 import FlockPage from "./pages/FlockPage";
 import BreedPage from "./pages/BreedPage";
@@ -25,6 +26,7 @@ const App = () => (
       <LivestockProvider>
         <Toaster />
         <Sonner />
+        <DebtReminder />
         <BrowserRouter>
           <Routes>
             <Route path="/" element={<Dashboard />} />

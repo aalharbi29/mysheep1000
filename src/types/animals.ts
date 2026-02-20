@@ -95,13 +95,22 @@ export const EXPENSE_CATEGORIES: Record<ExpenseCategoryKey, { label: string; ico
   },
 };
 
+export type PaymentType = 'cash' | 'debt';
+
 export interface Sale {
   id: string;
   date: string;
+  animalId?: string;
   animalNumber?: number;
+  animalBreed?: string;
   description: string;
   amount: number;
   quantity: number;
+  buyer?: string;
+  paymentType: PaymentType;
+  amountPaid: number;
+  remaining: number;
+  lastReminderDate?: string;
 }
 
 export interface Purchase {
