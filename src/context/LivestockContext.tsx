@@ -14,6 +14,7 @@ interface LivestockContextType {
   deleteBirthRecord: (animalId: string, recordId: string) => void;
   addExpense: (expense: Expense) => void;
   addSale: (sale: Sale) => void;
+  updateSale: (sale: Sale) => void;
   addPurchase: (purchase: Purchase) => void;
   getAnimalsByBreed: (category: string, breed: string) => Animal[];
   getAnimalById: (id: string) => Animal | undefined;
@@ -152,6 +153,7 @@ export function LivestockProvider({ children }: { children: ReactNode }) {
 
   const addExpense = (expense: Expense) => setExpenses(prev => [...prev, expense]);
   const addSale = (sale: Sale) => setSales(prev => [...prev, sale]);
+  const updateSale = (sale: Sale) => setSales(prev => prev.map(s => s.id === sale.id ? sale : s));
   const addPurchase = (purchase: Purchase) => setPurchases(prev => [...prev, purchase]);
 
   const getAnimalsByBreed = (category: string, breed: string) =>
@@ -174,7 +176,7 @@ export function LivestockProvider({ children }: { children: ReactNode }) {
       value={{
         animals, expenses, sales, purchases,
         addAnimal, updateAnimal, deleteAnimal, addBirthRecord, updateBirthRecord, deleteBirthRecord,
-        addExpense, addSale, addPurchase,
+        addExpense, addSale, updateSale, addPurchase,
         getAnimalsByBreed, getAnimalById, getAnimalByNumber,
         getTotalExpenses, getTotalSales, getTotalPurchases,
       }}

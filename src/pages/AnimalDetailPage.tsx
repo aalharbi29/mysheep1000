@@ -1,4 +1,4 @@
-import { useParams } from 'react-router-dom';
+import { useParams, useNavigate } from 'react-router-dom';
 import { useState } from 'react';
 import PageHeader from '@/components/PageHeader';
 import { useLivestock } from '@/context/LivestockContext';
@@ -22,11 +22,14 @@ import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from '@
 import { Dialog, DialogContent, DialogHeader, DialogTitle, DialogTrigger } from '@/components/ui/dialog';
 import { Baby, Calendar, Palette, TreePine, Plus, Edit, ArrowRightLeft, Trash2, Skull, DollarSign, Home } from 'lucide-react';
 import { toast } from '@/hooks/use-toast';
+import SellAnimalDialog from '@/components/SellAnimalDialog';
 
 const AnimalDetailPage = () => {
   const { id } = useParams<{ id: string }>();
+  const navigate = useNavigate();
   const { getAnimalById, updateAnimal, addBirthRecord, updateBirthRecord, deleteBirthRecord, addAnimal, deleteAnimal } = useLivestock();
   const animal = getAnimalById(id || '');
+  const [sellOpen, setSellOpen] = useState(false);
   const [editOpen, setEditOpen] = useState(false);
   const [birthOpen, setBirthOpen] = useState(false);
   const [moveOpen, setMoveOpen] = useState(false);
@@ -229,6 +232,10 @@ const AnimalDetailPage = () => {
             </div>
 
             <div className="flex gap-1">
+              <Button size="sm" variant="outline" className="gap-1" onClick={() => setSellOpen(true)}>
+                <DollarSign className="w-3 h-3" /> بيع
+              </Button>
+
               <Dialog open={moveOpen} onOpenChange={setMoveOpen}>
                 <DialogTrigger asChild>
                   <Button size="sm" variant="outline" className="gap-1">
@@ -333,13 +340,7 @@ const AnimalDetailPage = () => {
               <Button
                 variant="outline"
                 className="gap-1 text-xs h-auto py-3 flex-col"
-                onClick={() => {
-                  if (confirm('هل تريد تسجيل بيع هذا الحيوان؟')) {
-                    deleteAnimal(animal.id);
-                    toast({ title: '💰 تم تسجيل البيع', description: `بطاقة رقم ${animal.number}` });
-                    window.history.back();
-                  }
-                }}
+                onClick={() => setSellOpen(true)}
               >
                 <DollarSign className="w-5 h-5 text-success" />
                 <span>بيع</span>
@@ -591,6 +592,13 @@ const AnimalDetailPage = () => {
             </div>
           </DialogContent>
         </Dialog>
+        {/* Sell dialog */}
+        <SellAnimalDialog
+          animal={animal}
+          open={sellOpen}
+          onOpenChange={setSellOpen}
+          onSold={() => navigate(-1)}
+        />
       </div>
     </div>
   );
