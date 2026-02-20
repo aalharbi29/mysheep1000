@@ -46,6 +46,8 @@ const AnimalCardsPage = () => {
       ? getMotherDefaultColor(breedId)
       : getDefaultColor(breedId, newGender, sub));
 
+    const isYoung = sub === 'young';
+
     addAnimal({
       id: `${breedId}-${sub}-${num}-${Date.now()}`,
       number: num,
@@ -57,6 +59,7 @@ const AnimalCardsPage = () => {
       birthDate: '',
       birthRecords: [],
       status: 'alive',
+      confirmed: isYoung ? true : undefined,
     });
 
     toast({ title: '✅ تمت الإضافة', description: `بطاقة رقم ${num} - ${subLabel}` });

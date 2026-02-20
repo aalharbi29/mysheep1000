@@ -102,6 +102,7 @@ const AnimalDetailPage = () => {
           motherNumber: animal.number,
           motherBreed: animal.breed,
           birthRecords: [],
+          confirmed: true,
         });
       }
     });
