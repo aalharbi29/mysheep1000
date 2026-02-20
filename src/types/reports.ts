@@ -1,3 +1,19 @@
+export interface BreedBreakdown {
+  mothers: number;
+  young: number;
+  rams: number;
+  males: number;
+  females: number;
+  births: number;
+}
+
+export interface ExpenseDetail {
+  category: string;
+  description: string;
+  date: string;
+  amount: number;
+}
+
 export interface SavedReport {
   id: string;
   title: string;
@@ -18,6 +34,10 @@ export interface ReportData {
   ramsCount: number;
   maleCount: number;
   femaleCount: number;
+  // Breed breakdown
+  harriBreed?: BreedBreakdown;
+  najdiBreed?: BreedBreakdown;
+  goatBreed?: BreedBreakdown;
   // Births
   totalBirths: number;
   birthsByFate: Record<string, number>;
@@ -35,6 +55,7 @@ export interface ReportData {
   totalExpenses: number;
   expensesCount: number;
   expensesByCategory: Record<string, number>;
+  expenseDetails?: ExpenseDetail[];
   // Net
   netProfit: number;
 }

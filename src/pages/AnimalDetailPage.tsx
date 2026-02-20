@@ -2,6 +2,7 @@ import { useParams } from 'react-router-dom';
 import { useState } from 'react';
 import PageHeader from '@/components/PageHeader';
 import { useLivestock } from '@/context/LivestockContext';
+import { getDefaultColor, getMotherDefaultColor } from '@/context/LivestockContext';
 import {
   ANIMAL_COLORS,
   CATEGORY_LABELS,
@@ -42,8 +43,9 @@ const AnimalDetailPage = () => {
 
   // Birth form state
   const [birthDate, setBirthDate] = useState('');
+  const defaultOffspringColor = animal ? getDefaultColor(animal.breed, 'female', 'young') : 'أبيض';
   const [offspringList, setOffspringList] = useState<(Partial<Offspring> & { assignedNumber?: number })[]>([
-    { gender: 'female', color: 'أبيض', fate: 'flock', assignedNumber: undefined },
+    { gender: 'female', color: defaultOffspringColor, fate: 'flock', assignedNumber: undefined },
   ]);
 
   // Move state
@@ -121,12 +123,21 @@ const AnimalDetailPage = () => {
   };
 
   const addOffspringField = () => {
-    setOffspringList(prev => [...prev, { gender: 'female', color: 'أبيض', fate: 'flock', assignedNumber: undefined }]);
+    const color = animal ? getDefaultColor(animal.breed, 'female', 'young') : 'أبيض';
+    setOffspringList(prev => [...prev, { gender: 'female', color, fate: 'flock', assignedNumber: undefined }]);
   };
 
   const updateOffspringField = (index: number, field: string, value: string | number) => {
     setOffspringList(prev =>
-      prev.map((o, i) => (i === index ? { ...o, [field]: value } : o))
+      prev.map((o, i) => {
+        if (i !== index) return o;
+        const updated = { ...o, [field]: value };
+        // Auto-assign color when gender changes
+        if (field === 'gender' && animal) {
+          updated.color = getDefaultColor(animal.breed, value as 'male' | 'female', 'young');
+        }
+        return updated;
+      })
     );
   };
 
