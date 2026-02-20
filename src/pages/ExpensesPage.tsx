@@ -6,9 +6,10 @@ import { Input } from '@/components/ui/input';
 import { Label } from '@/components/ui/label';
 import { Dialog, DialogContent, DialogHeader, DialogTitle, DialogTrigger } from '@/components/ui/dialog';
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from '@/components/ui/select';
-import { Plus, Trash2, ShoppingCart } from 'lucide-react';
+import { Plus, Trash2, ShoppingCart, FileText, Image } from 'lucide-react';
 import { EXPENSE_CATEGORIES, ExpenseCategoryKey, ExpenseItem } from '@/types/animals';
 import { toast } from '@/hooks/use-toast';
+import { generateExpensesReport, downloadSectionReportAsImage } from '@/lib/generateSectionReport';
 
 const ExpensesPage = () => {
   const { expenses, addExpense, getTotalExpenses } = useLivestock();
@@ -16,22 +17,15 @@ const ExpensesPage = () => {
   const [date, setDate] = useState(new Date().toISOString().split('T')[0]);
   const [selectedCategory, setSelectedCategory] = useState<ExpenseCategoryKey | ''>('');
   const [items, setItems] = useState<{ name: string; qty: string; price: string }[]>([]);
-  // permanent labor
   const [workerName, setWorkerName] = useState('');
   const [workerSalary, setWorkerSalary] = useState('');
   const [workerBonus, setWorkerBonus] = useState('');
-  // temp labor
   const [tempWorkType, setTempWorkType] = useState('');
   const [tempAmount, setTempAmount] = useState('');
-  // custom item for any category
   const [customItem, setCustomItem] = useState('');
-  // custom categories stored in localStorage
   const [customCategories, setCustomCategories] = useState<Record<string, string[]>>(() => {
-    try {
-      return JSON.parse(localStorage.getItem('livestock_custom_expense_items') || '{}');
-    } catch { return {}; }
+    try { return JSON.parse(localStorage.getItem('livestock_custom_expense_items') || '{}'); } catch { return {}; }
   });
-  // filter
   const [filterCategory, setFilterCategory] = useState<string>('all');
 
   const categoryData = selectedCategory ? EXPENSE_CATEGORIES[selectedCategory] : null;
@@ -46,17 +40,11 @@ const ExpensesPage = () => {
     if (items.find(i => i.name === itemName)) return;
     setItems(prev => [...prev, { name: itemName, qty: '1', price: '' }]);
   };
-
   const removeItem = (idx: number) => setItems(prev => prev.filter((_, i) => i !== idx));
-
   const updateItem = (idx: number, field: 'qty' | 'price', value: string) => {
     setItems(prev => prev.map((item, i) => i === idx ? { ...item, [field]: value } : item));
   };
-
-  const getItemTotal = (item: { qty: string; price: string }) => {
-    return (Number(item.qty) || 0) * (Number(item.price) || 0);
-  };
-
+  const getItemTotal = (item: { qty: string; price: string }) => (Number(item.qty) || 0) * (Number(item.price) || 0);
   const grandTotal = items.reduce((sum, item) => sum + getItemTotal(item), 0);
 
   const handleAddCustomItem = () => {
@@ -75,88 +63,38 @@ const ExpensesPage = () => {
   const handleSave = () => {
     if (!selectedCategory || !date) return;
     const catLabel = categoryData?.label || selectedCategory;
-
     if (selectedCategory === 'permanentLabor') {
       if (!workerName || !workerSalary) return;
       const total = Number(workerSalary) + Number(workerBonus || 0);
-      addExpense({
-        id: Date.now().toString(),
-        date,
-        description: `راتب: ${workerName}`,
-        amount: total,
-        category: catLabel,
-        subCategory: workerName,
-        items: [
-          { itemName: 'راتب', quantity: 1, unitPrice: Number(workerSalary), total: Number(workerSalary) },
-          ...(workerBonus ? [{ itemName: 'حافز', quantity: 1, unitPrice: Number(workerBonus), total: Number(workerBonus) }] : []),
-        ],
-      });
+      addExpense({ id: Date.now().toString(), date, description: `راتب: ${workerName}`, amount: total, category: catLabel, subCategory: workerName, items: [{ itemName: 'راتب', quantity: 1, unitPrice: Number(workerSalary), total: Number(workerSalary) }, ...(workerBonus ? [{ itemName: 'حافز', quantity: 1, unitPrice: Number(workerBonus), total: Number(workerBonus) }] : [])] });
       toast({ title: 'تم الحفظ', description: `تم إضافة راتب ${workerName}` });
     } else if (selectedCategory === 'tempLabor') {
       if (!tempWorkType || !tempAmount) return;
-      addExpense({
-        id: Date.now().toString(),
-        date,
-        description: tempWorkType,
-        amount: Number(tempAmount),
-        category: catLabel,
-        subCategory: tempWorkType,
-        items: [{ itemName: tempWorkType, quantity: 1, unitPrice: Number(tempAmount), total: Number(tempAmount) }],
-      });
+      addExpense({ id: Date.now().toString(), date, description: tempWorkType, amount: Number(tempAmount), category: catLabel, subCategory: tempWorkType, items: [{ itemName: tempWorkType, quantity: 1, unitPrice: Number(tempAmount), total: Number(tempAmount) }] });
       toast({ title: 'تم الحفظ', description: `تم إضافة أجر عمالة مؤقتة` });
     } else {
       if (items.length === 0) return;
-      const expenseItems: ExpenseItem[] = items.map(i => ({
-        itemName: i.name,
-        quantity: Number(i.qty) || 0,
-        unitPrice: Number(i.price) || 0,
-        total: getItemTotal(i),
-      }));
-      // Add each item as separate expense for detailed tracking
+      const expenseItems: ExpenseItem[] = items.map(i => ({ itemName: i.name, quantity: Number(i.qty) || 0, unitPrice: Number(i.price) || 0, total: getItemTotal(i) }));
       expenseItems.forEach((ei, idx) => {
-        addExpense({
-          id: `${Date.now()}-${idx}`,
-          date,
-          description: ei.itemName,
-          amount: ei.total,
-          category: catLabel,
-          subCategory: ei.itemName,
-          items: [ei],
-        });
+        addExpense({ id: `${Date.now()}-${idx}`, date, description: ei.itemName, amount: ei.total, category: catLabel, subCategory: ei.itemName, items: [ei] });
       });
       toast({ title: 'تم الحفظ', description: `تم إضافة ${expenseItems.length} صنف بإجمالي ${grandTotal.toLocaleString()} ر.س` });
     }
-
     resetForm();
     setOpen(false);
   };
 
   const resetForm = () => {
-    setSelectedCategory('');
-    setItems([]);
+    setSelectedCategory(''); setItems([]);
     setWorkerName(''); setWorkerSalary(''); setWorkerBonus('');
     setTempWorkType(''); setTempAmount('');
     setDate(new Date().toISOString().split('T')[0]);
   };
 
-  // Group expenses by category for display
-  const groupedExpenses = useMemo(() => {
-    const groups: Record<string, typeof expenses> = {};
-    expenses.forEach(e => {
-      const cat = e.category || 'أخرى';
-      if (!groups[cat]) groups[cat] = [];
-      groups[cat].push(e);
-    });
-    return groups;
-  }, [expenses]);
-
   const filteredExpenses = filterCategory === 'all' ? expenses : expenses.filter(e => e.category === filterCategory);
   const categoryTotals = useMemo(() => {
     const totals: Record<string, number> = {};
-    expenses.forEach(e => {
-      const cat = e.category || 'أخرى';
-      totals[cat] = (totals[cat] || 0) + e.amount;
-    });
+    expenses.forEach(e => { totals[e.category || 'أخرى'] = (totals[e.category || 'أخرى'] || 0) + e.amount; });
     return totals;
   }, [expenses]);
 
@@ -165,7 +103,6 @@ const ExpensesPage = () => {
       <div className="max-w-2xl mx-auto">
         <PageHeader title="المصروفات" subtitle={`الإجمالي: ${getTotalExpenses().toLocaleString()} ر.س`} backTo="/" />
 
-        {/* Category Summary Cards */}
         {Object.keys(categoryTotals).length > 0 && (
           <div className="grid grid-cols-2 gap-2 mb-4">
             {Object.entries(categoryTotals).sort(([,a],[,b]) => b - a).map(([cat, total]) => {
@@ -184,7 +121,18 @@ const ExpensesPage = () => {
           </div>
         )}
 
-        {/* Add Button */}
+        {/* Report buttons */}
+        {expenses.length > 0 && (
+          <div className="flex gap-2 mb-4">
+            <Button variant="outline" className="flex-1 gap-2 h-10 border-destructive/30 text-destructive hover:bg-destructive/10" onClick={() => generateExpensesReport(expenses)}>
+              <FileText className="w-4 h-4" /> تقرير PDF
+            </Button>
+            <Button variant="outline" className="flex-1 gap-2 h-10 border-destructive/30 text-destructive hover:bg-destructive/10" onClick={() => downloadSectionReportAsImage(expenses, 'expenses')}>
+              <Image className="w-4 h-4" /> تقرير صورة
+            </Button>
+          </div>
+        )}
+
         <Dialog open={open} onOpenChange={(o) => { setOpen(o); if (!o) resetForm(); }}>
           <DialogTrigger asChild>
             <Button className="w-full mb-4 gap-2 h-12 text-base"><Plus className="w-5 h-5" /> إضافة مصروف</Button>
@@ -192,42 +140,28 @@ const ExpensesPage = () => {
           <DialogContent className="max-w-lg max-h-[90vh] overflow-y-auto">
             <DialogHeader><DialogTitle>إضافة مصروفات</DialogTitle></DialogHeader>
             <div className="space-y-4 mt-3">
-              {/* Date */}
-              <div>
-                <Label>التاريخ</Label>
-                <Input type="date" value={date} onChange={e => setDate(e.target.value)} />
-              </div>
-
-              {/* Category Selection */}
+              <div><Label>التاريخ</Label><Input type="date" value={date} onChange={e => setDate(e.target.value)} /></div>
               <div>
                 <Label>نوع الصرف</Label>
                 <Select value={selectedCategory} onValueChange={(v) => { setSelectedCategory(v as ExpenseCategoryKey); setItems([]); }}>
                   <SelectTrigger><SelectValue placeholder="اختر نوع الصرف" /></SelectTrigger>
                   <SelectContent>
                     {(Object.keys(EXPENSE_CATEGORIES) as ExpenseCategoryKey[]).map(key => (
-                      <SelectItem key={key} value={key}>
-                        {EXPENSE_CATEGORIES[key].icon} {EXPENSE_CATEGORIES[key].label}
-                      </SelectItem>
+                      <SelectItem key={key} value={key}>{EXPENSE_CATEGORIES[key].icon} {EXPENSE_CATEGORIES[key].label}</SelectItem>
                     ))}
                   </SelectContent>
                 </Select>
               </div>
 
-              {/* Permanent Labor Form */}
               {selectedCategory === 'permanentLabor' && (
                 <div className="space-y-3 rounded-xl bg-muted/50 p-3">
                   <div><Label>اسم العامل</Label><Input value={workerName} onChange={e => setWorkerName(e.target.value)} placeholder="مثال: محمد" /></div>
                   <div><Label>الراتب الشهري</Label><Input type="number" value={workerSalary} onChange={e => setWorkerSalary(e.target.value)} placeholder="0" /></div>
                   <div><Label>حافز (اختياري)</Label><Input type="number" value={workerBonus} onChange={e => setWorkerBonus(e.target.value)} placeholder="0" /></div>
-                  {workerSalary && (
-                    <div className="text-left font-bold text-primary">
-                      الإجمالي: {(Number(workerSalary) + Number(workerBonus || 0)).toLocaleString()} ر.س
-                    </div>
-                  )}
+                  {workerSalary && <div className="text-left font-bold text-primary">الإجمالي: {(Number(workerSalary) + Number(workerBonus || 0)).toLocaleString()} ر.س</div>}
                 </div>
               )}
 
-              {/* Temp Labor Form */}
               {selectedCategory === 'tempLabor' && (
                 <div className="space-y-3 rounded-xl bg-muted/50 p-3">
                   <div>
@@ -249,7 +183,6 @@ const ExpensesPage = () => {
                 </div>
               )}
 
-              {/* Items Grid for feed/medicine/infrastructure */}
               {selectedCategory && !['permanentLabor', 'tempLabor'].includes(selectedCategory) && (
                 <div className="space-y-3">
                   <Label>اختر الأصناف</Label>
@@ -257,27 +190,17 @@ const ExpensesPage = () => {
                     {allItemsForCategory.map(item => {
                       const isSelected = items.find(i => i.name === item);
                       return (
-                        <button
-                          key={item}
-                          onClick={() => isSelected ? removeItem(items.findIndex(i => i.name === item)) : addItem(item)}
-                          className={`px-3 py-1.5 rounded-full text-sm border transition-colors ${isSelected ? 'bg-primary text-primary-foreground border-primary' : 'bg-card border-border text-foreground hover:border-primary/50'}`}
-                        >
+                        <button key={item} onClick={() => isSelected ? removeItem(items.findIndex(i => i.name === item)) : addItem(item)}
+                          className={`px-3 py-1.5 rounded-full text-sm border transition-colors ${isSelected ? 'bg-primary text-primary-foreground border-primary' : 'bg-card border-border text-foreground hover:border-primary/50'}`}>
                           {item}
                         </button>
                       );
                     })}
                   </div>
-
-                  {/* Custom item input */}
                   <div className="flex gap-2 items-end">
-                    <div className="flex-1">
-                      <Label>إضافة صنف جديد</Label>
-                      <Input value={customItem} onChange={e => setCustomItem(e.target.value)} placeholder="صنف غير موجود" />
-                    </div>
+                    <div className="flex-1"><Label>إضافة صنف جديد</Label><Input value={customItem} onChange={e => setCustomItem(e.target.value)} placeholder="صنف غير موجود" /></div>
                     <Button size="sm" variant="outline" onClick={handleAddCustomItem}><Plus className="w-4 h-4" /></Button>
                   </div>
-
-                  {/* Selected Items with qty & price */}
                   {items.length > 0 && (
                     <div className="space-y-2 mt-3">
                       <Label>تفاصيل الأصناف المحددة</Label>
@@ -285,25 +208,12 @@ const ExpensesPage = () => {
                         <div key={item.name} className="rounded-lg bg-card border border-border p-3 space-y-2">
                           <div className="flex justify-between items-center">
                             <span className="font-semibold text-sm text-foreground">{item.name}</span>
-                            <button onClick={() => removeItem(idx)} className="text-destructive hover:text-destructive/80">
-                              <Trash2 className="w-4 h-4" />
-                            </button>
+                            <button onClick={() => removeItem(idx)} className="text-destructive hover:text-destructive/80"><Trash2 className="w-4 h-4" /></button>
                           </div>
                           <div className="grid grid-cols-3 gap-2">
-                            <div>
-                              <Label className="text-xs">الكمية</Label>
-                              <Input type="number" value={item.qty} onChange={e => updateItem(idx, 'qty', e.target.value)} className="h-8 text-sm" />
-                            </div>
-                            <div>
-                              <Label className="text-xs">سعر الوحدة</Label>
-                              <Input type="number" value={item.price} onChange={e => updateItem(idx, 'price', e.target.value)} className="h-8 text-sm" placeholder="0" />
-                            </div>
-                            <div>
-                              <Label className="text-xs">الإجمالي</Label>
-                              <div className="h-8 flex items-center text-sm font-bold text-primary">
-                                {getItemTotal(item).toLocaleString()} ر.س
-                              </div>
-                            </div>
+                            <div><Label className="text-xs">الكمية</Label><Input type="number" value={item.qty} onChange={e => updateItem(idx, 'qty', e.target.value)} className="h-8 text-sm" /></div>
+                            <div><Label className="text-xs">سعر الوحدة</Label><Input type="number" value={item.price} onChange={e => updateItem(idx, 'price', e.target.value)} className="h-8 text-sm" placeholder="0" /></div>
+                            <div><Label className="text-xs">الإجمالي</Label><div className="h-8 flex items-center text-sm font-bold text-primary">{getItemTotal(item).toLocaleString()} ر.س</div></div>
                           </div>
                         </div>
                       ))}
@@ -312,7 +222,6 @@ const ExpensesPage = () => {
                 </div>
               )}
 
-              {/* Grand Total */}
               {selectedCategory && !['permanentLabor', 'tempLabor'].includes(selectedCategory) && items.length > 0 && (
                 <div className="rounded-xl bg-primary/10 p-4 text-center">
                   <p className="text-sm text-muted-foreground mb-1">الإجمالي الكلي</p>
@@ -332,7 +241,6 @@ const ExpensesPage = () => {
           </DialogContent>
         </Dialog>
 
-        {/* Filter */}
         {Object.keys(categoryTotals).length > 1 && (
           <div className="flex gap-2 mb-3 overflow-x-auto pb-1">
             <button onClick={() => setFilterCategory('all')}
@@ -348,7 +256,6 @@ const ExpensesPage = () => {
           </div>
         )}
 
-        {/* Expenses List */}
         <div className="space-y-2">
           {filteredExpenses.length === 0 && <p className="text-center text-muted-foreground py-8">لا توجد مصروفات مسجلة</p>}
           {filteredExpenses.slice().reverse().map(e => {

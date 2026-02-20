@@ -1,6 +1,9 @@
 import { useNavigate } from 'react-router-dom';
 import PageHeader from '@/components/PageHeader';
 import { useLivestock } from '@/context/LivestockContext';
+import { Button } from '@/components/ui/button';
+import { FileText, Image } from 'lucide-react';
+import { generateFlockReport, downloadSectionReportAsImage } from '@/lib/generateSectionReport';
 
 const categories = [
   { id: 'sheep', label: 'ضأن', emoji: '🐑', path: '/flock/sheep' },
@@ -15,6 +18,16 @@ const FlockPage = () => {
     <div className="min-h-screen bg-background p-4 sm:p-6">
       <div className="max-w-2xl mx-auto">
         <PageHeader title="القطيع" subtitle="اختر نوع الماشية" backTo="/" />
+
+        {/* Flock Report buttons */}
+        <div className="flex gap-2 mb-4">
+          <Button variant="outline" className="flex-1 gap-2 h-10 border-primary/30 text-primary hover:bg-primary/10" onClick={() => generateFlockReport(animals)}>
+            <FileText className="w-4 h-4" /> تقرير القطيع PDF
+          </Button>
+          <Button variant="outline" className="flex-1 gap-2 h-10 border-primary/30 text-primary hover:bg-primary/10" onClick={() => downloadSectionReportAsImage(animals, 'flock')}>
+            <Image className="w-4 h-4" /> تقرير صورة
+          </Button>
+        </div>
 
         <div className="grid grid-cols-2 gap-4">
           {categories.map((cat) => {

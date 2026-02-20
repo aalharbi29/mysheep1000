@@ -11,23 +11,19 @@ import {
 const subCategories: AnimalSubCategory[] = ['mothers', 'young', 'rams'];
 
 const SubCategoryPage = () => {
-  const { breed: breedParam } = useParams<{ breed: string }>();
+  const { breed } = useParams<{ breed: string }>();
   const location = useLocation();
   const navigate = useNavigate();
   const { animals } = useLivestock();
 
   const isGoat = location.pathname.startsWith('/flock/goat');
-  const breed = isGoat ? 'goat' : breedParam;
   const breedLabel = CATEGORY_LABELS[breed || ''] || breed;
-  const backTo = isGoat ? '/flock' : '/flock/sheep';
+  const backTo = isGoat ? '/flock/goat' : '/flock/sheep';
 
   const getCount = (sub: AnimalSubCategory) =>
-    animals.filter(a => {
-      const match = isGoat ? a.category === 'goat' && a.subCategory === sub : a.category === 'sheep' && a.breed === breed && a.subCategory === sub;
-      return match && a.status !== 'dead';
-    }).length;
+    animals.filter(a => a.breed === breed && a.subCategory === sub && a.status !== 'dead').length;
 
-  const basePath = isGoat ? '/flock/goat' : `/flock/sheep/${breed}`;
+  const basePath = isGoat ? `/flock/goat/${breed}` : `/flock/sheep/${breed}`;
 
   return (
     <div className="min-h-screen bg-background p-4 sm:p-6">

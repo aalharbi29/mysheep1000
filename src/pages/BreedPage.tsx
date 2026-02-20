@@ -1,33 +1,37 @@
-import { useNavigate } from 'react-router-dom';
+import { useNavigate, useLocation } from 'react-router-dom';
 import PageHeader from '@/components/PageHeader';
 import { useLivestock } from '@/context/LivestockContext';
-
-const breeds = [
-  { id: 'harri', label: 'حري' },
-  { id: 'najdi', label: 'نجدي' },
-];
+import { SHEEP_BREEDS, GOAT_BREEDS } from '@/types/animals';
 
 const BreedPage = () => {
   const navigate = useNavigate();
+  const location = useLocation();
   const { animals } = useLivestock();
+
+  const isGoat = location.pathname.startsWith('/flock/goat');
+  const breeds = isGoat ? GOAT_BREEDS : SHEEP_BREEDS;
+  const title = isGoat ? 'ماعز' : 'ضأن';
+  const emoji = isGoat ? '🐐' : '🐑';
+  const basePath = isGoat ? '/flock/goat' : '/flock/sheep';
+  const category = isGoat ? 'goat' : 'sheep';
 
   return (
     <div className="min-h-screen bg-background p-4 sm:p-6">
       <div className="max-w-2xl mx-auto">
-        <PageHeader title="ضأن" subtitle="اختر السلالة" backTo="/flock" />
+        <PageHeader title={title} subtitle="اختر السلالة" backTo="/flock" />
 
         <div className="grid grid-cols-2 gap-4">
           {breeds.map((breed) => {
             const count = animals.filter(
-              a => a.category === 'sheep' && a.breed === breed.id
+              a => a.category === category && a.breed === breed.id && a.status !== 'dead'
             ).length;
             return (
               <button
                 key={breed.id}
-                onClick={() => navigate(`/flock/sheep/${breed.id}`)}
+                onClick={() => navigate(`${basePath}/${breed.id}`)}
                 className="rounded-xl bg-card p-6 text-center transition-all duration-200 card-shadow hover:card-shadow-hover hover:scale-[1.02] active:scale-[0.98]"
               >
-                <span className="text-4xl block mb-3">🐑</span>
+                <span className="text-4xl block mb-3">{emoji}</span>
                 <h2 className="text-xl font-bold text-card-foreground">{breed.label}</h2>
                 <p className="text-sm text-muted-foreground mt-1">{count} رأس</p>
               </button>
