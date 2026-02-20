@@ -6,7 +6,8 @@ import { Dialog, DialogContent, DialogHeader, DialogTitle } from '@/components/u
 import { Button } from '@/components/ui/button';
 import { Input } from '@/components/ui/input';
 import { Label } from '@/components/ui/label';
-import { Plus, Check } from 'lucide-react';
+import { Plus, Check, Trash2 } from 'lucide-react';
+import { AlertDialog, AlertDialogAction, AlertDialogCancel, AlertDialogContent, AlertDialogDescription, AlertDialogFooter, AlertDialogHeader, AlertDialogTitle } from '@/components/ui/alert-dialog';
 import { toast } from '@/hooks/use-toast';
 
 interface AnimalGridProps {
@@ -37,7 +38,10 @@ function getContrastSubColor(hexBg: string): string {
 
 const AnimalGrid = ({ breed, category, subCategory }: AnimalGridProps) => {
   const navigate = useNavigate();
-  const { animals, updateAnimal } = useLivestock();
+  const { animals, updateAnimal, deleteAnimal } = useLivestock();
+
+  const [deleteDialogOpen, setDeleteDialogOpen] = useState(false);
+  const [deleteAnimalId, setDeleteAnimalId] = useState<string | null>(null);
 
   const [confirmOpen, setConfirmOpen] = useState(false);
   const [selectedAnimalId, setSelectedAnimalId] = useState<string | null>(null);
@@ -146,6 +150,21 @@ const AnimalGrid = ({ breed, category, subCategory }: AnimalGridProps) => {
                   إضافة
                 </div>
               )}
+
+              {/* Delete button for young animals only */}
+              {animal.subCategory === 'young' && !isDead && (
+                <div
+                  className="absolute top-1 right-1 w-5 h-5 rounded-full flex items-center justify-center cursor-pointer transition-colors"
+                  style={{ backgroundColor: 'rgba(229,62,62,0.15)' }}
+                  onClick={(e) => {
+                    e.stopPropagation();
+                    setDeleteAnimalId(animal.id);
+                    setDeleteDialogOpen(true);
+                  }}
+                >
+                  <Trash2 className="w-3 h-3" style={{ color: '#E53E3E' }} />
+                </div>
+              )}
             </button>
           );
         })}
@@ -203,6 +222,32 @@ const AnimalGrid = ({ breed, category, subCategory }: AnimalGridProps) => {
           </div>
         </DialogContent>
       </Dialog>
+      {/* Delete Confirmation Dialog */}
+      <AlertDialog open={deleteDialogOpen} onOpenChange={setDeleteDialogOpen}>
+        <AlertDialogContent>
+          <AlertDialogHeader>
+            <AlertDialogTitle>هل تريد حذف هذه البطاقة؟</AlertDialogTitle>
+            <AlertDialogDescription>
+              سيتم حذف البطاقة نهائياً ولا يمكن التراجع عن هذا الإجراء.
+            </AlertDialogDescription>
+          </AlertDialogHeader>
+          <AlertDialogFooter>
+            <AlertDialogCancel>إلغاء</AlertDialogCancel>
+            <AlertDialogAction
+              className="bg-destructive text-destructive-foreground hover:bg-destructive/90"
+              onClick={() => {
+                if (deleteAnimalId) {
+                  deleteAnimal(deleteAnimalId);
+                  toast({ title: '🗑️ تم الحذف', description: 'تم حذف البطاقة بنجاح' });
+                }
+                setDeleteAnimalId(null);
+              }}
+            >
+              حذف
+            </AlertDialogAction>
+          </AlertDialogFooter>
+        </AlertDialogContent>
+      </AlertDialog>
     </>
   );
 };
