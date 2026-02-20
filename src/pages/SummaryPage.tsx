@@ -2,7 +2,7 @@ import { useState } from 'react';
 import PageHeader from '@/components/PageHeader';
 import { useLivestock } from '@/context/LivestockContext';
 import { CATEGORY_LABELS, FATE_LABELS, type OffspringFate } from '@/types/animals';
-import { SavedReport, ReportData } from '@/types/reports';
+import { SavedReport, ReportData, BreedBreakdown } from '@/types/reports';
 import { Fence, TrendingUp, TrendingDown, Receipt, ShoppingCart, Baby, Download, Save, FileText } from 'lucide-react';
 import { Button } from '@/components/ui/button';
 import { toast } from '@/hooks/use-toast';
@@ -56,13 +56,29 @@ const SummaryPage = () => {
   const purchasesQuantity = purchases.reduce((s, x) => s + x.quantity, 0);
   const avgPurchasePrice = purchasesCount > 0 ? totalPurchases / purchasesQuantity : 0;
 
+  const buildBreedBreakdown = (breed: string): BreedBreakdown => {
+    const filtered = animals.filter(a => breed === 'goat' ? a.category === 'goat' : a.breed === breed);
+    return {
+      mothers: filtered.filter(a => a.subCategory === 'mothers').length,
+      young: filtered.filter(a => a.subCategory === 'young').length,
+      rams: filtered.filter(a => a.subCategory === 'rams').length,
+      males: filtered.filter(a => a.gender === 'male').length,
+      females: filtered.filter(a => a.gender === 'female').length,
+      births: filtered.flatMap(a => a.birthRecords.flatMap(r => r.offspring)).length,
+    };
+  };
+
   const buildReportData = (): ReportData => ({
     totalAnimals: animals.length, sheepCount, goatCount, harriCount, najdiCount,
     mothersCount, youngCount, ramsCount, maleCount, femaleCount,
+    harriBreed: buildBreedBreakdown('harri'),
+    najdiBreed: buildBreedBreakdown('najdi'),
+    goatBreed: buildBreedBreakdown('goat'),
     totalBirths, birthsByFate,
     totalSales, salesCount, salesQuantity, avgSalePrice,
     totalPurchases, purchasesCount, purchasesQuantity, avgPurchasePrice,
     totalExpenses, expensesCount: expenses.length, expensesByCategory,
+    expenseDetails: expenses.map(e => ({ category: e.category, description: e.description, date: e.date, amount: e.amount })),
     netProfit: net,
   });
 

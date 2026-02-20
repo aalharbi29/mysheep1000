@@ -25,13 +25,34 @@ interface LivestockContextType {
 
 const LivestockContext = createContext<LivestockContextType | undefined>(undefined);
 
+// Default colors by breed and role
+export function getDefaultColor(breed: string, gender: 'male' | 'female', subCategory: string): string {
+  if (subCategory === 'mothers' || (subCategory === 'young' && gender === 'female' && false)) {
+    // Mothers colors
+    if (breed === 'harri') return 'أصفر';
+    if (breed === 'najdi') return 'أصفر';
+    if (breed === 'goat') return 'برتقالي';
+  }
+  // Offspring / young colors
+  if (breed === 'harri') return gender === 'male' ? 'أبيض' : 'بنفسجي';
+  if (breed === 'najdi') return gender === 'male' ? 'أزرق' : 'أخضر';
+  if (breed === 'goat') return gender === 'male' ? 'أحمر' : 'وردي';
+  return 'أبيض';
+}
+
+export function getMotherDefaultColor(breed: string): string {
+  if (breed === 'harri' || breed === 'najdi') return 'أصفر';
+  if (breed === 'goat') return 'برتقالي';
+  return 'أبيض';
+}
+
 function generateInitialAnimals(): Animal[] {
   const animals: Animal[] = [];
   const breeds = ['harri', 'najdi', 'goat'] as const;
   const categories = { harri: 'sheep', najdi: 'sheep', goat: 'goat' } as const;
 
-  // Generate 100 mothers per breed, no rams initially
   breeds.forEach(breed => {
+    const motherColor = getMotherDefaultColor(breed);
     for (let i = 1; i <= 100; i++) {
       animals.push({
         id: `${breed}-${i}`,
@@ -40,7 +61,7 @@ function generateInitialAnimals(): Animal[] {
         breed,
         gender: 'female' as const,
         subCategory: 'mothers',
-        color: 'أبيض',
+        color: motherColor,
         birthDate: '',
         birthRecords: [],
       });
@@ -60,9 +81,16 @@ function loadFromStorage<T>(key: string, fallback: T): T {
 }
 
 export function LivestockProvider({ children }: { children: ReactNode }) {
-  const [animals, setAnimals] = useState<Animal[]>(() =>
-    loadFromStorage('livestock_animals', generateInitialAnimals())
-  );
+  const [animals, setAnimals] = useState<Animal[]>(() => {
+    const loaded = loadFromStorage('livestock_animals', generateInitialAnimals());
+    // Enforce default colors for mothers
+    return loaded.map(a => {
+      if (a.subCategory === 'mothers') {
+        return { ...a, color: getMotherDefaultColor(a.breed) };
+      }
+      return a;
+    });
+  });
   const [expenses, setExpenses] = useState<Expense[]>(() =>
     loadFromStorage('livestock_expenses', [])
   );
