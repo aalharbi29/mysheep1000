@@ -117,24 +117,24 @@ const AnimalGrid = ({ breed, category, subCategory }: AnimalGridProps) => {
               <span className="text-3xl sm:text-4xl font-black block leading-tight" style={{ color: textColor }}>
                 {animal.number}
               </span>
-              <span className="text-[11px] font-semibold block mt-1" style={{ color: subTextColor }}>
+              <span className="text-[11px] font-bold block mt-1" style={{ color: subTextColor }}>
                 {CATEGORY_LABELS[animal.breed] || animal.breed}
               </span>
-              <span className="text-[10px] font-medium block" style={{ color: subTextColor }}>
+              <span className="text-[10px] font-bold block" style={{ color: subTextColor }}>
                 {GENDER_LABELS[animal.gender]}
               </span>
               {isDead && animal.deathDate && (
-                <span className="text-[9px] block mt-0.5 font-bold" style={{ color: '#E53E3E' }}>
+                <span className="text-[9px] block mt-0.5 font-black" style={{ color: '#E53E3E' }}>
                   نفق: {animal.deathDate}
                 </span>
               )}
               {!isDead && animal.birthDate && (
-                <span className="text-[9px] block mt-0.5" style={{ color: subTextColor }}>
+                <span className="text-[9px] block mt-0.5 font-bold" style={{ color: subTextColor }}>
                   {animal.birthDate}
                 </span>
               )}
               {animal.ageCategory && animal.ageCategory !== 'غير معروف' && (
-                <span className="text-[9px] block font-semibold" style={{ color: subTextColor }}>
+                <span className="text-[9px] block font-bold" style={{ color: subTextColor }}>
                   {animal.ageCategory}
                 </span>
               )}
