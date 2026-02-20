@@ -35,9 +35,10 @@ const App = () => (
             <Route path="/flock/sheep" element={<BreedPage />} />
             <Route path="/flock/sheep/:breed" element={<SubCategoryPage />} />
             <Route path="/flock/sheep/:breed/:subCategory" element={<AnimalCardsPage />} />
-            {/* Goat routes */}
-            <Route path="/flock/goat" element={<SubCategoryPage />} />
-            <Route path="/flock/goat/:subCategory" element={<AnimalCardsPage />} />
+            {/* Goat routes - same structure as sheep */}
+            <Route path="/flock/goat" element={<BreedPage />} />
+            <Route path="/flock/goat/:breed" element={<SubCategoryPage />} />
+            <Route path="/flock/goat/:breed/:subCategory" element={<AnimalCardsPage />} />
             {/* Main */}
             <Route path="/flock" element={<FlockPage />} />
             <Route path="/expenses" element={<ExpensesPage />} />

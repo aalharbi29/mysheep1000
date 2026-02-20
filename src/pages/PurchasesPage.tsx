@@ -5,7 +5,8 @@ import { Button } from '@/components/ui/button';
 import { Input } from '@/components/ui/input';
 import { Label } from '@/components/ui/label';
 import { Dialog, DialogContent, DialogHeader, DialogTitle, DialogTrigger } from '@/components/ui/dialog';
-import { Plus } from 'lucide-react';
+import { Plus, FileText, Image } from 'lucide-react';
+import { generatePurchasesReport, downloadSectionReportAsImage } from '@/lib/generateSectionReport';
 
 const PurchasesPage = () => {
   const { purchases, addPurchase, getTotalPurchases } = useLivestock();
@@ -25,6 +26,18 @@ const PurchasesPage = () => {
     <div className="min-h-screen bg-background p-4 sm:p-6">
       <div className="max-w-2xl mx-auto">
         <PageHeader title="المشتريات" subtitle={`الإجمالي: ${getTotalPurchases().toLocaleString()} ر.س`} backTo="/" />
+
+        {/* Report buttons */}
+        {purchases.length > 0 && (
+          <div className="flex gap-2 mb-4">
+            <Button variant="outline" className="flex-1 gap-2 h-10 border-info/30 text-info hover:bg-info/10" onClick={() => generatePurchasesReport(purchases)}>
+              <FileText className="w-4 h-4" /> تقرير PDF
+            </Button>
+            <Button variant="outline" className="flex-1 gap-2 h-10 border-info/30 text-info hover:bg-info/10" onClick={() => downloadSectionReportAsImage(purchases, 'purchases')}>
+              <Image className="w-4 h-4" /> تقرير صورة
+            </Button>
+          </div>
+        )}
 
         <Dialog open={open} onOpenChange={setOpen}>
           <DialogTrigger asChild>

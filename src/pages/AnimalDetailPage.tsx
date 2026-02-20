@@ -2,7 +2,7 @@ import { useParams, useNavigate } from 'react-router-dom';
 import { useState } from 'react';
 import PageHeader from '@/components/PageHeader';
 import { useLivestock } from '@/context/LivestockContext';
-import { getDefaultColor, getMotherDefaultColor } from '@/context/LivestockContext';
+import { getDefaultColor, getMotherDefaultColor, isGoatBreed } from '@/context/LivestockContext';
 import {
   ANIMAL_COLORS,
   CATEGORY_LABELS,
@@ -38,20 +38,17 @@ const AnimalDetailPage = () => {
   const [editRecordDate, setEditRecordDate] = useState('');
   const [editRecordOffspring, setEditRecordOffspring] = useState<Offspring[]>([]);
 
-  // Edit form state
   const [editColor, setEditColor] = useState(animal?.color || '');
   const [editBirthDate, setEditBirthDate] = useState(animal?.birthDate || '');
   const [editGender, setEditGender] = useState<AnimalGender>(animal?.gender || 'female');
   const [editNotes, setEditNotes] = useState(animal?.notes || '');
 
-  // Birth form state
   const [birthDate, setBirthDate] = useState('');
   const defaultOffspringColor = animal ? getDefaultColor(animal.breed, 'female', 'young') : 'أبيض';
   const [offspringList, setOffspringList] = useState<(Partial<Offspring> & { assignedNumber?: number })[]>([
     { gender: 'female', color: defaultOffspringColor, fate: 'flock', assignedNumber: undefined },
   ]);
 
-  // Move state
   const [moveTarget, setMoveTarget] = useState<AnimalSubCategory>('mothers');
 
   if (!animal) {
@@ -63,10 +60,10 @@ const AnimalDetailPage = () => {
   }
 
   const bgColor = ANIMAL_COLORS[animal.color] || '#F5F0E8';
-  const isDark = ['بني', 'أزرق', 'بنفسجي'].includes(animal.color);
+  const isDark = ['بني', 'أزرق', 'بنفسجي', 'أسود'].includes(animal.color);
   const isGoat = animal.category === 'goat';
   const backPath = isGoat
-    ? `/flock/goat/${animal.subCategory}`
+    ? `/flock/goat/${animal.breed}/${animal.subCategory}`
     : `/flock/sheep/${animal.breed}/${animal.subCategory}`;
 
   const totalOffspring = animal.birthRecords.reduce(
@@ -74,13 +71,7 @@ const AnimalDetailPage = () => {
   );
 
   const handleSaveEdit = () => {
-    updateAnimal({
-      ...animal,
-      color: editColor,
-      birthDate: editBirthDate,
-      gender: editGender,
-      notes: editNotes,
-    });
+    updateAnimal({ ...animal, color: editColor, birthDate: editBirthDate, gender: editGender, notes: editNotes });
     setEditOpen(false);
   };
 
@@ -94,14 +85,9 @@ const AnimalDetailPage = () => {
       color: o.color || 'أبيض',
     }));
 
-    const record: BirthRecord = {
-      id: Date.now().toString(),
-      date: birthDate,
-      offspring,
-    };
+    const record: BirthRecord = { id: Date.now().toString(), date: birthDate, offspring };
     addBirthRecord(animal.id, record);
 
-    // Create animal cards in "young" subCategory for each offspring
     offspring.forEach((off) => {
       if (off.number > 0) {
         addAnimal({
@@ -135,7 +121,6 @@ const AnimalDetailPage = () => {
       prev.map((o, i) => {
         if (i !== index) return o;
         const updated = { ...o, [field]: value };
-        // Auto-assign color when gender changes
         if (field === 'gender' && animal) {
           updated.color = getDefaultColor(animal.breed, value as 'male' | 'female', 'young');
         }
@@ -158,12 +143,7 @@ const AnimalDetailPage = () => {
 
   const handleSaveRecord = () => {
     if (!editingRecord) return;
-    const updated: BirthRecord = {
-      ...editingRecord,
-      date: editRecordDate,
-      offspring: editRecordOffspring,
-    };
-    updateBirthRecord(animal.id, updated);
+    updateBirthRecord(animal.id, { ...editingRecord, date: editRecordDate, offspring: editRecordOffspring });
     setEditRecordOpen(false);
     setEditingRecord(null);
   };
@@ -175,9 +155,7 @@ const AnimalDetailPage = () => {
   };
 
   const updateEditOffspring = (index: number, field: string, value: string | number) => {
-    setEditRecordOffspring(prev =>
-      prev.map((o, i) => (i === index ? { ...o, [field]: value } : o))
-    );
+    setEditRecordOffspring(prev => prev.map((o, i) => (i === index ? { ...o, [field]: value } : o)));
   };
 
   const deleteEditOffspring = (index: number) => {
@@ -194,40 +172,19 @@ const AnimalDetailPage = () => {
         />
 
         {/* Main card */}
-        <div
-          className="rounded-2xl p-6 mb-6 card-shadow"
-          style={{ backgroundColor: bgColor }}
-        >
+        <div className="rounded-2xl p-6 mb-6 card-shadow" style={{ backgroundColor: bgColor }}>
           <div className="flex items-start justify-between">
             <div>
               <span className={`text-5xl font-extrabold ${isDark ? 'text-primary-foreground' : 'text-foreground'}`}>
                 {animal.number}
               </span>
               <div className={`mt-2 space-y-1 ${isDark ? 'text-primary-foreground/80' : 'text-muted-foreground'}`}>
-                <p className="flex items-center gap-2 text-sm">
-                  <Palette className="w-4 h-4" /> لون التاق: {animal.color}
-                </p>
-                <p className="flex items-center gap-2 text-sm">
-                  {GENDER_LABELS[animal.gender]}
-                </p>
-                <p className="flex items-center gap-2 text-sm">
-                  📂 القسم: {SUB_CATEGORY_LABELS[animal.subCategory]}
-                </p>
-                {animal.motherNumber && (
-                  <p className="flex items-center gap-2 text-sm">
-                    🐑 رقم الأم: {animal.motherNumber}
-                  </p>
-                )}
-                {animal.birthDate && (
-                  <p className="flex items-center gap-2 text-sm">
-                    <Calendar className="w-4 h-4" /> تاريخ الميلاد: {animal.birthDate}
-                  </p>
-                )}
-                {animal.subCategory === 'mothers' && (
-                  <p className="flex items-center gap-2 text-sm">
-                    <Baby className="w-4 h-4" /> عدد المواليد: {totalOffspring}
-                  </p>
-                )}
+                <p className="flex items-center gap-2 text-sm"><Palette className="w-4 h-4" /> لون التاق: {animal.color}</p>
+                <p className="flex items-center gap-2 text-sm">{GENDER_LABELS[animal.gender]}</p>
+                <p className="flex items-center gap-2 text-sm">📂 القسم: {SUB_CATEGORY_LABELS[animal.subCategory]}</p>
+                {animal.motherNumber && <p className="flex items-center gap-2 text-sm">🐑 رقم الأم: {animal.motherNumber}</p>}
+                {animal.birthDate && <p className="flex items-center gap-2 text-sm"><Calendar className="w-4 h-4" /> تاريخ الميلاد: {animal.birthDate}</p>}
+                {animal.subCategory === 'mothers' && <p className="flex items-center gap-2 text-sm"><Baby className="w-4 h-4" /> عدد المواليد: {totalOffspring}</p>}
               </div>
             </div>
 
@@ -235,17 +192,12 @@ const AnimalDetailPage = () => {
               <Button size="sm" variant="outline" className="gap-1" onClick={() => setSellOpen(true)}>
                 <DollarSign className="w-3 h-3" /> بيع
               </Button>
-
               <Dialog open={moveOpen} onOpenChange={setMoveOpen}>
                 <DialogTrigger asChild>
-                  <Button size="sm" variant="outline" className="gap-1">
-                    <ArrowRightLeft className="w-3 h-3" /> نقل
-                  </Button>
+                  <Button size="sm" variant="outline" className="gap-1"><ArrowRightLeft className="w-3 h-3" /> نقل</Button>
                 </DialogTrigger>
                 <DialogContent>
-                  <DialogHeader>
-                    <DialogTitle>نقل إلى قسم آخر</DialogTitle>
-                  </DialogHeader>
+                  <DialogHeader><DialogTitle>نقل إلى قسم آخر</DialogTitle></DialogHeader>
                   <div className="space-y-4 mt-4">
                     <Select value={moveTarget} onValueChange={v => setMoveTarget(v as AnimalSubCategory)}>
                       <SelectTrigger><SelectValue /></SelectTrigger>
@@ -259,17 +211,12 @@ const AnimalDetailPage = () => {
                   </div>
                 </DialogContent>
               </Dialog>
-
               <Dialog open={editOpen} onOpenChange={setEditOpen}>
                 <DialogTrigger asChild>
-                  <Button size="sm" variant="outline" className="gap-1">
-                    <Edit className="w-3 h-3" /> تعديل
-                  </Button>
+                  <Button size="sm" variant="outline" className="gap-1"><Edit className="w-3 h-3" /> تعديل</Button>
                 </DialogTrigger>
                 <DialogContent>
-                  <DialogHeader>
-                    <DialogTitle>تعديل بطاقة رقم {animal.number}</DialogTitle>
-                  </DialogHeader>
+                  <DialogHeader><DialogTitle>تعديل بطاقة رقم {animal.number}</DialogTitle></DialogHeader>
                   <div className="space-y-4 mt-4">
                     <div>
                       <Label>لون التاق</Label>
@@ -287,10 +234,7 @@ const AnimalDetailPage = () => {
                         </SelectContent>
                       </Select>
                     </div>
-                    <div>
-                      <Label>تاريخ الميلاد</Label>
-                      <Input type="date" value={editBirthDate} onChange={e => setEditBirthDate(e.target.value)} />
-                    </div>
+                    <div><Label>تاريخ الميلاد</Label><Input type="date" value={editBirthDate} onChange={e => setEditBirthDate(e.target.value)} /></div>
                     <div>
                       <Label>النوع</Label>
                       <Select value={editGender} onValueChange={v => setEditGender(v as AnimalGender)}>
@@ -301,10 +245,7 @@ const AnimalDetailPage = () => {
                         </SelectContent>
                       </Select>
                     </div>
-                    <div>
-                      <Label>ملاحظات</Label>
-                      <Input value={editNotes} onChange={e => setEditNotes(e.target.value)} />
-                    </div>
+                    <div><Label>ملاحظات</Label><Input value={editNotes} onChange={e => setEditNotes(e.target.value)} /></div>
                     <Button onClick={handleSaveEdit} className="w-full">حفظ</Button>
                   </div>
                 </DialogContent>
@@ -312,13 +253,11 @@ const AnimalDetailPage = () => {
             </div>
           </div>
           {animal.notes && (
-            <p className={`mt-3 text-sm ${isDark ? 'text-primary-foreground/70' : 'text-muted-foreground'}`}>
-              {animal.notes}
-            </p>
+            <p className={`mt-3 text-sm ${isDark ? 'text-primary-foreground/70' : 'text-muted-foreground'}`}>{animal.notes}</p>
           )}
         </div>
 
-        {/* Death/Sold status banner */}
+        {/* Death status banner */}
         {animal.status === 'dead' && (
           <div className="rounded-xl bg-destructive/10 border border-destructive/30 p-4 mb-6 text-center">
             <p className="text-lg font-bold text-destructive">💀 نافق</p>
@@ -326,111 +265,65 @@ const AnimalDetailPage = () => {
           </div>
         )}
 
-        {/* Fate management for all alive animals */}
+        {/* Actions */}
         {animal.status !== 'dead' && (
           <div className="rounded-xl bg-card p-4 mb-6 card-shadow">
             <h3 className="text-sm font-bold text-foreground mb-3">🔄 إجراءات</h3>
             <div className="grid grid-cols-3 gap-2">
-              <Button
-                variant="outline"
-                className="gap-1 text-xs h-auto py-3 flex-col"
-                onClick={() => {
-                  const deathDate = prompt('أدخل تاريخ النفوق (مثال: 2025-01-15)');
-                  if (deathDate) {
-                    markAnimalDead(animal.id, deathDate);
-                    toast({ title: '💀 تم تسجيل النفوق', description: `بطاقة رقم ${animal.number} - ${deathDate}` });
-                  }
-                }}
-              >
-                <Skull className="w-5 h-5 text-destructive" />
-                <span>نفوق</span>
+              <Button variant="outline" className="gap-1 text-xs h-auto py-3 flex-col" onClick={() => {
+                const deathDate = prompt('أدخل تاريخ النفوق (مثال: 2025-01-15)');
+                if (deathDate) {
+                  markAnimalDead(animal.id, deathDate);
+                  toast({ title: '💀 تم تسجيل النفوق', description: `بطاقة رقم ${animal.number} - ${deathDate}` });
+                }
+              }}>
+                <Skull className="w-5 h-5 text-destructive" /><span>نفوق</span>
               </Button>
-              <Button
-                variant="outline"
-                className="gap-1 text-xs h-auto py-3 flex-col"
-                onClick={() => setSellOpen(true)}
-              >
-                <DollarSign className="w-5 h-5 text-success" />
-                <span>بيع</span>
+              <Button variant="outline" className="gap-1 text-xs h-auto py-3 flex-col" onClick={() => setSellOpen(true)}>
+                <DollarSign className="w-5 h-5 text-success" /><span>بيع</span>
               </Button>
               {animal.subCategory === 'young' && (
-                <Button
-                  variant="outline"
-                  className="gap-1 text-xs h-auto py-3 flex-col"
-                  onClick={() => {
-                    updateAnimal({ ...animal, subCategory: 'mothers' });
-                    toast({ title: '🐑 تم التحويل للأمهات', description: `بطاقة رقم ${animal.number}` });
-                  }}
-                >
-                  <Home className="w-5 h-5 text-primary" />
-                  <span>تحويل للأمهات</span>
+                <Button variant="outline" className="gap-1 text-xs h-auto py-3 flex-col" onClick={() => {
+                  updateAnimal({ ...animal, subCategory: 'mothers' });
+                  toast({ title: '🐑 تم التحويل للأمهات', description: `بطاقة رقم ${animal.number}` });
+                }}>
+                  <Home className="w-5 h-5 text-primary" /><span>تحويل للأمهات</span>
                 </Button>
               )}
             </div>
           </div>
         )}
 
-        {/* Birth registration - only for mothers */}
+        {/* Birth registration */}
         {animal.subCategory === 'mothers' && (
           <Dialog open={birthOpen} onOpenChange={setBirthOpen}>
             <DialogTrigger asChild>
-              <Button className="w-full mb-6 gap-2" size="lg">
-                <Baby className="w-5 h-5" /> تسجيل ولادة جديدة
-              </Button>
+              <Button className="w-full mb-6 gap-2" size="lg"><Baby className="w-5 h-5" /> تسجيل ولادة جديدة</Button>
             </DialogTrigger>
             <DialogContent className="max-h-[80vh] overflow-y-auto">
-              <DialogHeader>
-                <DialogTitle>تسجيل ولادة - بطاقة {animal.number}</DialogTitle>
-              </DialogHeader>
+              <DialogHeader><DialogTitle>تسجيل ولادة - بطاقة {animal.number}</DialogTitle></DialogHeader>
               <div className="space-y-4 mt-4">
-                <div>
-                  <Label>تاريخ الولادة</Label>
-                  <Input type="date" value={birthDate} onChange={e => setBirthDate(e.target.value)} />
-                </div>
+                <div><Label>تاريخ الولادة</Label><Input type="date" value={birthDate} onChange={e => setBirthDate(e.target.value)} /></div>
                 <div>
                   <Label>تاريخ ميلاد الأم</Label>
                   <div className="flex items-center gap-2">
-                    <Input
-                      type="date"
-                      value={animal.birthDate === 'غير معروف' ? '' : animal.birthDate}
-                      disabled
-                      className="flex-1"
-                    />
+                    <Input type="date" value={animal.birthDate === 'غير معروف' ? '' : animal.birthDate} disabled className="flex-1" />
                     {!animal.birthDate && (
-                      <Button
-                        type="button"
-                        variant="outline"
-                        size="sm"
-                        onClick={() => {
-                          updateAnimal({ ...animal, birthDate: 'غير معروف' });
-                        }}
-                      >
-                        غير معروف
-                      </Button>
+                      <Button type="button" variant="outline" size="sm" onClick={() => updateAnimal({ ...animal, birthDate: 'غير معروف' })}>غير معروف</Button>
                     )}
                   </div>
-                  {animal.birthDate === 'غير معروف' && (
-                    <p className="text-xs text-muted-foreground mt-1">تاريخ ميلاد الأم: غير معروف</p>
-                  )}
+                  {animal.birthDate === 'غير معروف' && <p className="text-xs text-muted-foreground mt-1">تاريخ ميلاد الأم: غير معروف</p>}
                 </div>
 
                 {offspringList.map((o, index) => (
                   <div key={index} className="rounded-lg bg-muted p-3 space-y-3">
                     <p className="text-sm font-semibold text-foreground">مولود {index + 1}</p>
-                    <div>
-                      <Label className="text-xs">رقم البطاقة</Label>
-                      <Input
-                        type="number"
-                        placeholder="أدخل رقم البطاقة"
-                        value={o.assignedNumber || ''}
-                        onChange={e => updateOffspringField(index, 'assignedNumber', parseInt(e.target.value) || 0)}
-                      />
-                    </div>
-                    <div className="grid grid-cols-3 gap-2">
+                    <div><Label className="text-xs">رقم البطاقة</Label><Input type="number" placeholder="أدخل رقم البطاقة" value={o.assignedNumber || ''} onChange={e => updateOffspringField(index, 'assignedNumber', Number(e.target.value))} /></div>
+                    <div className="grid grid-cols-2 gap-2">
                       <div>
                         <Label className="text-xs">النوع</Label>
-                        <Select value={o.gender} onValueChange={v => updateOffspringField(index, 'gender', v)}>
-                          <SelectTrigger><SelectValue /></SelectTrigger>
+                        <Select value={o.gender || 'female'} onValueChange={v => updateOffspringField(index, 'gender', v)}>
+                          <SelectTrigger className="h-8"><SelectValue /></SelectTrigger>
                           <SelectContent>
                             <SelectItem value="male">ذكر</SelectItem>
                             <SelectItem value="female">أنثى</SelectItem>
@@ -438,144 +331,26 @@ const AnimalDetailPage = () => {
                         </Select>
                       </div>
                       <div>
-                        <Label className="text-xs">لون التاق</Label>
-                        <Select value={o.color} onValueChange={v => updateOffspringField(index, 'color', v)}>
-                          <SelectTrigger><SelectValue /></SelectTrigger>
+                        <Label className="text-xs">المصير</Label>
+                        <Select value={o.fate || 'flock'} onValueChange={v => updateOffspringField(index, 'fate', v)}>
+                          <SelectTrigger className="h-8"><SelectValue /></SelectTrigger>
                           <SelectContent>
-                            {Object.keys(ANIMAL_COLORS).map(c => (
-                              <SelectItem key={c} value={c}>
-                                <span className="flex items-center gap-2">
-                                  <span className="w-3 h-3 rounded-full inline-block border" style={{ backgroundColor: ANIMAL_COLORS[c] }} />
-                                  {c}
-                                </span>
-                              </SelectItem>
+                            {Object.entries(FATE_LABELS).map(([k, v]) => (
+                              <SelectItem key={k} value={k}>{v}</SelectItem>
                             ))}
                           </SelectContent>
                         </Select>
                       </div>
-                      <div>
-                        <Label className="text-xs">الإجراء</Label>
-                        <Select value={o.fate} onValueChange={v => updateOffspringField(index, 'fate', v)}>
-                          <SelectTrigger><SelectValue /></SelectTrigger>
-                          <SelectContent>
-                            <SelectItem value="flock">إضافة للقطيع</SelectItem>
-                            <SelectItem value="sold">بيع</SelectItem>
-                            <SelectItem value="died">نفوق</SelectItem>
-                            <SelectItem value="infant">رضيع</SelectItem>
-                          </SelectContent>
-                        </Select>
-                      </div>
-                    </div>
-                  </div>
-                ))}
-
-                <Button variant="outline" onClick={addOffspringField} className="w-full gap-1">
-                  <Plus className="w-4 h-4" /> إضافة مولود آخر
-                </Button>
-                <Button onClick={handleAddBirth} className="w-full" disabled={!birthDate}>
-                  حفظ الولادة
-                </Button>
-              </div>
-            </DialogContent>
-          </Dialog>
-        )}
-
-        {/* Birth history */}
-        {animal.birthRecords.length > 0 && (
-          <section>
-            <h2 className="text-lg font-bold text-foreground mb-3 flex items-center gap-2">
-              <TreePine className="w-5 h-5 text-primary" /> سجل الولادات
-            </h2>
-            <div className="space-y-3">
-              {animal.birthRecords.map((record) => (
-                <div key={record.id} className="rounded-xl bg-card p-4 card-shadow">
-                  <div className="flex items-center justify-between mb-2">
-                    <p className="text-sm font-semibold text-foreground">
-                      <Calendar className="w-4 h-4 inline ml-1" />
-                      {record.date}
-                      <span className="text-muted-foreground font-normal mr-2">
-                        ({record.offspring.length} مواليد)
-                      </span>
-                    </p>
-                    <div className="flex gap-1">
-                      <Button size="sm" variant="ghost" className="h-7 w-7 p-0" onClick={() => handleEditRecord(record)}>
-                        <Edit className="w-3.5 h-3.5" />
-                      </Button>
-                      <Button size="sm" variant="ghost" className="h-7 w-7 p-0 text-destructive" onClick={() => handleDeleteRecord(record.id)}>
-                        <Trash2 className="w-3.5 h-3.5" />
-                      </Button>
-                    </div>
-                  </div>
-                  <div className="grid grid-cols-2 gap-2">
-                    {record.offspring.map((off) => {
-                      const offBg = ANIMAL_COLORS[off.color] || '#F5F0E8';
-                      const offDark = ['بني', 'أزرق', 'بنفسجي'].includes(off.color);
-                      return (
-                        <div
-                          key={off.id}
-                          className="rounded-lg p-2 text-xs"
-                          style={{ backgroundColor: offBg, color: offDark ? 'white' : undefined }}
-                        >
-                          <span className="font-bold">#{off.number}</span>
-                          <span className="mx-1">•</span>
-                          <span>{GENDER_LABELS[off.gender]}</span>
-                          <span className="mx-1">•</span>
-                          <span>{off.color}</span>
-                          <span className="mx-1">•</span>
-                          <span>{FATE_LABELS[off.fate]}</span>
-                        </div>
-                      );
-                    })}
-                  </div>
-                </div>
-              ))}
-            </div>
-          </section>
-        )}
-
-        {/* Edit birth record dialog */}
-        <Dialog open={editRecordOpen} onOpenChange={setEditRecordOpen}>
-          <DialogContent className="max-h-[80vh] overflow-y-auto">
-            <DialogHeader>
-              <DialogTitle>تعديل سجل الولادة</DialogTitle>
-            </DialogHeader>
-            <div className="space-y-4 mt-4">
-              <div>
-                <Label>تاريخ الولادة</Label>
-                <Input type="date" value={editRecordDate} onChange={e => setEditRecordDate(e.target.value)} />
-              </div>
-              {editRecordOffspring.map((o, index) => (
-                <div key={o.id} className="rounded-lg p-3 space-y-3" style={{ backgroundColor: ANIMAL_COLORS[o.color] || '#F5F0E8' }}>
-                  <div className="flex items-center justify-between">
-                    <p className="text-sm font-semibold">مولود {index + 1}</p>
-                    <Button size="sm" variant="ghost" className="h-7 w-7 p-0 text-destructive" onClick={() => deleteEditOffspring(index)}>
-                      <Trash2 className="w-3.5 h-3.5" />
-                    </Button>
-                  </div>
-                  <div>
-                    <Label className="text-xs">رقم البطاقة</Label>
-                    <Input type="number" value={o.number || ''} onChange={e => updateEditOffspring(index, 'number', parseInt(e.target.value) || 0)} />
-                  </div>
-                  <div className="grid grid-cols-3 gap-2">
-                    <div>
-                      <Label className="text-xs">النوع</Label>
-                      <Select value={o.gender} onValueChange={v => updateEditOffspring(index, 'gender', v)}>
-                        <SelectTrigger><SelectValue /></SelectTrigger>
-                        <SelectContent>
-                          <SelectItem value="male">ذكر</SelectItem>
-                          <SelectItem value="female">أنثى</SelectItem>
-                        </SelectContent>
-                      </Select>
                     </div>
                     <div>
                       <Label className="text-xs">لون التاق</Label>
-                      <Select value={o.color} onValueChange={v => updateEditOffspring(index, 'color', v)}>
-                        <SelectTrigger><SelectValue /></SelectTrigger>
+                      <Select value={o.color || 'أبيض'} onValueChange={v => updateOffspringField(index, 'color', v)}>
+                        <SelectTrigger className="h-8"><SelectValue /></SelectTrigger>
                         <SelectContent>
                           {Object.keys(ANIMAL_COLORS).map(c => (
                             <SelectItem key={c} value={c}>
                               <span className="flex items-center gap-2">
-                                <span className="w-3 h-3 rounded-full inline-block border" style={{ backgroundColor: ANIMAL_COLORS[c] }} />
+                                <span className="w-3 h-3 rounded-full border" style={{ backgroundColor: ANIMAL_COLORS[c] }} />
                                 {c}
                               </span>
                             </SelectItem>
@@ -583,15 +358,84 @@ const AnimalDetailPage = () => {
                         </SelectContent>
                       </Select>
                     </div>
+                  </div>
+                ))}
+
+                <Button variant="outline" className="w-full gap-2" onClick={addOffspringField}><Plus className="w-4 h-4" /> إضافة مولود آخر</Button>
+                <Button onClick={handleAddBirth} className="w-full" disabled={!birthDate}>حفظ سجل الولادة</Button>
+              </div>
+            </DialogContent>
+          </Dialog>
+        )}
+
+        {/* Birth records */}
+        {animal.birthRecords.length > 0 && (
+          <div className="space-y-4">
+            <h3 className="text-lg font-bold text-foreground">📋 سجلات الولادة</h3>
+            {animal.birthRecords.map(record => (
+              <div key={record.id} className="rounded-xl bg-card p-4 card-shadow">
+                <div className="flex justify-between items-center mb-3">
+                  <div>
+                    <p className="font-semibold text-card-foreground">📅 {record.date}</p>
+                    <p className="text-xs text-muted-foreground">{record.offspring.length} مولود</p>
+                  </div>
+                  <div className="flex gap-1">
+                    <Button size="sm" variant="outline" className="h-7 text-xs gap-1" onClick={() => handleEditRecord(record)}>
+                      <Edit className="w-3 h-3" /> تعديل
+                    </Button>
+                    <Button size="sm" variant="outline" className="h-7 text-xs gap-1 text-destructive" onClick={() => handleDeleteRecord(record.id)}>
+                      <Trash2 className="w-3 h-3" /> حذف
+                    </Button>
+                  </div>
+                </div>
+                {record.offspring.map(off => (
+                  <div key={off.id} className="rounded-lg p-2 mb-1 flex justify-between items-center" style={{ backgroundColor: `${ANIMAL_COLORS[off.color] || '#F5F0E8'}30` }}>
+                    <div className="flex items-center gap-2">
+                      <span className="w-4 h-4 rounded-full border" style={{ backgroundColor: ANIMAL_COLORS[off.color] || '#F5F0E8' }} />
+                      <span className="text-sm font-semibold">{off.number > 0 ? `#${off.number}` : 'بدون رقم'}</span>
+                      <span className="text-xs text-muted-foreground">{GENDER_LABELS[off.gender]}</span>
+                    </div>
+                    <span className={`text-xs px-2 py-0.5 rounded-full ${off.fate === 'died' ? 'bg-destructive/10 text-destructive' : off.fate === 'sold' ? 'bg-success/10 text-success' : 'bg-primary/10 text-primary'}`}>
+                      {FATE_LABELS[off.fate]}
+                    </span>
+                  </div>
+                ))}
+              </div>
+            ))}
+          </div>
+        )}
+
+        {/* Edit birth record dialog */}
+        <Dialog open={editRecordOpen} onOpenChange={setEditRecordOpen}>
+          <DialogContent className="max-h-[80vh] overflow-y-auto">
+            <DialogHeader><DialogTitle>تعديل سجل الولادة</DialogTitle></DialogHeader>
+            <div className="space-y-4 mt-4">
+              <div><Label>تاريخ الولادة</Label><Input type="date" value={editRecordDate} onChange={e => setEditRecordDate(e.target.value)} /></div>
+              {editRecordOffspring.map((off, idx) => (
+                <div key={off.id} className="rounded-lg bg-muted p-3 space-y-2">
+                  <div className="flex justify-between items-center">
+                    <p className="text-sm font-semibold">مولود {idx + 1}</p>
+                    <button onClick={() => deleteEditOffspring(idx)} className="text-destructive"><Trash2 className="w-4 h-4" /></button>
+                  </div>
+                  <div className="grid grid-cols-2 gap-2">
                     <div>
-                      <Label className="text-xs">الإجراء</Label>
-                      <Select value={o.fate} onValueChange={v => updateEditOffspring(index, 'fate', v)}>
-                        <SelectTrigger><SelectValue /></SelectTrigger>
+                      <Label className="text-xs">النوع</Label>
+                      <Select value={off.gender} onValueChange={v => updateEditOffspring(idx, 'gender', v)}>
+                        <SelectTrigger className="h-8"><SelectValue /></SelectTrigger>
                         <SelectContent>
-                          <SelectItem value="flock">إضافة للقطيع</SelectItem>
-                          <SelectItem value="sold">بيع</SelectItem>
-                          <SelectItem value="died">نفوق</SelectItem>
-                          <SelectItem value="infant">رضيع</SelectItem>
+                          <SelectItem value="male">ذكر</SelectItem>
+                          <SelectItem value="female">أنثى</SelectItem>
+                        </SelectContent>
+                      </Select>
+                    </div>
+                    <div>
+                      <Label className="text-xs">المصير</Label>
+                      <Select value={off.fate} onValueChange={v => updateEditOffspring(idx, 'fate', v)}>
+                        <SelectTrigger className="h-8"><SelectValue /></SelectTrigger>
+                        <SelectContent>
+                          {Object.entries(FATE_LABELS).map(([k, v]) => (
+                            <SelectItem key={k} value={k}>{v}</SelectItem>
+                          ))}
                         </SelectContent>
                       </Select>
                     </div>
@@ -602,13 +446,8 @@ const AnimalDetailPage = () => {
             </div>
           </DialogContent>
         </Dialog>
-        {/* Sell dialog */}
-        <SellAnimalDialog
-          animal={animal}
-          open={sellOpen}
-          onOpenChange={setSellOpen}
-          onSold={() => navigate(-1)}
-        />
+
+        <SellAnimalDialog animal={animal} open={sellOpen} onOpenChange={setSellOpen} onSold={() => navigate(backPath)} />
       </div>
     </div>
   );

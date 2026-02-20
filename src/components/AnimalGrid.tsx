@@ -8,15 +8,14 @@ interface AnimalGridProps {
   subCategory: AnimalSubCategory;
 }
 
+const DARK_COLORS = ['بني', 'أزرق', 'بنفسجي', 'أسود'];
+
 const AnimalGrid = ({ breed, category, subCategory }: AnimalGridProps) => {
   const navigate = useNavigate();
   const { animals } = useLivestock();
 
   const filtered = animals
-    .filter(a => {
-      const matchBreed = category === 'goat' ? a.category === 'goat' : (a.category === category && a.breed === breed);
-      return matchBreed && a.subCategory === subCategory;
-    })
+    .filter(a => a.breed === breed && a.subCategory === subCategory)
     .sort((a, b) => a.number - b.number);
 
   return (
@@ -29,7 +28,7 @@ const AnimalGrid = ({ breed, category, subCategory }: AnimalGridProps) => {
       {filtered.map((animal) => {
         const isDead = animal.status === 'dead';
         const bgColor = ANIMAL_COLORS[animal.color] || '#F5F0E8';
-        const isDark = ['بني', 'أزرق', 'بنفسجي'].includes(animal.color);
+        const isDark = DARK_COLORS.includes(animal.color);
 
         return (
           <button

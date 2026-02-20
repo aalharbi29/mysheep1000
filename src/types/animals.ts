@@ -1,5 +1,6 @@
 export type AnimalCategory = 'sheep' | 'goat';
-export type SheepBreed = 'harri' | 'najdi';
+export type SheepBreed = 'harri' | 'najdi' | 'naimi' | 'sawakni' | 'mixed_sheep';
+export type GoatBreed = 'aradi' | 'shami' | 'masri' | 'badwi' | 'hijazi' | 'mixed_goat';
 export type AnimalGender = 'male' | 'female';
 
 export type OffspringFate = 'flock' | 'sold' | 'died' | 'infant';
@@ -26,7 +27,7 @@ export interface Animal {
   id: string;
   number: number;
   category: AnimalCategory;
-  breed: SheepBreed | 'goat';
+  breed: SheepBreed | GoatBreed;
   gender: AnimalGender;
   subCategory: AnimalSubCategory;
   color: string;
@@ -107,6 +108,8 @@ export interface Sale {
   animalId?: string;
   animalNumber?: number;
   animalBreed?: string;
+  animalSubCategory?: AnimalSubCategory;
+  animalGender?: AnimalGender;
   description: string;
   amount: number;
   quantity: number;
@@ -136,16 +139,46 @@ export const TAG_COLORS: Record<string, string> = {
   'برتقالي': '#DD6B20',
   'رمادي': '#A0AEC0',
   'بني': '#8B6914',
+  'أسود': '#2D3748',
+  'ذهبي': '#D4AF37',
 };
 
 // Keep backward compat alias
 export const ANIMAL_COLORS = TAG_COLORS;
+
+export const SHEEP_BREEDS = [
+  { id: 'harri', label: 'حري' },
+  { id: 'najdi', label: 'نجدي' },
+  { id: 'naimi', label: 'نعيم' },
+  { id: 'sawakni', label: 'سواكن' },
+  { id: 'mixed_sheep', label: 'مختلطة' },
+];
+
+export const GOAT_BREEDS = [
+  { id: 'aradi', label: 'عارضي' },
+  { id: 'shami', label: 'شامي' },
+  { id: 'masri', label: 'مصري' },
+  { id: 'badwi', label: 'بدوية' },
+  { id: 'hijazi', label: 'حجازي' },
+  { id: 'mixed_goat', label: 'مختلطة' },
+];
+
+export const ALL_GOAT_BREED_IDS = GOAT_BREEDS.map(b => b.id);
 
 export const CATEGORY_LABELS: Record<string, string> = {
   sheep: 'ضأن',
   goat: 'ماعز',
   harri: 'حري',
   najdi: 'نجدي',
+  naimi: 'نعيم',
+  sawakni: 'سواكن',
+  mixed_sheep: 'مختلطة',
+  aradi: 'عارضي',
+  shami: 'شامي',
+  masri: 'مصري',
+  badwi: 'بدوية',
+  hijazi: 'حجازي',
+  mixed_goat: 'مختلطة',
 };
 
 export const GENDER_LABELS: Record<AnimalGender, string> = {

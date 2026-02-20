@@ -1,5 +1,5 @@
 import React, { createContext, useContext, useState, useEffect, ReactNode } from 'react';
-import { Animal, Expense, Sale, Purchase, BirthRecord, Offspring, AnimalStatus } from '@/types/animals';
+import { Animal, Expense, Sale, Purchase, BirthRecord, Offspring, AnimalStatus, AnimalSubCategory, AnimalGender, ALL_GOAT_BREED_IDS } from '@/types/animals';
 
 interface LivestockContextType {
   animals: Animal[];
@@ -19,6 +19,7 @@ interface LivestockContextType {
   deleteSale: (id: string) => void;
   cancelSale: (sale: Sale) => void;
   addPurchase: (purchase: Purchase) => void;
+  updateAllColors: (breed: string, subCategory: string, color: string) => void;
   getAnimalsByBreed: (category: string, breed: string) => Animal[];
   getAnimalById: (id: string) => Animal | undefined;
   getAnimalByNumber: (number: number, breed: string) => Animal | undefined;
@@ -31,41 +32,52 @@ interface LivestockContextType {
 
 const LivestockContext = createContext<LivestockContextType | undefined>(undefined);
 
-// Default colors by breed and role
+const GOAT_BREED_IDS = ALL_GOAT_BREED_IDS;
+
+export function isGoatBreed(breed: string): boolean {
+  return GOAT_BREED_IDS.includes(breed) || breed === 'goat';
+}
+
 export function getDefaultColor(breed: string, gender: 'male' | 'female', subCategory: string): string {
-  if (subCategory === 'mothers' || (subCategory === 'young' && gender === 'female' && false)) {
-    // Mothers colors
-    if (breed === 'harri') return 'أصفر';
-    if (breed === 'najdi') return 'أصفر';
-    if (breed === 'goat') return 'برتقالي';
-  }
-  // Offspring / young colors
-  if (breed === 'harri') return gender === 'male' ? 'أبيض' : 'بنفسجي';
-  if (breed === 'najdi') return gender === 'male' ? 'أزرق' : 'أخضر';
-  if (breed === 'goat') return gender === 'male' ? 'أحمر' : 'وردي';
+  if (subCategory === 'mothers') return getMotherDefaultColor(breed);
+  // Young / rams colors by breed
+  if (breed === 'harri' || breed === 'naimi') return gender === 'male' ? 'أبيض' : 'بنفسجي';
+  if (breed === 'najdi' || breed === 'sawakni') return gender === 'male' ? 'أزرق' : 'أخضر';
+  if (breed === 'mixed_sheep') return gender === 'male' ? 'رمادي' : 'ذهبي';
+  if (isGoatBreed(breed)) return gender === 'male' ? 'أحمر' : 'وردي';
   return 'أبيض';
 }
 
 export function getMotherDefaultColor(breed: string): string {
-  if (breed === 'harri' || breed === 'najdi') return 'أصفر';
-  if (breed === 'goat') return 'برتقالي';
-  return 'أبيض';
+  if (isGoatBreed(breed)) return 'برتقالي';
+  return 'أصفر';
 }
+
+const ALL_BREEDS = [
+  { id: 'harri', cat: 'sheep' },
+  { id: 'najdi', cat: 'sheep' },
+  { id: 'naimi', cat: 'sheep' },
+  { id: 'sawakni', cat: 'sheep' },
+  { id: 'mixed_sheep', cat: 'sheep' },
+  { id: 'aradi', cat: 'goat' },
+  { id: 'shami', cat: 'goat' },
+  { id: 'masri', cat: 'goat' },
+  { id: 'badwi', cat: 'goat' },
+  { id: 'hijazi', cat: 'goat' },
+  { id: 'mixed_goat', cat: 'goat' },
+];
 
 function generateInitialAnimals(): Animal[] {
   const animals: Animal[] = [];
-  const breeds = ['harri', 'najdi', 'goat'] as const;
-  const categories = { harri: 'sheep', najdi: 'sheep', goat: 'goat' } as const;
-
-  breeds.forEach(breed => {
+  ALL_BREEDS.forEach(({ id: breed, cat }) => {
     const motherColor = getMotherDefaultColor(breed);
     for (let i = 1; i <= 100; i++) {
       animals.push({
         id: `${breed}-${i}`,
         number: i,
-        category: categories[breed],
-        breed,
-        gender: 'female' as const,
+        category: cat as any,
+        breed: breed as any,
+        gender: 'female',
         subCategory: 'mothers',
         color: motherColor,
         birthDate: '',
@@ -73,8 +85,40 @@ function generateInitialAnimals(): Animal[] {
       });
     }
   });
-
   return animals;
+}
+
+function migrateAnimals(animals: Animal[]): Animal[] {
+  // Migrate legacy 'goat' breed to 'mixed_goat'
+  let migrated = animals.map(a => {
+    if ((a.breed as string) === 'goat') {
+      return { ...a, breed: 'mixed_goat' as any };
+    }
+    return a;
+  });
+
+  // Add missing breeds (100 mothers each)
+  const existingBreeds = new Set(migrated.map(a => a.breed));
+  ALL_BREEDS.forEach(({ id: breed, cat }) => {
+    if (!existingBreeds.has(breed as any)) {
+      const motherColor = getMotherDefaultColor(breed);
+      for (let i = 1; i <= 100; i++) {
+        migrated.push({
+          id: `${breed}-${i}`,
+          number: i,
+          category: cat as any,
+          breed: breed as any,
+          gender: 'female',
+          subCategory: 'mothers',
+          color: motherColor,
+          birthDate: '',
+          birthRecords: [],
+        });
+      }
+    }
+  });
+
+  return migrated;
 }
 
 function loadFromStorage<T>(key: string, fallback: T): T {
@@ -89,13 +133,7 @@ function loadFromStorage<T>(key: string, fallback: T): T {
 export function LivestockProvider({ children }: { children: ReactNode }) {
   const [animals, setAnimals] = useState<Animal[]>(() => {
     const loaded = loadFromStorage('livestock_animals', generateInitialAnimals());
-    // Enforce default colors for mothers
-    return loaded.map(a => {
-      if (a.subCategory === 'mothers') {
-        return { ...a, color: getMotherDefaultColor(a.breed) };
-      }
-      return a;
-    });
+    return migrateAnimals(loaded);
   });
   const [expenses, setExpenses] = useState<Expense[]>(() =>
     loadFromStorage('livestock_expenses', [])
@@ -168,20 +206,24 @@ export function LivestockProvider({ children }: { children: ReactNode }) {
   const addSale = (sale: Sale) => setSales(prev => [...prev, sale]);
   const updateSale = (sale: Sale) => setSales(prev => prev.map(s => s.id === sale.id ? sale : s));
   const deleteSale = (id: string) => setSales(prev => prev.filter(s => s.id !== id));
-  
+
   const cancelSale = (sale: Sale) => {
-    // Restore the animal if it was sold from a card
     if (sale.animalId && sale.animalNumber && sale.animalBreed) {
       const breed = sale.animalBreed;
-      const cat = breed === 'goat' ? 'goat' : 'sheep';
+      const cat = isGoatBreed(breed) ? 'goat' : 'sheep';
+      const subCat = sale.animalSubCategory || 'young';
+      const gender = sale.animalGender || 'male';
+      const color = subCat === 'mothers'
+        ? getMotherDefaultColor(breed)
+        : getDefaultColor(breed, gender, subCat);
       addAnimal({
         id: sale.animalId,
         number: sale.animalNumber,
         category: cat as any,
         breed: breed as any,
-        gender: 'male', // default, user can edit
-        subCategory: 'young',
-        color: 'أبيض',
+        gender,
+        subCategory: subCat,
+        color,
         birthDate: '',
         birthRecords: [],
         status: 'alive',
@@ -189,17 +231,25 @@ export function LivestockProvider({ children }: { children: ReactNode }) {
     }
     deleteSale(sale.id);
   };
-  
+
   const addPurchase = (purchase: Purchase) => setPurchases(prev => [...prev, purchase]);
 
+  const updateAllColors = (breed: string, subCategory: string, color: string) => {
+    setAnimals(prev =>
+      prev.map(a => {
+        if (a.breed === breed && a.subCategory === subCategory && a.status !== 'dead') {
+          return { ...a, color };
+        }
+        return a;
+      })
+    );
+  };
+
   const getAnimalsByBreed = (category: string, breed: string) =>
-    animals.filter(a => {
-      if (category === 'goat') return a.category === 'goat';
-      return a.category === category && a.breed === breed;
-    });
+    animals.filter(a => a.breed === breed);
 
   const getAnimalById = (id: string) => animals.find(a => a.id === id);
-  
+
   const getAnimalByNumber = (number: number, breed: string) =>
     animals.find(a => a.number === number && a.breed === breed);
 
@@ -216,6 +266,7 @@ export function LivestockProvider({ children }: { children: ReactNode }) {
         addAnimal, updateAnimal, deleteAnimal, markAnimalDead,
         addBirthRecord, updateBirthRecord, deleteBirthRecord,
         addExpense, addSale, updateSale, deleteSale, cancelSale, addPurchase,
+        updateAllColors,
         getAnimalsByBreed, getAnimalById, getAnimalByNumber,
         getTotalExpenses, getTotalSales, getTotalPurchases,
         getAliveAnimalsCount, getDeadAnimalsCount,

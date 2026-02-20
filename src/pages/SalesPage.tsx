@@ -1,14 +1,15 @@
 import { useState } from 'react';
 import PageHeader from '@/components/PageHeader';
 import { useLivestock } from '@/context/LivestockContext';
-import { CATEGORY_LABELS } from '@/types/animals';
+import { CATEGORY_LABELS, SUB_CATEGORY_LABELS } from '@/types/animals';
 import { Button } from '@/components/ui/button';
 import { Input } from '@/components/ui/input';
 import { Label } from '@/components/ui/label';
 import { Dialog, DialogContent, DialogHeader, DialogTitle, DialogTrigger } from '@/components/ui/dialog';
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from '@/components/ui/select';
-import { Plus, Undo2 } from 'lucide-react';
+import { Plus, Undo2, RefreshCw, FileText, Download, Image } from 'lucide-react';
 import { toast } from '@/hooks/use-toast';
+import { generateSalesReport, downloadSectionReportAsImage } from '@/lib/generateSectionReport';
 
 const SalesPage = () => {
   const { sales, addSale, updateSale, cancelSale, getTotalSales } = useLivestock();
@@ -68,6 +69,18 @@ const SalesPage = () => {
           </div>
         )}
 
+        {/* Report buttons */}
+        {sales.length > 0 && (
+          <div className="flex gap-2 mb-4">
+            <Button variant="outline" className="flex-1 gap-2 h-10 border-primary/30 text-primary hover:bg-primary/10" onClick={() => generateSalesReport(sales)}>
+              <FileText className="w-4 h-4" /> تقرير PDF
+            </Button>
+            <Button variant="outline" className="flex-1 gap-2 h-10 border-primary/30 text-primary hover:bg-primary/10" onClick={() => downloadSectionReportAsImage(sales, 'sales')}>
+              <Image className="w-4 h-4" /> تقرير صورة
+            </Button>
+          </div>
+        )}
+
         <Dialog open={open} onOpenChange={setOpen}>
           <DialogTrigger asChild>
             <Button className="w-full mb-4 gap-2"><Plus className="w-4 h-4" /> إضافة بيع</Button>
@@ -118,6 +131,7 @@ const SalesPage = () => {
                   <p className="text-xs text-muted-foreground">{s.date} • {s.quantity} رأس</p>
                   {s.buyer && <p className="text-xs text-muted-foreground">المشتري: {s.buyer}</p>}
                   {s.animalBreed && <p className="text-xs text-muted-foreground">السلالة: {CATEGORY_LABELS[s.animalBreed] || s.animalBreed}</p>}
+                  {s.animalSubCategory && <p className="text-xs text-muted-foreground">القسم: {SUB_CATEGORY_LABELS[s.animalSubCategory] || s.animalSubCategory}</p>}
                   {s.paymentType === 'debt' && (
                     <div className="mt-1 text-xs">
                       <span className="text-muted-foreground">مقبوض: {s.amountPaid.toLocaleString()}</span>
@@ -133,20 +147,27 @@ const SalesPage = () => {
                     <span className={`text-[10px] px-2 py-0.5 rounded-full ${s.paymentType === 'cash' ? 'bg-primary/10 text-primary' : 'bg-destructive/10 text-destructive'}`}>
                       {s.paymentType === 'cash' ? 'نقد' : 'دين'}
                     </span>
+                  </div>
+                  <div className="flex gap-1 mt-2">
                     {s.paymentType === 'debt' && s.remaining > 0 && (
-                      <Button size="sm" variant="ghost" className="h-6 text-[10px] px-2" onClick={() => { setSelectedSale(s.id); setUpdateOpen(true); }}>
-                        تحديث
+                      <Button
+                        size="sm"
+                        variant="default"
+                        className="h-8 text-xs px-3 gap-1 bg-primary hover:bg-primary/90"
+                        onClick={() => { setSelectedSale(s.id); setUpdateOpen(true); }}
+                      >
+                        <RefreshCw className="w-3 h-3" /> تحديث
                       </Button>
                     )}
+                    <Button
+                      size="sm"
+                      variant="destructive"
+                      className="h-8 text-xs px-3 gap-1"
+                      onClick={() => handleCancelSale(s.id)}
+                    >
+                      <Undo2 className="w-3 h-3" /> إلغاء
+                    </Button>
                   </div>
-                  <Button
-                    size="sm"
-                    variant="ghost"
-                    className="h-6 text-[10px] px-2 mt-1 text-destructive gap-1"
-                    onClick={() => handleCancelSale(s.id)}
-                  >
-                    <Undo2 className="w-3 h-3" /> إلغاء البيع
-                  </Button>
                 </div>
               </div>
             </div>
