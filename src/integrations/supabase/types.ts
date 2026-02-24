@@ -14,7 +14,225 @@ export type Database = {
   }
   public: {
     Tables: {
-      [_ in never]: never
+      animals: {
+        Row: {
+          age_category: string | null
+          birth_date: string | null
+          birth_records: Json
+          breed: string
+          category: string
+          color: string
+          confirmed: boolean | null
+          created_at: string
+          death_date: string | null
+          father_number: number | null
+          gender: string
+          id: string
+          image: string | null
+          mother_breed: string | null
+          mother_number: number | null
+          notes: string | null
+          number: number
+          status: string | null
+          sub_category: string
+          updated_at: string
+          user_id: string
+        }
+        Insert: {
+          age_category?: string | null
+          birth_date?: string | null
+          birth_records?: Json
+          breed: string
+          category: string
+          color?: string
+          confirmed?: boolean | null
+          created_at?: string
+          death_date?: string | null
+          father_number?: number | null
+          gender: string
+          id: string
+          image?: string | null
+          mother_breed?: string | null
+          mother_number?: number | null
+          notes?: string | null
+          number: number
+          status?: string | null
+          sub_category: string
+          updated_at?: string
+          user_id: string
+        }
+        Update: {
+          age_category?: string | null
+          birth_date?: string | null
+          birth_records?: Json
+          breed?: string
+          category?: string
+          color?: string
+          confirmed?: boolean | null
+          created_at?: string
+          death_date?: string | null
+          father_number?: number | null
+          gender?: string
+          id?: string
+          image?: string | null
+          mother_breed?: string | null
+          mother_number?: number | null
+          notes?: string | null
+          number?: number
+          status?: string | null
+          sub_category?: string
+          updated_at?: string
+          user_id?: string
+        }
+        Relationships: []
+      }
+      expenses: {
+        Row: {
+          amount: number
+          category: string
+          created_at: string
+          date: string
+          description: string
+          id: string
+          items: Json | null
+          sub_category: string | null
+          user_id: string
+        }
+        Insert: {
+          amount?: number
+          category: string
+          created_at?: string
+          date: string
+          description: string
+          id: string
+          items?: Json | null
+          sub_category?: string | null
+          user_id: string
+        }
+        Update: {
+          amount?: number
+          category?: string
+          created_at?: string
+          date?: string
+          description?: string
+          id?: string
+          items?: Json | null
+          sub_category?: string | null
+          user_id?: string
+        }
+        Relationships: []
+      }
+      profiles: {
+        Row: {
+          created_at: string
+          display_name: string | null
+          id: string
+          user_id: string
+        }
+        Insert: {
+          created_at?: string
+          display_name?: string | null
+          id?: string
+          user_id: string
+        }
+        Update: {
+          created_at?: string
+          display_name?: string | null
+          id?: string
+          user_id?: string
+        }
+        Relationships: []
+      }
+      purchases: {
+        Row: {
+          amount: number
+          created_at: string
+          date: string
+          description: string
+          id: string
+          quantity: number
+          user_id: string
+        }
+        Insert: {
+          amount?: number
+          created_at?: string
+          date: string
+          description: string
+          id: string
+          quantity?: number
+          user_id: string
+        }
+        Update: {
+          amount?: number
+          created_at?: string
+          date?: string
+          description?: string
+          id?: string
+          quantity?: number
+          user_id?: string
+        }
+        Relationships: []
+      }
+      sales: {
+        Row: {
+          amount: number
+          amount_paid: number
+          animal_breed: string | null
+          animal_gender: string | null
+          animal_id: string | null
+          animal_number: number | null
+          animal_sub_category: string | null
+          buyer: string | null
+          created_at: string
+          date: string
+          description: string
+          id: string
+          last_reminder_date: string | null
+          payment_type: string
+          quantity: number
+          remaining: number
+          user_id: string
+        }
+        Insert: {
+          amount?: number
+          amount_paid?: number
+          animal_breed?: string | null
+          animal_gender?: string | null
+          animal_id?: string | null
+          animal_number?: number | null
+          animal_sub_category?: string | null
+          buyer?: string | null
+          created_at?: string
+          date: string
+          description: string
+          id: string
+          last_reminder_date?: string | null
+          payment_type?: string
+          quantity?: number
+          remaining?: number
+          user_id: string
+        }
+        Update: {
+          amount?: number
+          amount_paid?: number
+          animal_breed?: string | null
+          animal_gender?: string | null
+          animal_id?: string | null
+          animal_number?: number | null
+          animal_sub_category?: string | null
+          buyer?: string | null
+          created_at?: string
+          date?: string
+          description?: string
+          id?: string
+          last_reminder_date?: string | null
+          payment_type?: string
+          quantity?: number
+          remaining?: number
+          user_id?: string
+        }
+        Relationships: []
+      }
     }
     Views: {
       [_ in never]: never
