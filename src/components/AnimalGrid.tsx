@@ -17,23 +17,17 @@ interface AnimalGridProps {
 }
 
 // Returns best text color (white or dark) for a given background hex
+// Colors that should always use black text
+const LIGHT_BG_COLORS = ['#F5F0E8', '#E53E3E', '#ECC94B', '#DD6B20', '#38A169', '#ED64A6', '#A0AEC0', '#D4AF37'];
+
 function getContrastTextColor(hexBg: string): string {
-  const hex = hexBg.replace('#', '');
-  const r = parseInt(hex.substring(0, 2), 16);
-  const g = parseInt(hex.substring(2, 4), 16);
-  const b = parseInt(hex.substring(4, 6), 16);
-  // Relative luminance
-  const luminance = (0.299 * r + 0.587 * g + 0.114 * b) / 255;
-  return luminance > 0.55 ? '#1a1a1a' : '#ffffff';
+  if (LIGHT_BG_COLORS.includes(hexBg)) return '#1a1a1a';
+  return '#ffffff';
 }
 
 function getContrastSubColor(hexBg: string): string {
-  const hex = hexBg.replace('#', '');
-  const r = parseInt(hex.substring(0, 2), 16);
-  const g = parseInt(hex.substring(2, 4), 16);
-  const b = parseInt(hex.substring(4, 6), 16);
-  const luminance = (0.299 * r + 0.587 * g + 0.114 * b) / 255;
-  return luminance > 0.55 ? '#555555' : 'rgba(255,255,255,0.75)';
+  if (LIGHT_BG_COLORS.includes(hexBg)) return '#333333';
+  return 'rgba(255,255,255,0.75)';
 }
 
 const AnimalGrid = ({ breed, category, subCategory }: AnimalGridProps) => {

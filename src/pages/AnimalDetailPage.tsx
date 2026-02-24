@@ -179,26 +179,23 @@ const AnimalDetailPage = () => {
           <div className="flex items-start justify-between">
             <div className="flex items-start gap-4">
               {/* Animal thumbnail */}
-              <div className="flex flex-col items-center gap-1">
-                {/* Clickable avatar to preview image */}
-                <div
-                  className={`cursor-pointer ${animal.image ? '' : 'pointer-events-none'}`}
-                  onClick={() => animal.image && setImagePreviewOpen(true)}
+              <label className="cursor-pointer flex flex-col items-center">
+                <Avatar className="w-16 h-16 sm:w-20 sm:h-20 border-2 border-white/60 shadow-md hover:shadow-lg transition-shadow"
+                  onClick={(e) => {
+                    if (animal.image) {
+                      e.preventDefault();
+                      setImagePreviewOpen(true);
+                    }
+                  }}
                 >
-                  <Avatar className="w-16 h-16 sm:w-20 sm:h-20 border-2 border-white/60 shadow-md">
-                    {animal.image ? (
-                      <AvatarImage src={animal.image} alt={`رأس ${animal.number}`} />
-                    ) : (
-                      <AvatarFallback className="bg-white/30 text-2xl">
-                        <Camera className="w-6 h-6 opacity-50" />
-                      </AvatarFallback>
-                    )}
-                  </Avatar>
-                </div>
-                {/* Upload button */}
-                <label className="cursor-pointer text-[10px] font-bold opacity-60 hover:opacity-100 transition-opacity flex items-center gap-0.5">
-                  <Camera className="w-3 h-3" />
-                  {animal.image ? 'تغيير' : 'إضافة صورة'}
+                  {animal.image ? (
+                    <AvatarImage src={animal.image} alt={`رأس ${animal.number}`} />
+                  ) : (
+                    <AvatarFallback className="bg-white/30 text-2xl">
+                      <Camera className="w-6 h-6 opacity-50" />
+                    </AvatarFallback>
+                  )}
+                </Avatar>
                 <input
                   type="file"
                   accept="image/*"
@@ -207,11 +204,10 @@ const AnimalDetailPage = () => {
                   onChange={(e) => {
                     const file = e.target.files?.[0];
                     if (!file) return;
-                    // Resize image to small thumbnail to fit localStorage
                     const img = new Image();
                     const url = URL.createObjectURL(file);
                     img.onload = () => {
-                      const MAX = 150; // max dimension px
+                      const MAX = 300;
                       let w = img.width, h = img.height;
                       if (w > h) { h = Math.round(h * MAX / w); w = MAX; }
                       else { w = Math.round(w * MAX / h); h = MAX; }
@@ -220,7 +216,7 @@ const AnimalDetailPage = () => {
                       canvas.height = h;
                       const ctx = canvas.getContext('2d')!;
                       ctx.drawImage(img, 0, 0, w, h);
-                      const dataUrl = canvas.toDataURL('image/jpeg', 0.7);
+                      const dataUrl = canvas.toDataURL('image/jpeg', 0.85);
                       URL.revokeObjectURL(url);
                       try {
                         updateAnimal({ ...animal, image: dataUrl });
@@ -232,8 +228,7 @@ const AnimalDetailPage = () => {
                     img.src = url;
                   }}
                 />
-                </label>
-              </div>
+              </label>
               <div>
                 <span className={`text-5xl font-extrabold ${isDark ? 'text-primary-foreground' : 'text-foreground'}`}>
                   {animal.number}
