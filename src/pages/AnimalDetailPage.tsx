@@ -194,21 +194,34 @@ const AnimalDetailPage = () => {
                 <input
                   type="file"
                   accept="image/*"
+                  capture="environment"
                   className="hidden"
                   onChange={(e) => {
                     const file = e.target.files?.[0];
                     if (!file) return;
-                    if (file.size > 2 * 1024 * 1024) {
-                      toast({ title: '⚠️ الصورة كبيرة', description: 'يجب أن تكون أقل من 2 ميغابايت' });
-                      return;
-                    }
-                    const reader = new FileReader();
-                    reader.onload = (ev) => {
-                      const dataUrl = ev.target?.result as string;
-                      updateAnimal({ ...animal, image: dataUrl });
-                      toast({ title: '📷 تم إضافة الصورة' });
+                    // Resize image to small thumbnail to fit localStorage
+                    const img = new Image();
+                    const url = URL.createObjectURL(file);
+                    img.onload = () => {
+                      const MAX = 150; // max dimension px
+                      let w = img.width, h = img.height;
+                      if (w > h) { h = Math.round(h * MAX / w); w = MAX; }
+                      else { w = Math.round(w * MAX / h); h = MAX; }
+                      const canvas = document.createElement('canvas');
+                      canvas.width = w;
+                      canvas.height = h;
+                      const ctx = canvas.getContext('2d')!;
+                      ctx.drawImage(img, 0, 0, w, h);
+                      const dataUrl = canvas.toDataURL('image/jpeg', 0.7);
+                      URL.revokeObjectURL(url);
+                      try {
+                        updateAnimal({ ...animal, image: dataUrl });
+                        toast({ title: '📷 تم إضافة الصورة' });
+                      } catch {
+                        toast({ title: '⚠️ خطأ', description: 'لم يتم حفظ الصورة، مساحة التخزين ممتلئة' });
+                      }
                     };
-                    reader.readAsDataURL(file);
+                    img.src = url;
                   }}
                 />
               </label>
