@@ -114,6 +114,13 @@ const AnimalGrid = ({ breed, category, subCategory }: AnimalGridProps) => {
                 </div>
               )}
 
+              {/* Thumbnail image */}
+              {animal.image && (
+                <div className="w-10 h-10 sm:w-12 sm:h-12 mx-auto mb-1 rounded-full overflow-hidden border-2 border-white/50">
+                  <img src={animal.image} alt={`رأس ${animal.number}`} className="w-full h-full object-cover" />
+                </div>
+              )}
+
               <span className="text-3xl sm:text-4xl font-black block leading-tight" style={{ color: textColor }}>
                 {animal.number}
               </span>

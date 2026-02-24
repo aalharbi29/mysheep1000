@@ -20,7 +20,8 @@ import { Input } from '@/components/ui/input';
 import { Label } from '@/components/ui/label';
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from '@/components/ui/select';
 import { Dialog, DialogContent, DialogHeader, DialogTitle, DialogTrigger } from '@/components/ui/dialog';
-import { Baby, Calendar, Palette, TreePine, Plus, Edit, Trash2, Skull, DollarSign, Home } from 'lucide-react';
+import { Baby, Calendar, Palette, TreePine, Plus, Edit, Trash2, Skull, DollarSign, Home, Camera } from 'lucide-react';
+import { Avatar, AvatarImage, AvatarFallback } from '@/components/ui/avatar';
 import { toast } from '@/hooks/use-toast';
 import SellAnimalDialog from '@/components/SellAnimalDialog';
 
@@ -175,17 +176,54 @@ const AnimalDetailPage = () => {
         {/* Main card */}
         <div className="rounded-2xl p-6 mb-6 card-shadow" style={{ backgroundColor: bgColor }}>
           <div className="flex items-start justify-between">
-            <div>
-              <span className={`text-5xl font-extrabold ${isDark ? 'text-primary-foreground' : 'text-foreground'}`}>
-                {animal.number}
-              </span>
-              <div className={`mt-2 space-y-1 ${isDark ? 'text-primary-foreground/80' : 'text-muted-foreground'}`}>
-                <p className="flex items-center gap-2 text-sm"><Palette className="w-4 h-4" /> لون التاق: {animal.color}</p>
-                <p className="flex items-center gap-2 text-sm">{GENDER_LABELS[animal.gender]}</p>
-                <p className="flex items-center gap-2 text-sm">📂 القسم: {SUB_CATEGORY_LABELS[animal.subCategory]}</p>
-                {animal.motherNumber && <p className="flex items-center gap-2 text-sm">🐑 رقم الأم: {animal.motherNumber}</p>}
-                {animal.birthDate && <p className="flex items-center gap-2 text-sm"><Calendar className="w-4 h-4" /> تاريخ الميلاد: {animal.birthDate}</p>}
-                {animal.subCategory === 'mothers' && <p className="flex items-center gap-2 text-sm"><Baby className="w-4 h-4" /> عدد المواليد: {totalOffspring}</p>}
+            <div className="flex items-start gap-4">
+              {/* Animal thumbnail */}
+              <label className="cursor-pointer group relative">
+                <Avatar className="w-16 h-16 sm:w-20 sm:h-20 border-2 border-white/60 shadow-md">
+                  {animal.image ? (
+                    <AvatarImage src={animal.image} alt={`رأس ${animal.number}`} />
+                  ) : (
+                    <AvatarFallback className="bg-white/30 text-2xl">
+                      <Camera className="w-6 h-6 opacity-50" />
+                    </AvatarFallback>
+                  )}
+                </Avatar>
+                <div className="absolute inset-0 rounded-full bg-black/30 opacity-0 group-hover:opacity-100 transition-opacity flex items-center justify-center">
+                  <Camera className="w-5 h-5 text-white" />
+                </div>
+                <input
+                  type="file"
+                  accept="image/*"
+                  className="hidden"
+                  onChange={(e) => {
+                    const file = e.target.files?.[0];
+                    if (!file) return;
+                    if (file.size > 2 * 1024 * 1024) {
+                      toast({ title: '⚠️ الصورة كبيرة', description: 'يجب أن تكون أقل من 2 ميغابايت' });
+                      return;
+                    }
+                    const reader = new FileReader();
+                    reader.onload = (ev) => {
+                      const dataUrl = ev.target?.result as string;
+                      updateAnimal({ ...animal, image: dataUrl });
+                      toast({ title: '📷 تم إضافة الصورة' });
+                    };
+                    reader.readAsDataURL(file);
+                  }}
+                />
+              </label>
+              <div>
+                <span className={`text-5xl font-extrabold ${isDark ? 'text-primary-foreground' : 'text-foreground'}`}>
+                  {animal.number}
+                </span>
+                <div className={`mt-2 space-y-1 ${isDark ? 'text-primary-foreground/80' : 'text-muted-foreground'}`}>
+                  <p className="flex items-center gap-2 text-sm"><Palette className="w-4 h-4" /> لون التاق: {animal.color}</p>
+                  <p className="flex items-center gap-2 text-sm">{GENDER_LABELS[animal.gender]}</p>
+                  <p className="flex items-center gap-2 text-sm">📂 القسم: {SUB_CATEGORY_LABELS[animal.subCategory]}</p>
+                  {animal.motherNumber && <p className="flex items-center gap-2 text-sm">🐑 رقم الأم: {animal.motherNumber}</p>}
+                  {animal.birthDate && <p className="flex items-center gap-2 text-sm"><Calendar className="w-4 h-4" /> تاريخ الميلاد: {animal.birthDate}</p>}
+                  {animal.subCategory === 'mothers' && <p className="flex items-center gap-2 text-sm"><Baby className="w-4 h-4" /> عدد المواليد: {totalOffspring}</p>}
+                </div>
               </div>
             </div>
 

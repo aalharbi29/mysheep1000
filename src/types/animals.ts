@@ -44,6 +44,7 @@ export interface Animal {
   deathDate?: string;
   confirmed?: boolean;
   ageCategory?: AnimalAge;
+  image?: string; // base64 data URL for thumbnail
 }
 
 export const SUB_CATEGORY_LABELS: Record<AnimalSubCategory, string> = {
