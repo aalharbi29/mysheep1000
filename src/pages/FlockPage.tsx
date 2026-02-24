@@ -15,7 +15,7 @@ const FlockPage = () => {
   const { animals } = useLivestock();
 
   return (
-    <div className="min-h-screen bg-background p-4 sm:p-6 rounded-3xl opacity-100 border-8 border-solid mt-0 ml-0 mr-0 mb-0 pt-0 pb-0 pl-[5px] pr-[5px]">
+    <div className="min-h-screen bg-background p-4 sm:p-6 rounded-3xl opacity-100 border-8 border-solid ml-0 mr-0 pt-0 pb-0 pl-[5px] pr-[5px] mt-[200px] mb-[200px]">
       <div className="max-w-2xl mx-auto my-[100px] border-2 border-cyan-950 border-solid">
         <PageHeader title="القطيع" subtitle="اختر نوع الماشية" backTo="/" />
 
