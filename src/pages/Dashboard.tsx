@@ -1,6 +1,8 @@
 import { useNavigate } from 'react-router-dom';
 import { useLivestock } from '@/context/LivestockContext';
-import { Fence, Receipt, ShoppingCart, TrendingUp, FileText, Archive } from 'lucide-react';
+import { useAuth } from '@/context/AuthContext';
+import { Fence, Receipt, ShoppingCart, TrendingUp, FileText, Archive, LogOut } from 'lucide-react';
+import { Button } from '@/components/ui/button';
 
 const cards = [
   { id: 'flock', label: 'القطيع', icon: Fence, path: '/flock', gradient: 'from-primary to-primary/80' },
@@ -13,7 +15,8 @@ const cards = [
 
 const Dashboard = () => {
   const navigate = useNavigate();
-  const { animals, getTotalExpenses, getTotalSales, getTotalPurchases, getAliveAnimalsCount, getDeadAnimalsCount } = useLivestock();
+  const { animals, getTotalExpenses, getTotalSales, getTotalPurchases, getAliveAnimalsCount, getDeadAnimalsCount, loading } = useLivestock();
+  const { signOut } = useAuth();
 
   const deadCount = getDeadAnimalsCount();
   const aliveCount = getAliveAnimalsCount();
@@ -30,7 +33,16 @@ const Dashboard = () => {
   return (
     <div className="min-h-screen bg-background p-4 sm:p-6">
       <div className="max-w-2xl mx-auto">
-        <header className="text-center mb-8 pt-6">
+        <header className="text-center mb-8 pt-6 relative">
+          <Button
+            variant="ghost"
+            size="icon"
+            onClick={signOut}
+            className="absolute left-0 top-6"
+            title="تسجيل الخروج"
+          >
+            <LogOut className="w-5 h-5" />
+          </Button>
           <div className="inline-flex items-center justify-center w-16 h-16 rounded-2xl bg-primary/10 mb-4">
             <Fence className="w-8 h-8 text-primary" />
           </div>
