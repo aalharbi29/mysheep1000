@@ -230,24 +230,21 @@ const AnimalDetailPage = () => {
                 />
               </label>
               <div>
-                <span className={`text-5xl font-extrabold ${isDark ? 'text-primary-foreground' : 'text-foreground'}`}>
+                <span className="text-5xl font-extrabold text-black">
                   {animal.number}
                 </span>
-                <div className={`mt-2 space-y-1 ${isDark ? 'text-primary-foreground/80' : 'text-muted-foreground'}`}>
-                  <p className="flex items-center gap-2 text-sm"><Palette className="w-4 h-4" /> لون التاق: {animal.color}</p>
-                  <p className="flex items-center gap-2 text-sm">{GENDER_LABELS[animal.gender]}</p>
-                  <p className="flex items-center gap-2 text-sm">📂 القسم: {SUB_CATEGORY_LABELS[animal.subCategory]}</p>
-                  {animal.motherNumber && <p className="flex items-center gap-2 text-sm">🐑 رقم الأم: {animal.motherNumber}</p>}
-                  {animal.birthDate && <p className="flex items-center gap-2 text-sm"><Calendar className="w-4 h-4" /> تاريخ الميلاد: {animal.birthDate}</p>}
-                  {animal.subCategory === 'mothers' && <p className="flex items-center gap-2 text-sm"><Baby className="w-4 h-4" /> عدد المواليد: {totalOffspring}</p>}
+                <div className="mt-2 space-y-1 text-black">
+                  <p className="flex items-center gap-2 text-sm font-bold"><Palette className="w-4 h-4" /> لون التاق: {animal.color}</p>
+                  <p className="flex items-center gap-2 text-sm font-bold">{GENDER_LABELS[animal.gender]}</p>
+                  <p className="flex items-center gap-2 text-sm font-bold">📂 القسم: {SUB_CATEGORY_LABELS[animal.subCategory]}</p>
+                  {animal.motherNumber && <p className="flex items-center gap-2 text-sm font-bold">🐑 رقم الأم: {animal.motherNumber}</p>}
+                  {animal.birthDate && <p className="flex items-center gap-2 text-sm font-bold"><Calendar className="w-4 h-4" /> تاريخ الميلاد: {animal.birthDate}</p>}
+                  {animal.subCategory === 'mothers' && <p className="flex items-center gap-2 text-sm font-bold"><Baby className="w-4 h-4" /> عدد المواليد: {totalOffspring}</p>}
                 </div>
               </div>
             </div>
 
             <div className="flex gap-1">
-              <Button size="sm" variant="outline" className="gap-1" onClick={() => setSellOpen(true)}>
-                <DollarSign className="w-3 h-3" /> بيع
-              </Button>
               <Dialog open={editOpen} onOpenChange={setEditOpen}>
                 <DialogTrigger asChild>
                   <Button size="sm" variant="outline" className="gap-1"><Edit className="w-3 h-3" /> تعديل</Button>
@@ -290,7 +287,7 @@ const AnimalDetailPage = () => {
             </div>
           </div>
           {animal.notes && (
-            <p className={`mt-3 text-sm ${isDark ? 'text-primary-foreground/70' : 'text-muted-foreground'}`}>{animal.notes}</p>
+            <p className="mt-3 text-sm font-bold text-black/70">{animal.notes}</p>
           )}
         </div>
 
@@ -495,6 +492,18 @@ const AnimalDetailPage = () => {
             {animal.image && (
               <img src={animal.image} alt={`رأس ${animal.number}`} className="w-full rounded-xl object-contain max-h-[60vh]" />
             )}
+            <Button
+              variant="destructive"
+              size="sm"
+              className="w-full gap-2 mt-2"
+              onClick={() => {
+                updateAnimal({ ...animal, image: undefined });
+                setImagePreviewOpen(false);
+                toast({ title: '🗑️ تم حذف الصورة' });
+              }}
+            >
+              <Trash2 className="w-4 h-4" /> حذف الصورة
+            </Button>
           </DialogContent>
         </Dialog>
       </div>
