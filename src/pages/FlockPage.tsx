@@ -6,17 +6,17 @@ import { FileText, Image } from 'lucide-react';
 import { generateFlockReport, downloadSectionReportAsImage } from '@/lib/generateSectionReport';
 
 const categories = [
-{ id: 'sheep', label: 'ضأن', emoji: '🐑', path: '/flock/sheep' },
-{ id: 'goat', label: 'ماعز', emoji: '🐐', path: '/flock/goat' }];
-
+  { id: 'sheep', label: 'ضأن', emoji: '🐑', path: '/flock/sheep' },
+  { id: 'goat', label: 'ماعز', emoji: '🐐', path: '/flock/goat' },
+];
 
 const FlockPage = () => {
   const navigate = useNavigate();
   const { animals } = useLivestock();
 
   return (
-    <div className="min-h-screen bg-background p-4 sm:p-6 rounded-3xl opacity-100 border-8 border-solid ml-0 mr-0 pt-0 pb-0 pl-[5px] pr-[5px] mx-px my-0 px-0 py-[2px] mb-0 mt-0">
-      <div className="max-w-2xl mx-auto my-[100px] border-2 border-solid border-muted-foreground bg-muted-foreground">
+    <div className="min-h-screen bg-background p-4 sm:p-6">
+      <div className="max-w-2xl mx-auto">
         <PageHeader title="القطيع" subtitle="اختر نوع الماشية" backTo="/" />
 
         {/* Flock Report buttons */}
@@ -29,25 +29,25 @@ const FlockPage = () => {
           </Button>
         </div>
 
-        <div className="grid grid-cols-2 gap-4 border-muted-foreground">
+        <div className="grid grid-cols-2 gap-4">
           {categories.map((cat) => {
-            const count = animals.filter((a) => a.category === cat.id && a.status !== 'dead' && a.confirmed === true).length;
+            const count = animals.filter(a => a.category === cat.id && a.status !== 'dead' && a.confirmed === true).length;
             return (
               <button
                 key={cat.id}
                 onClick={() => navigate(cat.path)}
-                className="rounded-xl p-6 text-center transition-all duration-200 card-shadow hover:card-shadow-hover hover:scale-[1.02] active:scale-[0.98] text-muted-foreground border-muted-foreground px-px py-px my-[10px] mx-[5px] border-0 border-none bg-zinc-400 hover:bg-zinc-300">
-
+                className="rounded-xl bg-card p-6 text-center transition-all duration-200 card-shadow hover:card-shadow-hover hover:scale-[1.02] active:scale-[0.98]"
+              >
                 <span className="text-5xl block mb-3">{cat.emoji}</span>
-                <h2 className="text-card-foreground text-3xl font-extrabold">{cat.label}</h2>
-                <p className="mt-1 text-zinc-950 font-extrabold text-xl">{count} رأس</p>
-              </button>);
-
+                <h2 className="text-xl font-bold text-card-foreground">{cat.label}</h2>
+                <p className="text-sm text-muted-foreground mt-1">{count} رأس</p>
+              </button>
+            );
           })}
         </div>
       </div>
-    </div>);
-
+    </div>
+  );
 };
 
 export default FlockPage;
