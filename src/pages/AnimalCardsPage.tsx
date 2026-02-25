@@ -79,15 +79,15 @@ const AnimalCardsPage = () => {
   };
 
   return (
-    <div className="min-h-screen p-4 sm:p-6 border-primary-foreground bg-muted">
-      <div className="max-w-2xl mx-auto border-2 border-solid border-muted-foreground opacity-100 rounded-full">
+    <div className="min-h-screen p-4 sm:p-6 border-primary-foreground bg-muted mx-0 pr-[15px] pl-[15px] pb-0 pt-[15px]">
+      <div className="max-w-2xl border-2 border-solid border-muted-foreground opacity-100 mx-0 shadow-2xl rounded-3xl my-[50px] py-[100px] pt-[50px] mb-0">
         <PageHeader
           title={`${subLabel} - ${breedLabel}`}
           subtitle={`عرض بطاقات ${subLabel}`}
           backTo={backTo} />
 
 
-        <div className="mb-4 flex-col my-[15px] py-[15px] border-none opacity-100 rounded-2xl shadow-2xl ml-[200px] mr-[200px] mx-[100px] gap-[5px] px-0 flex items-center justify-center">
+        <div className="mb-4 my-[15px] py-[15px] border-none opacity-100 rounded-2xl shadow-2xl gap-[5px] flex-col flex items-center justify-center px-[15px] mx-[50px] mt-[50px] ml-[50px] mr-[50px]">
           <Dialog open={open} onOpenChange={setOpen}>
             <DialogTrigger asChild>
               <Button className="flex-1 gap-2">
