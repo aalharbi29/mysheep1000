@@ -67,6 +67,9 @@ const Dashboard = () => {
           })}
         </div>
       </div>
+      <div className="fixed bottom-2 left-2 text-[10px] text-muted-foreground/40 select-none pointer-events-none font-light">
+        إدارة وتطوير الهرساني لتطوير المحتوى
+      </div>
     </div>
   );
 };
