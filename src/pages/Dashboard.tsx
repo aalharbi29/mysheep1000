@@ -41,18 +41,18 @@ const Dashboard = () => {
             className="absolute left-0 top-6"
             title="تسجيل الخروج">
 
-            <LogOut className="shadow-2xl h-[50px] w-[100px]" />
+            <LogOut className="shadow-2xl w-[50px] h-[75px] mr-0 ml-[600px]" />
           </Button>
           <div className="inline-flex items-center justify-center w-16 h-16 rounded-2xl bg-primary/10 mb-4 mx-0 shadow-2xl">
             <Fence className="w-8 h-8 text-primary" />
           </div>
-          <h1 className="font-extrabold text-4xl text-blue-900 mx-[25px]">ماشية</h1>
-          <p className="mt-1 text-cyan-700 text-xl font-bold mx-[3px]">إدارة ومتابعة القطيع</p>
+          <h1 className="font-extrabold text-4xl mx-[25px] text-[#6075af]">الحظيرة النموذجية
+          </h1>
+          <p className="mt-1 text-xl font-bold mx-[3px] text-[#755e1f]/[0.97]">إدارة ومتابعة القطيع</p>
         </header>
 
-        <div className="grid grid-cols-2 gap-4 mx-0 my-0 opacity-100 rounded pb-[15px] pr-[5px] pl-[5px] pt-[5px]">
-          {cards.map((card) => {
-            const Icon = card.icon;
+        <div className="grid grid-cols-2 gap-4 mx-0 my-0 opacity-100 pb-[15px] pr-[5px] pl-[5px] pt-[5px] border-2 border-muted-foreground rounded-3xl shadow-2xl">
+          {cards.map((card) => {const Icon = card.icon;
             return (
               <button
                 key={card.id}
