@@ -60,7 +60,7 @@ const Dashboard = () => {
                 className={`relative overflow-hidden rounded-xl p-5 text-right transition-all duration-200 card-shadow hover:card-shadow-hover hover:scale-[1.02] active:scale-[0.98] bg-gradient-to-bl ${card.gradient} ${card.id === 'flock' ? 'col-span-2' : ''}`}>
 
                 <Icon className="w-7 h-7 text-primary-foreground/90 mb-3 mr-[50px]" />
-                <h2 className="text-lg font-bold text-primary-foreground text-center">{card.label}</h2>
+                <h2 className="text-primary-foreground text-center font-extrabold text-xl">{card.label}</h2>
                 <p className="text-sm text-primary-foreground/75 mt-1 text-center font-extrabold">{stats[card.id]}</p>
               </button>);
 
