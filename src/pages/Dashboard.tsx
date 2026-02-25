@@ -36,12 +36,10 @@ const Dashboard = () => {
         <header className="text-center mb-8 pt-6 relative">
           <Button
             variant="ghost"
-            size="icon"
             onClick={signOut}
-            className="absolute left-0 top-6"
+            className="absolute left-0 top-6 flex items-center gap-2 px-3 py-2"
             title="تسجيل الخروج">
-
-            <LogOut className="shadow-2xl mr-0 ml-[600px] w-[100px] h-[100px]" />
+            <LogOut className="w-6 h-6" />
           </Button>
           <div className="inline-flex items-center justify-center w-16 h-16 rounded-2xl bg-primary/10 mb-4 mx-0 shadow-2xl">
             <Fence className="w-8 h-8 text-primary" />
