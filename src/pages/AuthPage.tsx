@@ -30,8 +30,8 @@ const AuthPage = () => {
           password,
           options: {
             data: { display_name: displayName },
-            emailRedirectTo: window.location.origin,
-          },
+            emailRedirectTo: window.location.origin
+          }
         });
         if (error) throw error;
         toast.success('تم إنشاء الحساب! تحقق من بريدك الإلكتروني لتأكيد الحساب.');
@@ -44,7 +44,7 @@ const AuthPage = () => {
   };
 
   return (
-    <div className="min-h-screen bg-background flex items-center justify-center p-4" dir="rtl">
+    <div className="min-h-screen bg-background items-center justify-center p-4 flex flex-row shadow-2xl opacity-100 rounded-sm border-solid gap-0 py-0 px-[20px]" dir="rtl">
       <Card className="w-full max-w-md">
         <CardHeader className="text-center">
           <span className="text-6xl block mb-2">🐑</span>
@@ -55,30 +55,30 @@ const AuthPage = () => {
         </CardHeader>
         <CardContent>
           <form onSubmit={handleSubmit} className="space-y-4">
-            {!isLogin && (
-              <div className="space-y-2">
+            {!isLogin &&
+            <div className="space-y-2">
                 <Label htmlFor="name">الاسم</Label>
                 <Input
-                  id="name"
-                  type="text"
-                  value={displayName}
-                  onChange={e => setDisplayName(e.target.value)}
-                  placeholder="أدخل اسمك"
-                  required={!isLogin}
-                />
+                id="name"
+                type="text"
+                value={displayName}
+                onChange={(e) => setDisplayName(e.target.value)}
+                placeholder="أدخل اسمك"
+                required={!isLogin} />
+
               </div>
-            )}
+            }
             <div className="space-y-2">
               <Label htmlFor="email">البريد الإلكتروني</Label>
               <Input
                 id="email"
                 type="email"
                 value={email}
-                onChange={e => setEmail(e.target.value)}
+                onChange={(e) => setEmail(e.target.value)}
                 placeholder="example@email.com"
                 required
-                dir="ltr"
-              />
+                dir="ltr" />
+
             </div>
             <div className="space-y-2">
               <Label htmlFor="password">كلمة المرور</Label>
@@ -87,20 +87,20 @@ const AuthPage = () => {
                   id="password"
                   type={showPassword ? 'text' : 'password'}
                   value={password}
-                  onChange={e => setPassword(e.target.value)}
+                  onChange={(e) => setPassword(e.target.value)}
                   placeholder="••••••••"
                   required
                   minLength={6}
                   dir="ltr"
-                  className="pl-10"
-                />
+                  className="pl-10" />
+
                 <button
                   type="button"
                   onClick={() => setShowPassword(!showPassword)}
                   className="absolute left-2 top-1/2 -translate-y-1/2 text-muted-foreground hover:text-foreground"
-                  tabIndex={-1}
-                >
-                  {showPassword ? <EyeOff className="w-4 h-4" /> : <Eye className="w-4 h-4" />}
+                  tabIndex={-1}>
+
+                  {showPassword ? <EyeOff className="w-4 h-4 mr-[5px] ml-[250px] mx-[230px]" /> : <Eye className="w-4 h-4" />}
                 </button>
               </div>
             </div>
@@ -113,15 +113,15 @@ const AuthPage = () => {
             <button
               type="button"
               onClick={() => setIsLogin(!isLogin)}
-              className="text-sm text-primary hover:underline"
-            >
+              className="text-sm text-primary hover:underline">
+
               {isLogin ? 'ليس لديك حساب؟ أنشئ حساباً جديداً' : 'لديك حساب؟ سجل دخولك'}
             </button>
           </div>
         </CardContent>
       </Card>
-    </div>
-  );
+    </div>);
+
 };
 
 export default AuthPage;
