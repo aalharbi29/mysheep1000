@@ -15,13 +15,13 @@ import { toast } from '@/hooks/use-toast';
 import BulkVaccinationDialog from '@/components/BulkVaccinationDialog';
 
 const AnimalCardsPage = () => {
-  const { breed, subCategory } = useParams<{ breed: string; subCategory: string }>();
+  const { breed, subCategory } = useParams<{breed: string;subCategory: string;}>();
   const location = useLocation();
   const { addAnimal, updateAllColors } = useLivestock();
 
   const isGoat = location.pathname.startsWith('/flock/goat');
   const breedId = breed || '';
-  const sub = (subCategory as AnimalSubCategory) || 'mothers';
+  const sub = subCategory as AnimalSubCategory || 'mothers';
   const category = isGoat ? 'goat' : 'sheep';
 
   const breedLabel = CATEGORY_LABELS[breedId] || breedId;
@@ -43,9 +43,9 @@ const AnimalCardsPage = () => {
       return;
     }
 
-    const color = newColor || (sub === 'mothers'
-      ? getMotherDefaultColor(breedId)
-      : getDefaultColor(breedId, newGender, sub));
+    const color = newColor || (sub === 'mothers' ?
+    getMotherDefaultColor(breedId) :
+    getDefaultColor(breedId, newGender, sub));
 
     const isYoung = sub === 'young';
 
@@ -60,7 +60,7 @@ const AnimalCardsPage = () => {
       birthDate: '',
       birthRecords: [],
       status: 'alive',
-      confirmed: isYoung ? true : undefined,
+      confirmed: isYoung ? true : undefined
     });
 
     toast({ title: '✅ تمت الإضافة', description: `بطاقة رقم ${num} - ${subLabel}` });
@@ -79,15 +79,15 @@ const AnimalCardsPage = () => {
   };
 
   return (
-    <div className="min-h-screen bg-background p-4 sm:p-6">
-      <div className="max-w-2xl mx-auto">
+    <div className="min-h-screen p-4 sm:p-6 border-primary-foreground bg-muted">
+      <div className="max-w-2xl mx-auto border-2 border-solid border-muted-foreground opacity-100 rounded-full">
         <PageHeader
           title={`${subLabel} - ${breedLabel}`}
           subtitle={`عرض بطاقات ${subLabel}`}
-          backTo={backTo}
-        />
+          backTo={backTo} />
 
-        <div className="flex gap-2 mb-4">
+
+        <div className="mb-4 flex-col my-[15px] py-[15px] border-none opacity-100 rounded-2xl shadow-2xl ml-[200px] mr-[200px] mx-[100px] gap-[5px] px-0 flex items-center justify-center">
           <Dialog open={open} onOpenChange={setOpen}>
             <DialogTrigger asChild>
               <Button className="flex-1 gap-2">
@@ -105,13 +105,13 @@ const AnimalCardsPage = () => {
                     type="number"
                     placeholder="أدخل رقم البطاقة"
                     value={newNumber}
-                    onChange={e => setNewNumber(e.target.value)}
-                  />
+                    onChange={(e) => setNewNumber(e.target.value)} />
+
                 </div>
-                {sub !== 'mothers' && (
-                  <div>
+                {sub !== 'mothers' &&
+                <div>
                     <Label>النوع</Label>
-                    <Select value={newGender} onValueChange={v => setNewGender(v as AnimalGender)}>
+                    <Select value={newGender} onValueChange={(v) => setNewGender(v as AnimalGender)}>
                       <SelectTrigger><SelectValue /></SelectTrigger>
                       <SelectContent>
                         <SelectItem value="male">ذكر</SelectItem>
@@ -119,20 +119,20 @@ const AnimalCardsPage = () => {
                       </SelectContent>
                     </Select>
                   </div>
-                )}
+                }
                 <div>
                   <Label>لون البطاقة (اختياري)</Label>
                   <Select value={newColor} onValueChange={setNewColor}>
                     <SelectTrigger><SelectValue placeholder="اللون الافتراضي" /></SelectTrigger>
                     <SelectContent>
-                      {Object.entries(TAG_COLORS).map(([name, hex]) => (
-                        <SelectItem key={name} value={name}>
+                      {Object.entries(TAG_COLORS).map(([name, hex]) =>
+                      <SelectItem key={name} value={name}>
                           <span className="flex items-center gap-2">
                             <span className="w-4 h-4 rounded-full inline-block border border-border" style={{ backgroundColor: hex }} />
                             {name}
                           </span>
                         </SelectItem>
-                      ))}
+                      )}
                     </SelectContent>
                   </Select>
                 </div>
@@ -156,18 +156,18 @@ const AnimalCardsPage = () => {
               <div className="space-y-4 mt-3">
                 <p className="text-sm text-muted-foreground">سيتم تغيير لون جميع بطاقات {subLabel} في {breedLabel}</p>
                 <div className="grid grid-cols-4 gap-3">
-                  {Object.entries(TAG_COLORS).map(([name, hex]) => (
-                    <button
-                      key={name}
-                      onClick={() => setBulkColor(name)}
-                      className={`rounded-xl p-3 text-center border-2 transition-all ${bulkColor === name ? 'border-primary scale-105 ring-2 ring-primary/30' : 'border-transparent'}`}
-                      style={{ backgroundColor: hex }}
-                    >
+                  {Object.entries(TAG_COLORS).map(([name, hex]) =>
+                  <button
+                    key={name}
+                    onClick={() => setBulkColor(name)}
+                    className={`rounded-xl p-3 text-center border-2 transition-all ${bulkColor === name ? 'border-primary scale-105 ring-2 ring-primary/30' : 'border-transparent'}`}
+                    style={{ backgroundColor: hex }}>
+
                       <span className={`text-xs font-bold ${['بني', 'أزرق', 'بنفسجي', 'أسود'].includes(name) ? 'text-white' : 'text-foreground'}`}>
                         {name}
                       </span>
                     </button>
-                  ))}
+                  )}
                 </div>
                 <Button onClick={handleBulkColor} className="w-full" disabled={!bulkColor}>
                   تطبيق اللون على الكل
@@ -182,11 +182,11 @@ const AnimalCardsPage = () => {
         <AnimalGrid
           breed={breedId}
           category={category}
-          subCategory={sub}
-        />
+          subCategory={sub} />
+
       </div>
-    </div>
-  );
+    </div>);
+
 };
 
 export default AnimalCardsPage;
