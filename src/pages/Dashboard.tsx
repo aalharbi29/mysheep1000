@@ -61,7 +61,7 @@ const Dashboard = () => {
 
                 <Icon className="w-7 h-7 text-primary-foreground/90 mb-3 mr-[50px]" />
                 <h2 className="text-lg font-bold text-primary-foreground text-center">{card.label}</h2>
-                <p className="text-sm text-primary-foreground/75 mt-1 text-center">{stats[card.id]}</p>
+                <p className="text-sm text-primary-foreground/75 mt-1 text-center font-extrabold">{stats[card.id]}</p>
               </button>);
 
           })}
