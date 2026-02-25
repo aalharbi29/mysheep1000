@@ -41,7 +41,7 @@ const Dashboard = () => {
             className="absolute left-0 top-6"
             title="تسجيل الخروج">
 
-            <LogOut className="shadow-2xl w-[50px] h-[75px] mr-0 ml-[600px]" />
+            <LogOut className="shadow-2xl mr-0 ml-[600px] w-[100px] h-[100px]" />
           </Button>
           <div className="inline-flex items-center justify-center w-16 h-16 rounded-2xl bg-primary/10 mb-4 mx-0 shadow-2xl">
             <Fence className="w-8 h-8 text-primary" />
