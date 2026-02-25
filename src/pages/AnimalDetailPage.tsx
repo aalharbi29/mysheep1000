@@ -24,6 +24,7 @@ import { Baby, Calendar, Palette, TreePine, Plus, Edit, Trash2, Skull, DollarSig
 import { Avatar, AvatarImage, AvatarFallback } from '@/components/ui/avatar';
 import { toast } from '@/hooks/use-toast';
 import SellAnimalDialog from '@/components/SellAnimalDialog';
+import AnimalVaccinations from '@/components/AnimalVaccinations';
 
 const AnimalDetailPage = () => {
   const { id } = useParams<{ id: string }>();
@@ -326,6 +327,9 @@ const AnimalDetailPage = () => {
             </div>
           </div>
         )}
+
+        {/* Vaccinations */}
+        <AnimalVaccinations animalId={animal.id} animalNumber={animal.number} />
 
         {/* Birth registration */}
         {animal.subCategory === 'mothers' && (

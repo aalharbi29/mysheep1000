@@ -12,6 +12,7 @@ import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from '@
 import { Dialog, DialogContent, DialogHeader, DialogTitle, DialogTrigger } from '@/components/ui/dialog';
 import { Plus, Palette } from 'lucide-react';
 import { toast } from '@/hooks/use-toast';
+import BulkVaccinationDialog from '@/components/BulkVaccinationDialog';
 
 const AnimalCardsPage = () => {
   const { breed, subCategory } = useParams<{ breed: string; subCategory: string }>();
@@ -174,6 +175,8 @@ const AnimalCardsPage = () => {
               </div>
             </DialogContent>
           </Dialog>
+
+          <BulkVaccinationDialog breed={breedId} subCategory={sub} />
         </div>
 
         <AnimalGrid
