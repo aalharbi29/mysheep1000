@@ -6,6 +6,7 @@ import { BrowserRouter, Routes, Route } from "react-router-dom";
 import { LivestockProvider } from "@/context/LivestockContext";
 import { AuthProvider, useAuth } from "@/context/AuthContext";
 import DebtReminder from "@/components/DebtReminder";
+import VaccinationReminder from "@/components/VaccinationReminder";
 import AuthPage from "./pages/AuthPage";
 import Dashboard from "./pages/Dashboard";
 import FlockPage from "./pages/FlockPage";
@@ -41,6 +42,7 @@ function AppContent() {
   return (
     <LivestockProvider>
       <DebtReminder />
+      <VaccinationReminder />
       <BrowserRouter>
         <Routes>
           <Route path="/" element={<Dashboard />} />

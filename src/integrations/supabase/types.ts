@@ -233,6 +233,54 @@ export type Database = {
         }
         Relationships: []
       }
+      vaccinations: {
+        Row: {
+          animal_id: string
+          animal_number: number
+          created_at: string
+          first_dose_date: string
+          id: string
+          is_deworming: boolean
+          notes: string | null
+          repeat_confirmed: boolean
+          repeat_date: string | null
+          second_dose_confirmed: boolean
+          second_dose_date: string | null
+          user_id: string
+          vaccination_type: string
+        }
+        Insert: {
+          animal_id: string
+          animal_number: number
+          created_at?: string
+          first_dose_date: string
+          id?: string
+          is_deworming?: boolean
+          notes?: string | null
+          repeat_confirmed?: boolean
+          repeat_date?: string | null
+          second_dose_confirmed?: boolean
+          second_dose_date?: string | null
+          user_id: string
+          vaccination_type: string
+        }
+        Update: {
+          animal_id?: string
+          animal_number?: number
+          created_at?: string
+          first_dose_date?: string
+          id?: string
+          is_deworming?: boolean
+          notes?: string | null
+          repeat_confirmed?: boolean
+          repeat_date?: string | null
+          second_dose_confirmed?: boolean
+          second_dose_date?: string | null
+          user_id?: string
+          vaccination_type?: string
+        }
+        Relationships: []
+      }
     }
     Views: {
       [_ in never]: never
