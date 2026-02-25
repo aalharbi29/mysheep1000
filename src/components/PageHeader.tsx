@@ -11,7 +11,7 @@ const PageHeader = ({ title, subtitle, backTo }: PageHeaderProps) => {
   const navigate = useNavigate();
 
   return (
-    <header className="mb-6 rounded-full shadow-2xl opacity-100 border border-solid border-sidebar-border py-0 ml-[200px] mr-[80px] mt-[10px] pt-0 px-[15px] my-0 pr-0 pl-0 mx-0">
+    <header className="mb-6 rounded-full shadow-2xl opacity-100 border border-solid border-sidebar-border py-0 mt-[10px] pt-0 px-[15px] my-0 pr-0 pl-0 mx-0 ml-[15px] mr-[15px]">
       {backTo &&
       <button
         onClick={() => navigate(backTo)}
@@ -21,8 +21,8 @@ const PageHeader = ({ title, subtitle, backTo }: PageHeaderProps) => {
           رجوع
         </button>
       }
-      <h1 className="text-foreground font-extrabold text-base text-center mx-[50px]">{title}</h1>
-      {subtitle && <p className="text-muted-foreground mt-1 text-sm font-medium text-center mx-[50px]">{subtitle}</p>}
+      <h1 className="text-foreground font-extrabold text-center mx-[50px] text-sm">{title}</h1>
+      {subtitle && <p className="text-muted-foreground mt-1 text-sm font-medium text-center mx-[50px] mb-[5px] mr-[50px]">{subtitle}</p>}
     </header>);
 
 };
