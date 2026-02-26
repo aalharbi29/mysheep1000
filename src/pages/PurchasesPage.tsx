@@ -1,4 +1,4 @@
-import { useState } from 'react';
+import { useState, useMemo } from 'react';
 import PageHeader from '@/components/PageHeader';
 import { useLivestock } from '@/context/LivestockContext';
 import { Button } from '@/components/ui/button';
@@ -7,6 +7,7 @@ import { Label } from '@/components/ui/label';
 import { Dialog, DialogContent, DialogHeader, DialogTitle, DialogTrigger } from '@/components/ui/dialog';
 import { Plus, FileText, Image } from 'lucide-react';
 import { generatePurchasesReport, downloadSectionReportAsImage } from '@/lib/generateSectionReport';
+import MonthlyGroup, { groupByMonth } from '@/components/MonthlyGroup';
 
 const PurchasesPage = () => {
   const { purchases, addPurchase, getTotalPurchases } = useLivestock();
@@ -22,12 +23,13 @@ const PurchasesPage = () => {
     setDesc(''); setAmount(''); setDate(''); setQty('1');
   };
 
+  const monthlyGroups = useMemo(() => groupByMonth(purchases), [purchases]);
+
   return (
     <div className="min-h-screen bg-background p-4 sm:p-6">
       <div className="max-w-2xl mx-auto">
         <PageHeader title="المشتريات" subtitle={`الإجمالي: ${getTotalPurchases().toLocaleString()} ر.س`} backTo="/" />
 
-        {/* Report buttons */}
         {purchases.length > 0 && (
           <div className="flex gap-2 mb-4">
             <Button variant="outline" className="flex-1 gap-2 h-10 border-info/30 text-info hover:bg-info/10" onClick={() => generatePurchasesReport(purchases)}>
@@ -55,18 +57,24 @@ const PurchasesPage = () => {
           </DialogContent>
         </Dialog>
 
-        <div className="space-y-3">
-          {purchases.length === 0 && <p className="text-center text-muted-foreground py-8">لا توجد مشتريات مسجلة</p>}
-          {purchases.map(p => (
-            <div key={p.id} className="rounded-xl bg-card p-4 card-shadow flex justify-between items-center">
-              <div>
-                <p className="font-semibold text-card-foreground">{p.description}</p>
-                <p className="text-xs text-muted-foreground">{p.date} • {p.quantity} قطعة</p>
-              </div>
-              <span className="font-bold text-info">{p.amount.toLocaleString()} ر.س</span>
-            </div>
-          ))}
-        </div>
+        {purchases.length === 0 && <p className="text-center text-muted-foreground py-8">لا توجد مشتريات مسجلة</p>}
+
+        {Object.entries(monthlyGroups).map(([monthKey, monthPurchases]) => {
+          const monthTotal = monthPurchases.reduce((s, x) => s + x.amount, 0);
+          return (
+            <MonthlyGroup key={monthKey} monthKey={monthKey} total={monthTotal} count={monthPurchases.length} variant="purchases">
+              {monthPurchases.map(p => (
+                <div key={p.id} className="rounded-xl bg-card p-4 card-shadow flex justify-between items-center">
+                  <div>
+                    <p className="font-semibold text-card-foreground">{p.description}</p>
+                    <p className="text-xs text-muted-foreground">{p.date} • {p.quantity} قطعة</p>
+                  </div>
+                  <span className="font-bold text-info">{p.amount.toLocaleString()} ر.س</span>
+                </div>
+              ))}
+            </MonthlyGroup>
+          );
+        })}
       </div>
     </div>
   );

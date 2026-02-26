@@ -1,7 +1,7 @@
-import { useState } from 'react';
+import { useState, useMemo } from 'react';
 import PageHeader from '@/components/PageHeader';
 import { useLivestock } from '@/context/LivestockContext';
-import { CATEGORY_LABELS, FATE_LABELS, type OffspringFate } from '@/types/animals';
+import { CATEGORY_LABELS, SUB_CATEGORY_LABELS, FATE_LABELS, type OffspringFate } from '@/types/animals';
 import { SavedReport, ReportData, BreedBreakdown } from '@/types/reports';
 import { Fence, TrendingUp, TrendingDown, Receipt, ShoppingCart, Baby, Download, Save, FileText } from 'lucide-react';
 import { Button } from '@/components/ui/button';
@@ -50,6 +50,22 @@ const SummaryPage = () => {
   const salesCount = sales.length;
   const salesQuantity = sales.reduce((s, x) => s + x.quantity, 0);
   const avgSalePrice = salesCount > 0 ? totalSales / salesQuantity : 0;
+
+  // Sales breakdown by breed
+  const salesByBreed = useMemo(() => {
+    const map: Record<string, { total: number; qty: number; bySubCat: Record<string, { total: number; qty: number }> }> = {};
+    sales.forEach(s => {
+      const breed = s.animalBreed || 'غير محدد';
+      if (!map[breed]) map[breed] = { total: 0, qty: 0, bySubCat: {} };
+      map[breed].total += s.amount;
+      map[breed].qty += s.quantity;
+      const sub = s.animalSubCategory || 'غير محدد';
+      if (!map[breed].bySubCat[sub]) map[breed].bySubCat[sub] = { total: 0, qty: 0 };
+      map[breed].bySubCat[sub].total += s.amount;
+      map[breed].bySubCat[sub].qty += s.quantity;
+    });
+    return map;
+  }, [sales]);
 
   // Purchases count & avg
   const purchasesCount = purchases.length;
@@ -169,12 +185,32 @@ const SummaryPage = () => {
 
         {/* المبيعات */}
         <SectionTitle icon={<TrendingUp className="w-5 h-5 text-success" />} title="المبيعات" />
-        <div className="grid grid-cols-2 gap-3 mb-6">
+        <div className="grid grid-cols-2 gap-3 mb-3">
           <StatCard label="إجمالي المبيعات" value={totalSales.toLocaleString()} unit="ر.س" className="text-success" />
           <StatCard label="عدد عمليات البيع" value={`${salesCount}`} />
           <StatCard label="عدد الرؤوس المباعة" value={`${salesQuantity}`} unit="رأس" />
           <StatCard label="متوسط سعر البيع" value={avgSalePrice > 0 ? avgSalePrice.toLocaleString(undefined, { maximumFractionDigits: 0 }) : '0'} unit="ر.س" />
         </div>
+        {/* تفصيل المبيعات حسب السلالة */}
+        {Object.keys(salesByBreed).length > 0 && (
+          <div className="space-y-2 mb-6">
+            {Object.entries(salesByBreed).map(([breed, data]) => (
+              <div key={breed} className="rounded-xl bg-card p-3 card-shadow">
+                <div className="flex justify-between items-center mb-2">
+                  <span className="text-sm font-bold text-card-foreground">{CATEGORY_LABELS[breed] || breed}</span>
+                  <span className="text-sm font-bold text-success">{data.total.toLocaleString()} ر.س ({data.qty} رأس)</span>
+                </div>
+                <div className="flex flex-wrap gap-2">
+                  {Object.entries(data.bySubCat).map(([sub, subData]) => (
+                    <span key={sub} className="text-xs bg-muted px-2 py-1 rounded-full text-muted-foreground">
+                      {SUB_CATEGORY_LABELS[sub as keyof typeof SUB_CATEGORY_LABELS] || sub}: {subData.qty} رأس • {subData.total.toLocaleString()} ر.س
+                    </span>
+                  ))}
+                </div>
+              </div>
+            ))}
+          </div>
+        )}
 
         {/* المشتريات */}
         <SectionTitle icon={<ShoppingCart className="w-5 h-5 text-info" />} title="المشتريات" />

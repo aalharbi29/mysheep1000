@@ -1,4 +1,4 @@
-import { useState } from 'react';
+import { useState, useMemo } from 'react';
 import PageHeader from '@/components/PageHeader';
 import { useLivestock } from '@/context/LivestockContext';
 import { CATEGORY_LABELS, SUB_CATEGORY_LABELS } from '@/types/animals';
@@ -10,11 +10,11 @@ import { Plus, Undo2, RefreshCw, FileText, Image } from 'lucide-react';
 import { toast } from '@/hooks/use-toast';
 import { generateSalesReport, downloadSectionReportAsImage } from '@/lib/generateSectionReport';
 import AddSaleWizard from '@/components/AddSaleWizard';
+import MonthlyGroup, { groupByMonth } from '@/components/MonthlyGroup';
 
 const SalesPage = () => {
   const { sales, addSale, updateSale, cancelSale, getTotalSales } = useLivestock();
   const [open, setOpen] = useState(false);
-
   const [updateOpen, setUpdateOpen] = useState(false);
   const [selectedSale, setSelectedSale] = useState<string | null>(null);
   const [newPayment, setNewPayment] = useState('');
@@ -40,6 +40,8 @@ const SalesPage = () => {
   const totalDebts = sales.filter(s => s.paymentType === 'debt' && s.remaining > 0);
   const totalDebtAmount = totalDebts.reduce((sum, s) => sum + s.remaining, 0);
 
+  const monthlyGroups = useMemo(() => groupByMonth(sales), [sales]);
+
   return (
     <div className="min-h-screen bg-background p-4 sm:p-6">
       <div className="max-w-2xl mx-auto">
@@ -51,7 +53,6 @@ const SalesPage = () => {
           </div>
         )}
 
-        {/* Report buttons */}
         {sales.length > 0 && (
           <div className="flex gap-2 mb-4">
             <Button variant="outline" className="flex-1 gap-2 h-10 border-primary/30 text-primary hover:bg-primary/10" onClick={() => generateSalesReport(sales)}>
@@ -79,58 +80,67 @@ const SalesPage = () => {
           </DialogContent>
         </Dialog>
 
-        <div className="space-y-3">
-          {sales.length === 0 && <p className="text-center text-muted-foreground py-8">لا توجد مبيعات مسجلة</p>}
-          {sales.map(s => (
-            <div key={s.id} className="rounded-xl bg-card p-4 card-shadow">
-              <div className="flex justify-between items-start">
-                <div>
-                  <p className="font-semibold text-card-foreground">{s.description}</p>
-                  <p className="text-xs text-muted-foreground">{s.date} • {s.quantity} رأس</p>
-                  {s.buyer && <p className="text-xs text-muted-foreground">المشتري: {s.buyer}</p>}
-                  {s.animalBreed && <p className="text-xs text-muted-foreground">السلالة: {CATEGORY_LABELS[s.animalBreed] || s.animalBreed}</p>}
-                  {s.animalSubCategory && <p className="text-xs text-muted-foreground">القسم: {SUB_CATEGORY_LABELS[s.animalSubCategory] || s.animalSubCategory}</p>}
-                  {s.paymentType === 'debt' && (
-                    <div className="mt-1 text-xs">
-                      <span className="text-muted-foreground">مقبوض: {s.amountPaid.toLocaleString()}</span>
-                      {s.remaining > 0 && (
-                        <span className="text-destructive font-bold mr-2"> • متبقي: {s.remaining.toLocaleString()} ر.س</span>
+        {sales.length === 0 && <p className="text-center text-muted-foreground py-8">لا توجد مبيعات مسجلة</p>}
+
+        {Object.entries(monthlyGroups).map(([monthKey, monthSales]) => {
+          const monthTotal = monthSales.reduce((s, x) => s + x.amount, 0);
+          const monthPaid = monthSales.reduce((s, x) => s + x.amountPaid, 0);
+          const monthRemaining = monthSales.reduce((s, x) => s + x.remaining, 0);
+
+          return (
+            <MonthlyGroup
+              key={monthKey}
+              monthKey={monthKey}
+              total={monthTotal}
+              paid={monthPaid}
+              remaining={monthRemaining}
+              count={monthSales.length}
+              variant="sales"
+            >
+              {monthSales.map(s => (
+                <div key={s.id} className="rounded-xl bg-card p-4 card-shadow">
+                  <div className="flex justify-between items-start">
+                    <div>
+                      <p className="font-semibold text-card-foreground">{s.description}</p>
+                      <p className="text-xs text-muted-foreground">{s.date} • {s.quantity} رأس</p>
+                      {s.buyer && <p className="text-xs text-muted-foreground">المشتري: {s.buyer}</p>}
+                      {s.animalBreed && <p className="text-xs text-muted-foreground">السلالة: {CATEGORY_LABELS[s.animalBreed] || s.animalBreed}</p>}
+                      {s.animalSubCategory && <p className="text-xs text-muted-foreground">القسم: {SUB_CATEGORY_LABELS[s.animalSubCategory] || s.animalSubCategory}</p>}
+                      {s.paymentType === 'debt' && (
+                        <div className="mt-1 text-xs">
+                          <span className="text-muted-foreground">مقبوض: {s.amountPaid.toLocaleString()}</span>
+                          {s.remaining > 0 && (
+                            <span className="text-destructive font-bold mr-2"> • متبقي: {s.remaining.toLocaleString()} ر.س</span>
+                          )}
+                        </div>
                       )}
                     </div>
-                  )}
-                </div>
-                <div className="text-left">
-                  <span className="font-bold text-success">{s.amount.toLocaleString()} ر.س</span>
-                  <div className="flex items-center gap-1 mt-1">
-                    <span className={`text-[10px] px-2 py-0.5 rounded-full ${s.paymentType === 'cash' ? 'bg-primary/10 text-primary' : 'bg-destructive/10 text-destructive'}`}>
-                      {s.paymentType === 'cash' ? 'نقد' : 'دين'}
-                    </span>
-                  </div>
-                  <div className="flex gap-1 mt-2">
-                    {s.paymentType === 'debt' && s.remaining > 0 && (
-                      <Button
-                        size="sm"
-                        variant="default"
-                        className="h-8 text-xs px-3 gap-1 bg-primary hover:bg-primary/90"
-                        onClick={() => { setSelectedSale(s.id); setUpdateOpen(true); }}
-                      >
-                        <RefreshCw className="w-3 h-3" /> تحديث
-                      </Button>
-                    )}
-                    <Button
-                      size="sm"
-                      variant="destructive"
-                      className="h-8 text-xs px-3 gap-1"
-                      onClick={() => handleCancelSale(s.id)}
-                    >
-                      <Undo2 className="w-3 h-3" /> إلغاء
-                    </Button>
+                    <div className="text-left">
+                      <span className="font-bold text-success">{s.amount.toLocaleString()} ر.س</span>
+                      <div className="flex items-center gap-1 mt-1">
+                        <span className={`text-[10px] px-2 py-0.5 rounded-full ${s.paymentType === 'cash' ? 'bg-primary/10 text-primary' : 'bg-destructive/10 text-destructive'}`}>
+                          {s.paymentType === 'cash' ? 'نقد' : 'دين'}
+                        </span>
+                      </div>
+                      <div className="flex gap-1 mt-2">
+                        {s.paymentType === 'debt' && s.remaining > 0 && (
+                          <Button size="sm" variant="default" className="h-8 text-xs px-3 gap-1 bg-primary hover:bg-primary/90"
+                            onClick={() => { setSelectedSale(s.id); setUpdateOpen(true); }}>
+                            <RefreshCw className="w-3 h-3" /> تحديث
+                          </Button>
+                        )}
+                        <Button size="sm" variant="destructive" className="h-8 text-xs px-3 gap-1"
+                          onClick={() => handleCancelSale(s.id)}>
+                          <Undo2 className="w-3 h-3" /> إلغاء
+                        </Button>
+                      </div>
+                    </div>
                   </div>
                 </div>
-              </div>
-            </div>
-          ))}
-        </div>
+              ))}
+            </MonthlyGroup>
+          );
+        })}
       </div>
     </div>
   );
