@@ -75,7 +75,7 @@ const AnimalGrid = ({ breed, category, subCategory }: AnimalGridProps) => {
 
   return (
     <>
-      <div className="grid grid-cols-3 sm:grid-cols-4 md:grid-cols-5 gap-3 opacity-100 shadow-xl py-0 my-[20px] mx-[50px] mt-[100px] mb-0 rounded">
+      <div className="grid grid-cols-3 sm:grid-cols-4 md:grid-cols-5 gap-3 opacity-100 shadow-xl py-0 my-[20px] mt-[100px] mb-0 rounded mx-[5px]">
         {filtered.length === 0 &&
         <p className="col-span-full text-center text-muted-foreground my-0 py-[10px] mx-[15px]">
             لا توجد بطاقات في قسم {SUB_CATEGORY_LABELS[subCategory]}
