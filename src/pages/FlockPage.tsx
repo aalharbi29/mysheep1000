@@ -15,8 +15,8 @@ const FlockPage = () => {
   const { animals } = useLivestock();
 
   return (
-    <div className="min-h-screen bg-background p-4 sm:p-6 shadow-2xl rounded-3xl">
-      <div className="max-w-2xl mx-auto mt-[100px] pb-[15px]">
+    <div className="min-h-screen p-4 sm:p-6 shadow-2xl rounded-3xl bg-[#f7f1e9]">
+      <div className="max-w-2xl mx-auto mt-[100px] pb-[15px] bg-[#d3cfcf]">
         <PageHeader title="القطيع" subtitle="اختر نوع الماشية" backTo="/" />
 
         {/* Flock Report buttons */}
