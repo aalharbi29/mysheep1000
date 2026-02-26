@@ -1,7 +1,7 @@
 import { useNavigate } from 'react-router-dom';
 import { useLivestock } from '@/context/LivestockContext';
 import { useAuth } from '@/context/AuthContext';
-import { Fence, Receipt, ShoppingCart, TrendingUp, FileText, Archive, LogOut } from 'lucide-react';
+import { Fence, Receipt, ShoppingCart, TrendingUp, FileText, Archive, LogOut, Store } from 'lucide-react';
 import { Button } from '@/components/ui/button';
 
 const cards = [
@@ -10,7 +10,8 @@ const cards = [
 { id: 'sales', label: 'المبيعات', icon: TrendingUp, path: '/sales', gradient: 'from-success to-success/80' },
 { id: 'purchases', label: 'المشتريات', icon: ShoppingCart, path: '/purchases', gradient: 'from-info to-info/80' },
 { id: 'summary', label: 'الملخص', icon: FileText, path: '/summary', gradient: 'from-accent to-accent/80' },
-{ id: 'reports', label: 'التقارير', icon: Archive, path: '/reports', gradient: 'from-muted-foreground/60 to-muted-foreground/40' }];
+{ id: 'reports', label: 'التقارير', icon: Archive, path: '/reports', gradient: 'from-muted-foreground/60 to-muted-foreground/40' },
+{ id: 'market', label: 'السوق', icon: Store, path: '/market', gradient: 'from-orange-500 to-orange-400' }];
 
 
 const Dashboard = () => {
@@ -27,7 +28,8 @@ const Dashboard = () => {
     sales: `${getTotalSales().toLocaleString()} ر.س`,
     purchases: `${getTotalPurchases().toLocaleString()} ر.س`,
     summary: 'عرض التقرير',
-    reports: 'التقارير المحفوظة'
+    reports: 'التقارير المحفوظة',
+    market: 'بيع وشراء'
   };
 
   return (

@@ -24,6 +24,10 @@ import SummarySalesPage from "./pages/SummarySalesPage";
 import SummaryPurchasesPage from "./pages/SummaryPurchasesPage";
 import SummaryExpensesPage from "./pages/SummaryExpensesPage";
 import ReportsPage from "./pages/ReportsPage";
+import MarketPage from "./pages/MarketPage";
+import MarketSellPage from "./pages/MarketSellPage";
+import MarketBuyPage from "./pages/MarketBuyPage";
+import SellLivestockPage from "./pages/SellLivestockPage";
 import NotFound from "./pages/NotFound";
 import { Loader2 } from "lucide-react";
 
@@ -69,6 +73,10 @@ function AppContent() {
           <Route path="/summary/purchases" element={<SummaryPurchasesPage />} />
           <Route path="/summary/expenses" element={<SummaryExpensesPage />} />
           <Route path="/reports" element={<ReportsPage />} />
+          <Route path="/market" element={<MarketPage />} />
+          <Route path="/market/sell" element={<MarketSellPage />} />
+          <Route path="/market/buy" element={<MarketBuyPage />} />
+          <Route path="/market/sell/livestock" element={<SellLivestockPage />} />
           <Route path="*" element={<NotFound />} />
         </Routes>
       </BrowserRouter>
