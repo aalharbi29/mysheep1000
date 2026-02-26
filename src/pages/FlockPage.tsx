@@ -29,14 +29,14 @@ const FlockPage = () => {
           </Button>
         </div>
 
-        <div className="grid grid-cols-2 gap-4">
+        <div className="grid grid-cols-2 gap-4 mx-0">
           {categories.map((cat) => {
             const count = animals.filter((a) => a.category === cat.id && a.status !== 'dead' && a.confirmed === true).length;
             return (
               <button
                 key={cat.id}
                 onClick={() => navigate(cat.path)}
-                className="rounded-xl p-6 text-center transition-all duration-200 card-shadow hover:card-shadow-hover hover:scale-[1.02] active:scale-[0.98] bg-[#dad0c8] mx-[5px]">
+                className="rounded-xl p-6 text-center transition-all duration-200 card-shadow hover:card-shadow-hover hover:scale-[1.02] active:scale-[0.98] bg-[#dad0c8] mx-[10px] px-[5px]">
 
                 <span className="text-5xl block mb-3">{cat.emoji}</span>
                 <h2 className="text-xl font-bold text-card-foreground">{cat.label}</h2>
