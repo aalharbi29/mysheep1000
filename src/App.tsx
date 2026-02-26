@@ -18,6 +18,11 @@ import ExpensesPage from "./pages/ExpensesPage";
 import SalesPage from "./pages/SalesPage";
 import PurchasesPage from "./pages/PurchasesPage";
 import SummaryPage from "./pages/SummaryPage";
+import SummaryFlockPage from "./pages/SummaryFlockPage";
+import SummaryBirthsPage from "./pages/SummaryBirthsPage";
+import SummarySalesPage from "./pages/SummarySalesPage";
+import SummaryPurchasesPage from "./pages/SummaryPurchasesPage";
+import SummaryExpensesPage from "./pages/SummaryExpensesPage";
 import ReportsPage from "./pages/ReportsPage";
 import NotFound from "./pages/NotFound";
 import { Loader2 } from "lucide-react";
@@ -58,6 +63,11 @@ function AppContent() {
           <Route path="/sales" element={<SalesPage />} />
           <Route path="/purchases" element={<PurchasesPage />} />
           <Route path="/summary" element={<SummaryPage />} />
+          <Route path="/summary/flock" element={<SummaryFlockPage />} />
+          <Route path="/summary/births" element={<SummaryBirthsPage />} />
+          <Route path="/summary/sales" element={<SummarySalesPage />} />
+          <Route path="/summary/purchases" element={<SummaryPurchasesPage />} />
+          <Route path="/summary/expenses" element={<SummaryExpensesPage />} />
           <Route path="/reports" element={<ReportsPage />} />
           <Route path="*" element={<NotFound />} />
         </Routes>
