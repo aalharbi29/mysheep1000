@@ -12,56 +12,56 @@ const SummaryPage = () => {
   const totalPurchases = getTotalPurchases();
   const net = totalSales - totalExpenses - totalPurchases;
 
-  const confirmedAnimals = animals.filter(a => a.confirmed);
-  const aliveCount = confirmedAnimals.filter(a => a.status !== 'dead').length;
-  const totalBirths = confirmedAnimals.flatMap(a => a.birthRecords.flatMap(r => r.offspring)).length;
+  const confirmedAnimals = animals.filter((a) => a.confirmed);
+  const aliveCount = confirmedAnimals.filter((a) => a.status !== 'dead').length;
+  const totalBirths = confirmedAnimals.flatMap((a) => a.birthRecords.flatMap((r) => r.offspring)).length;
 
   const cards = [
-    {
-      title: 'إحصائيات القطيع',
-      icon: <Fence className="w-7 h-7" />,
-      value: `${aliveCount} رأس`,
-      color: 'bg-primary/10 text-primary',
-      iconColor: 'text-primary',
-      route: '/summary/flock',
-    },
-    {
-      title: 'المواليد',
-      icon: <Baby className="w-7 h-7" />,
-      value: `${totalBirths} مولود`,
-      color: 'bg-accent/10 text-accent-foreground',
-      iconColor: 'text-primary',
-      route: '/summary/births',
-    },
-    {
-      title: 'المبيعات',
-      icon: <TrendingUp className="w-7 h-7" />,
-      value: `${totalSales.toLocaleString()} ر.س`,
-      color: 'bg-success/10 text-success',
-      iconColor: 'text-success',
-      route: '/summary/sales',
-    },
-    {
-      title: 'المشتريات',
-      icon: <ShoppingCart className="w-7 h-7" />,
-      value: `${totalPurchases.toLocaleString()} ر.س`,
-      color: 'bg-info/10 text-info',
-      iconColor: 'text-info',
-      route: '/summary/purchases',
-    },
-    {
-      title: 'المصروفات',
-      icon: <Receipt className="w-7 h-7" />,
-      value: `${totalExpenses.toLocaleString()} ر.س`,
-      color: 'bg-destructive/10 text-destructive',
-      iconColor: 'text-destructive',
-      route: '/summary/expenses',
-    },
-  ];
+  {
+    title: 'إحصائيات القطيع',
+    icon: <Fence className="w-7 h-7" />,
+    value: `${aliveCount} رأس`,
+    color: 'bg-primary/10 text-primary',
+    iconColor: 'text-primary',
+    route: '/summary/flock'
+  },
+  {
+    title: 'المواليد',
+    icon: <Baby className="w-7 h-7" />,
+    value: `${totalBirths} مولود`,
+    color: 'bg-accent/10 text-accent-foreground',
+    iconColor: 'text-primary',
+    route: '/summary/births'
+  },
+  {
+    title: 'المبيعات',
+    icon: <TrendingUp className="w-7 h-7" />,
+    value: `${totalSales.toLocaleString()} ر.س`,
+    color: 'bg-success/10 text-success',
+    iconColor: 'text-success',
+    route: '/summary/sales'
+  },
+  {
+    title: 'المشتريات',
+    icon: <ShoppingCart className="w-7 h-7" />,
+    value: `${totalPurchases.toLocaleString()} ر.س`,
+    color: 'bg-info/10 text-info',
+    iconColor: 'text-info',
+    route: '/summary/purchases'
+  },
+  {
+    title: 'المصروفات',
+    icon: <Receipt className="w-7 h-7" />,
+    value: `${totalExpenses.toLocaleString()} ر.س`,
+    color: 'bg-destructive/10 text-destructive',
+    iconColor: 'text-destructive',
+    route: '/summary/expenses'
+  }];
+
 
   return (
     <div className="min-h-screen bg-background p-4 sm:p-6">
-      <div className="max-w-2xl mx-auto">
+      <div className="max-w-2xl mx-auto mt-[100px] pb-[15px]">
         <PageHeader title="الملخص" subtitle="تقرير شامل عن القطيع والمالية" backTo="/" />
 
         {/* Net Profit/Loss Hero */}
@@ -77,12 +77,12 @@ const SummaryPage = () => {
 
         {/* Category Cards */}
         <div className="space-y-3">
-          {cards.map(card => (
-            <button
-              key={card.route}
-              onClick={() => navigate(card.route)}
-              className={`w-full rounded-2xl p-5 card-shadow flex items-center gap-4 transition-transform active:scale-[0.98] ${card.color}`}
-            >
+          {cards.map((card) =>
+          <button
+            key={card.route}
+            onClick={() => navigate(card.route)}
+            className={`w-full rounded-2xl p-5 card-shadow flex items-center gap-4 transition-transform active:scale-[0.98] ${card.color}`}>
+
               <div className={`rounded-xl p-3 bg-background/60 ${card.iconColor}`}>
                 {card.icon}
               </div>
@@ -92,11 +92,11 @@ const SummaryPage = () => {
               </div>
               <span className="text-xl opacity-40">←</span>
             </button>
-          ))}
+          )}
         </div>
       </div>
-    </div>
-  );
+    </div>);
+
 };
 
 export default SummaryPage;
