@@ -17,7 +17,7 @@ const ExpensesPage = () => {
   const [open, setOpen] = useState(false);
   const [date, setDate] = useState(new Date().toISOString().split('T')[0]);
   const [selectedCategory, setSelectedCategory] = useState<ExpenseCategoryKey | ''>('');
-  const [items, setItems] = useState<{name: string; qty: string; price: string;}[]>([]);
+  const [items, setItems] = useState<{name: string;qty: string;price: string;}[]>([]);
   const [workerName, setWorkerName] = useState('');
   const [workerSalary, setWorkerSalary] = useState('');
   const [workerBonus, setWorkerBonus] = useState('');
@@ -25,7 +25,7 @@ const ExpensesPage = () => {
   const [tempAmount, setTempAmount] = useState('');
   const [customItem, setCustomItem] = useState('');
   const [customCategories, setCustomCategories] = useState<Record<string, string[]>>(() => {
-    try { return JSON.parse(localStorage.getItem('livestock_custom_expense_items') || '{}'); } catch { return {}; }
+    try {return JSON.parse(localStorage.getItem('livestock_custom_expense_items') || '{}');} catch {return {};}
   });
 
   const categoryData = selectedCategory ? EXPENSE_CATEGORIES[selectedCategory] : null;
@@ -44,7 +44,7 @@ const ExpensesPage = () => {
   const updateItem = (idx: number, field: 'qty' | 'price', value: string) => {
     setItems((prev) => prev.map((item, i) => i === idx ? { ...item, [field]: value } : item));
   };
-  const getItemTotal = (item: {qty: string; price: string;}) => (Number(item.qty) || 0) * (Number(item.price) || 0);
+  const getItemTotal = (item: {qty: string;price: string;}) => (Number(item.qty) || 0) * (Number(item.price) || 0);
   const grandTotal = items.reduce((sum, item) => sum + getItemTotal(item), 0);
 
   const handleAddCustomItem = () => {
@@ -85,15 +85,15 @@ const ExpensesPage = () => {
   };
 
   const resetForm = () => {
-    setSelectedCategory(''); setItems([]);
-    setWorkerName(''); setWorkerSalary(''); setWorkerBonus('');
-    setTempWorkType(''); setTempAmount('');
+    setSelectedCategory('');setItems([]);
+    setWorkerName('');setWorkerSalary('');setWorkerBonus('');
+    setTempWorkType('');setTempAmount('');
     setDate(new Date().toISOString().split('T')[0]);
   };
 
   const categoryTotals = useMemo(() => {
     const totals: Record<string, number> = {};
-    expenses.forEach((e) => { totals[e.category || 'أخرى'] = (totals[e.category || 'أخرى'] || 0) + e.amount; });
+    expenses.forEach((e) => {totals[e.category || 'أخرى'] = (totals[e.category || 'أخرى'] || 0) + e.amount;});
     return totals;
   }, [expenses]);
 
@@ -101,28 +101,28 @@ const ExpensesPage = () => {
 
   return (
     <div className="min-h-screen bg-background p-4 sm:p-6 rounded-3xl">
-      <div className="max-w-2xl mx-auto my-[30px] pb-[50px]">
+      <div className="max-w-2xl mx-auto my-[30px] mt-[100px] pb-[15px]">
         <PageHeader title="المصروفات" subtitle={`الإجمالي: ${getTotalExpenses().toLocaleString()} ر.س`} backTo="/" />
 
-        {Object.keys(categoryTotals).length > 0 && (
-          <div className="grid grid-cols-2 gap-2 mb-4">
+        {Object.keys(categoryTotals).length > 0 &&
+        <div className="grid grid-cols-2 gap-2 mb-4">
             {Object.entries(categoryTotals).sort(([, a], [, b]) => b - a).map(([cat, total]) => {
-              const catInfo = Object.values(EXPENSE_CATEGORIES).find((c) => c.label === cat);
-              return (
-                <div key={cat} className="rounded-xl bg-card p-3 card-shadow">
+            const catInfo = Object.values(EXPENSE_CATEGORIES).find((c) => c.label === cat);
+            return (
+              <div key={cat} className="rounded-xl bg-card p-3 card-shadow">
                   <div className="flex items-center gap-1 mb-1">
                     <span>{catInfo?.icon || '📋'}</span>
                     <span className="text-xs text-muted-foreground">{cat}</span>
                   </div>
                   <p className="text-lg font-bold text-destructive">{total.toLocaleString()} <span className="text-xs font-normal">ر.س</span></p>
-                </div>
-              );
-            })}
-          </div>
-        )}
+                </div>);
 
-        {expenses.length > 0 && (
-          <div className="flex gap-2 mb-4">
+          })}
+          </div>
+        }
+
+        {expenses.length > 0 &&
+        <div className="flex gap-2 mb-4">
             <Button variant="outline" className="flex-1 gap-2 h-10 border-destructive/30 text-destructive hover:bg-destructive/10" onClick={() => generateExpensesReport(expenses)}>
               <FileText className="w-4 h-4" /> تقرير PDF
             </Button>
@@ -130,9 +130,9 @@ const ExpensesPage = () => {
               <Image className="w-4 h-4" /> تقرير صورة
             </Button>
           </div>
-        )}
+        }
 
-        <Dialog open={open} onOpenChange={(o) => { setOpen(o); if (!o) resetForm(); }}>
+        <Dialog open={open} onOpenChange={(o) => {setOpen(o);if (!o) resetForm();}}>
           <DialogTrigger asChild>
             <Button className="w-full mb-4 gap-2 h-12 text-base"><Plus className="w-5 h-5" /> إضافة مصروف</Button>
           </DialogTrigger>
@@ -142,69 +142,69 @@ const ExpensesPage = () => {
               <div><Label>التاريخ</Label><Input type="date" value={date} onChange={(e) => setDate(e.target.value)} /></div>
               <div>
                 <Label>نوع الصرف</Label>
-                <Select value={selectedCategory} onValueChange={(v) => { setSelectedCategory(v as ExpenseCategoryKey); setItems([]); }}>
+                <Select value={selectedCategory} onValueChange={(v) => {setSelectedCategory(v as ExpenseCategoryKey);setItems([]);}}>
                   <SelectTrigger><SelectValue placeholder="اختر نوع الصرف" /></SelectTrigger>
                   <SelectContent>
                     {(Object.keys(EXPENSE_CATEGORIES) as ExpenseCategoryKey[]).map((key) =>
-                      <SelectItem key={key} value={key}>{EXPENSE_CATEGORIES[key].icon} {EXPENSE_CATEGORIES[key].label}</SelectItem>
+                    <SelectItem key={key} value={key}>{EXPENSE_CATEGORIES[key].icon} {EXPENSE_CATEGORIES[key].label}</SelectItem>
                     )}
                   </SelectContent>
                 </Select>
               </div>
 
-              {selectedCategory === 'permanentLabor' && (
-                <div className="space-y-3 rounded-xl bg-muted/50 p-3">
+              {selectedCategory === 'permanentLabor' &&
+              <div className="space-y-3 rounded-xl bg-muted/50 p-3">
                   <div><Label>اسم العامل</Label><Input value={workerName} onChange={(e) => setWorkerName(e.target.value)} placeholder="مثال: محمد" /></div>
                   <div><Label>الراتب الشهري</Label><Input type="number" value={workerSalary} onChange={(e) => setWorkerSalary(e.target.value)} placeholder="0" /></div>
                   <div><Label>حافز (اختياري)</Label><Input type="number" value={workerBonus} onChange={(e) => setWorkerBonus(e.target.value)} placeholder="0" /></div>
                   {workerSalary && <div className="text-left font-bold text-primary">الإجمالي: {(Number(workerSalary) + Number(workerBonus || 0)).toLocaleString()} ر.س</div>}
                 </div>
-              )}
+              }
 
-              {selectedCategory === 'tempLabor' && (
-                <div className="space-y-3 rounded-xl bg-muted/50 p-3">
+              {selectedCategory === 'tempLabor' &&
+              <div className="space-y-3 rounded-xl bg-muted/50 p-3">
                   <div>
                     <Label>نوع العمل</Label>
                     <Select value={tempWorkType} onValueChange={setTempWorkType}>
                       <SelectTrigger><SelectValue placeholder="اختر نوع العمل" /></SelectTrigger>
                       <SelectContent>
                         {[...EXPENSE_CATEGORIES.tempLabor.items, ...(customCategories.tempLabor || [])].map((item) =>
-                          <SelectItem key={item} value={item}>{item}</SelectItem>
-                        )}
+                      <SelectItem key={item} value={item}>{item}</SelectItem>
+                      )}
                       </SelectContent>
                     </Select>
                   </div>
                   <div className="flex gap-2 items-end">
                     <div className="flex-1"><Label>إضافة نوع عمل جديد</Label><Input value={customItem} onChange={(e) => setCustomItem(e.target.value)} placeholder="نوع عمل آخر" /></div>
-                    <Button size="sm" variant="outline" onClick={() => { if (customItem.trim()) { handleAddCustomItem(); setTempWorkType(customItem.trim()); } }}>إضافة</Button>
+                    <Button size="sm" variant="outline" onClick={() => {if (customItem.trim()) {handleAddCustomItem();setTempWorkType(customItem.trim());}}}>إضافة</Button>
                   </div>
                   <div><Label>المبلغ</Label><Input type="number" value={tempAmount} onChange={(e) => setTempAmount(e.target.value)} placeholder="0" /></div>
                 </div>
-              )}
+              }
 
-              {selectedCategory && !['permanentLabor', 'tempLabor'].includes(selectedCategory) && (
-                <div className="space-y-3">
+              {selectedCategory && !['permanentLabor', 'tempLabor'].includes(selectedCategory) &&
+              <div className="space-y-3">
                   <Label>اختر الأصناف</Label>
                   <div className="flex flex-wrap gap-2">
                     {allItemsForCategory.map((item) => {
-                      const isSelected = items.find((i) => i.name === item);
-                      return (
-                        <button key={item} onClick={() => isSelected ? removeItem(items.findIndex((i) => i.name === item)) : addItem(item)}
-                          className={`px-3 py-1.5 rounded-full text-sm border transition-colors ${isSelected ? 'bg-primary text-primary-foreground border-primary' : 'bg-card border-border text-foreground hover:border-primary/50'}`}>
+                    const isSelected = items.find((i) => i.name === item);
+                    return (
+                      <button key={item} onClick={() => isSelected ? removeItem(items.findIndex((i) => i.name === item)) : addItem(item)}
+                      className={`px-3 py-1.5 rounded-full text-sm border transition-colors ${isSelected ? 'bg-primary text-primary-foreground border-primary' : 'bg-card border-border text-foreground hover:border-primary/50'}`}>
                           {item}
-                        </button>
-                      );
-                    })}
+                        </button>);
+
+                  })}
                   </div>
                   <div className="flex gap-2 items-end">
                     <div className="flex-1"><Label>إضافة صنف جديد</Label><Input value={customItem} onChange={(e) => setCustomItem(e.target.value)} placeholder="صنف غير موجود" /></div>
                     <Button size="sm" variant="outline" onClick={handleAddCustomItem}><Plus className="w-4 h-4" /></Button>
                   </div>
-                  {items.length > 0 && (
-                    <div className="space-y-2 mt-3">
+                  {items.length > 0 &&
+                <div className="space-y-2 mt-3">
                       <Label>تفاصيل الأصناف المحددة</Label>
                       {items.map((item, idx) =>
-                        <div key={item.name} className="rounded-lg bg-card border border-border p-3 space-y-2">
+                  <div key={item.name} className="rounded-lg bg-card border border-border p-3 space-y-2">
                           <div className="flex justify-between items-center">
                             <span className="font-semibold text-sm text-foreground">{item.name}</span>
                             <button onClick={() => removeItem(idx)} className="text-destructive hover:text-destructive/80"><Trash2 className="w-4 h-4" /></button>
@@ -215,24 +215,24 @@ const ExpensesPage = () => {
                             <div><Label className="text-xs">الإجمالي</Label><div className="h-8 flex items-center text-sm font-bold text-primary">{getItemTotal(item).toLocaleString()} ر.س</div></div>
                           </div>
                         </div>
-                      )}
-                    </div>
                   )}
+                    </div>
+                }
                 </div>
-              )}
+              }
 
-              {selectedCategory && !['permanentLabor', 'tempLabor'].includes(selectedCategory) && items.length > 0 && (
-                <div className="rounded-xl bg-primary/10 p-4 text-center">
+              {selectedCategory && !['permanentLabor', 'tempLabor'].includes(selectedCategory) && items.length > 0 &&
+              <div className="rounded-xl bg-primary/10 p-4 text-center">
                   <p className="text-sm text-muted-foreground mb-1">الإجمالي الكلي</p>
                   <p className="text-2xl font-extrabold text-primary">{grandTotal.toLocaleString()} ر.س</p>
                 </div>
-              )}
+              }
 
               <Button onClick={handleSave} className="w-full h-12 text-base" disabled={
-                !selectedCategory || !date ||
-                (selectedCategory === 'permanentLabor' && (!workerName || !workerSalary)) ||
-                (selectedCategory === 'tempLabor' && (!tempWorkType || !tempAmount)) ||
-                (!['permanentLabor', 'tempLabor'].includes(selectedCategory) && items.length === 0)
+              !selectedCategory || !date ||
+              selectedCategory === 'permanentLabor' && (!workerName || !workerSalary) ||
+              selectedCategory === 'tempLabor' && (!tempWorkType || !tempAmount) ||
+              !['permanentLabor', 'tempLabor'].includes(selectedCategory) && items.length === 0
               }>
                 <ShoppingCart className="w-5 h-5 ml-2" /> حفظ المصروفات
               </Button>
@@ -258,23 +258,23 @@ const ExpensesPage = () => {
                         </div>
                         <p className="font-semibold text-card-foreground">{e.description}</p>
                         <p className="text-xs text-muted-foreground mt-1">{e.date}</p>
-                        {e.items && e.items.length > 0 && (
-                          <p className="text-xs text-muted-foreground">
+                        {e.items && e.items.length > 0 &&
+                        <p className="text-xs text-muted-foreground">
                             {e.items.map((i) => `${i.itemName} (${i.quantity}×${i.unitPrice.toLocaleString()})`).join(' • ')}
                           </p>
-                        )}
+                        }
                       </div>
                       <span className="font-bold text-destructive whitespace-nowrap mr-2">{e.amount.toLocaleString()} ر.س</span>
                     </div>
-                  </div>
-                );
+                  </div>);
+
               })}
-            </MonthlyGroup>
-          );
+            </MonthlyGroup>);
+
         })}
       </div>
-    </div>
-  );
+    </div>);
+
 };
 
 export default ExpensesPage;
