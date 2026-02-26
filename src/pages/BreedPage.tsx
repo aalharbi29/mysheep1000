@@ -19,7 +19,7 @@ const BreedPage = () => {
       <div className="max-w-2xl mx-auto mt-[100px] pb-[15px] bg-[#d3cfcf] shadow-2xl rounded-3xl">
         <PageHeader title={title} subtitle="اختر السلالة" backTo="/flock" />
 
-        <div className="grid grid-cols-2 gap-4">
+        <div className="grid grid-cols-2 gap-4 rounded-3xl">
           {breeds.map((breed) => {
             return (
               <button

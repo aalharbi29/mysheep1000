@@ -19,7 +19,7 @@ const PageHeader = ({ title, subtitle, backTo }: PageHeaderProps) => {
           رجوع <ArrowRight className="w-5 h-5 text-primary" />
         </button>
       }
-      <h1 className="text-foreground font-extrabold text-center mx-[50px] text-xl">{title}</h1>
+      <h1 className="text-foreground font-extrabold text-center mx-[50px] text-3xl">{title}</h1>
       {subtitle && <p className="text-muted-foreground mt-1 text-center mx-[50px] mb-[5px] mr-[50px] font-extrabold text-sm">{subtitle}</p>}
     </header>);
 
