@@ -27,7 +27,7 @@ const PurchasesPage = () => {
 
   return (
     <div className="min-h-screen bg-background p-4 sm:p-6">
-      <div className="max-w-2xl mx-auto pt-0 mb-0 rounded-3xl pb-[15px] shadow-2xl mt-[100px]">
+      <div className="max-w-2xl pt-0 mb-0 rounded-3xl pb-[15px] shadow-2xl mt-[100px] mx-0 px-[5px]">
         <PageHeader title="المشتريات" subtitle={`الإجمالي: ${getTotalPurchases().toLocaleString()} ر.س`} backTo="/" />
 
         {purchases.length > 0 &&
