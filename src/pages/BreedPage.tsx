@@ -25,7 +25,7 @@ const BreedPage = () => {
               <button
                 key={breed.id}
                 onClick={() => navigate(`${basePath}/${breed.id}`)}
-                className="rounded-xl bg-card p-6 text-center transition-all duration-200 card-shadow hover:card-shadow-hover hover:scale-[1.02] active:scale-[0.98] shadow-2xl">
+                className="rounded-xl p-6 text-center transition-all duration-200 card-shadow hover:card-shadow-hover hover:scale-[1.02] active:scale-[0.98] shadow-2xl bg-[#dad0c8]">
 
                 <span className="text-4xl block mb-3">{emoji}</span>
                 <h2 className="text-xl font-bold text-card-foreground">{breed.label}</h2>
