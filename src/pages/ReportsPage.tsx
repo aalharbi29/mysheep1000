@@ -16,7 +16,7 @@ function loadReports(): SavedReport[] {
 }
 
 function deleteReport(id: string) {
-  const reports = loadReports().filter(r => r.id !== id);
+  const reports = loadReports().filter((r) => r.id !== id);
   localStorage.setItem('livestock_reports', JSON.stringify(reports));
   return reports;
 }
@@ -32,16 +32,16 @@ const ReportsPage = () => {
   };
 
   const toggleCompare = (id: string) => {
-    setSelectedForCompare(prev => {
+    setSelectedForCompare((prev) => {
       const next = new Set(prev);
-      if (next.has(id)) next.delete(id);
-      else next.add(id);
+      if (next.has(id)) next.delete(id);else
+      next.add(id);
       return next;
     });
   };
 
   const handleCompare = async () => {
-    const selected = reports.filter(r => selectedForCompare.has(r.id)).sort((a, b) => a.year - b.year);
+    const selected = reports.filter((r) => selectedForCompare.has(r.id)).sort((a, b) => a.year - b.year);
     if (selected.length < 2) {
       toast({ title: 'اختر تقريرين على الأقل للمقارنة', variant: 'destructive' });
       return;
@@ -52,37 +52,37 @@ const ReportsPage = () => {
 
   return (
     <div className="min-h-screen bg-background p-4 sm:p-6">
-      <div className="max-w-2xl mx-auto">
+      <div className="max-w-2xl mx-auto mt-[100px] pb-[15px]">
         <PageHeader title="التقارير المحفوظة" subtitle={`${reports.length} تقرير`} backTo="/" />
 
-        {selectedForCompare.size >= 2 && (
-          <Button onClick={handleCompare} className="w-full mb-4 gap-2" variant="default">
+        {selectedForCompare.size >= 2 &&
+        <Button onClick={handleCompare} className="w-full mb-4 gap-2" variant="default">
             <GitCompare className="w-4 h-4" /> مقارنة {selectedForCompare.size} تقارير (PDF)
           </Button>
-        )}
+        }
 
-        {reports.length === 0 && (
-          <div className="text-center py-16">
+        {reports.length === 0 &&
+        <div className="text-center py-16">
             <FileText className="w-12 h-12 text-muted-foreground/40 mx-auto mb-3" />
             <p className="text-muted-foreground">لا توجد تقارير محفوظة</p>
             <p className="text-xs text-muted-foreground/60 mt-1">يمكنك حفظ تقرير من صفحة الملخص</p>
           </div>
-        )}
+        }
 
         <div className="space-y-3">
-          {reports.map(report => (
-            <div
-              key={report.id}
-              className={`rounded-xl bg-card p-4 card-shadow transition-all ${selectedForCompare.has(report.id) ? 'ring-2 ring-primary' : ''}`}
-            >
+          {reports.map((report) =>
+          <div
+            key={report.id}
+            className={`rounded-xl bg-card p-4 card-shadow transition-all ${selectedForCompare.has(report.id) ? 'ring-2 ring-primary' : ''}`}>
+
               <div className="flex items-start justify-between mb-2">
                 <div className="flex items-center gap-2">
                   <input
-                    type="checkbox"
-                    checked={selectedForCompare.has(report.id)}
-                    onChange={() => toggleCompare(report.id)}
-                    className="w-4 h-4 accent-primary rounded"
-                  />
+                  type="checkbox"
+                  checked={selectedForCompare.has(report.id)}
+                  onChange={() => toggleCompare(report.id)}
+                  className="w-4 h-4 accent-primary rounded" />
+
                   <FileText className="w-5 h-5 text-primary" />
                   <h3 className="font-bold text-card-foreground">{report.title}</h3>
                 </div>
@@ -108,18 +108,18 @@ const ReportsPage = () => {
                 <MiniStat label="صافي" value={`${Math.abs(report.data.netProfit).toLocaleString()}`} className={report.data.netProfit >= 0 ? 'text-success' : 'text-destructive'} />
               </div>
             </div>
-          ))}
+          )}
         </div>
       </div>
-    </div>
-  );
+    </div>);
+
 };
 
-const MiniStat = ({ label, value, className }: { label: string; value: string; className?: string }) => (
-  <div className="rounded-lg bg-muted/50 p-2 text-center">
+const MiniStat = ({ label, value, className }: {label: string;value: string;className?: string;}) =>
+<div className="rounded-lg bg-muted/50 p-2 text-center">
     <p className="text-[10px] text-muted-foreground">{label}</p>
     <p className={`text-sm font-bold ${className || 'text-foreground'}`}>{value}</p>
-  </div>
-);
+  </div>;
+
 
 export default ReportsPage;
