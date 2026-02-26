@@ -4,8 +4,9 @@ import { Dialog, DialogContent, DialogHeader, DialogTitle } from '@/components/u
 import { Button } from '@/components/ui/button';
 import { Input } from '@/components/ui/input';
 import { Label } from '@/components/ui/label';
+import { toast } from '@/hooks/use-toast';
 
-const REMINDER_INTERVAL_DAYS = 7;
+const REMINDER_DAYS = [21, 22, 23, 24, 25, 26];
 
 const DebtReminder = () => {
   const { sales, updateSale } = useLivestock();
@@ -15,11 +16,17 @@ const DebtReminder = () => {
 
   useEffect(() => {
     const now = new Date();
+    const dayOfMonth = now.getDate();
+    
+    // Only show reminder on days 21-26
+    if (!REMINDER_DAYS.includes(dayOfMonth)) return;
+    
+    const todayStr = now.toISOString().split('T')[0];
     const pendingDebts = sales.filter(s => {
       if (s.paymentType !== 'debt' || s.remaining <= 0) return false;
-      const lastReminder = s.lastReminderDate ? new Date(s.lastReminderDate) : new Date(s.date);
-      const daysSince = Math.floor((now.getTime() - lastReminder.getTime()) / (1000 * 60 * 60 * 24));
-      return daysSince >= REMINDER_INTERVAL_DAYS;
+      // Don't re-show if already reminded today
+      if (s.lastReminderDate === todayStr) return false;
+      return true;
     });
 
     if (pendingDebts.length > 0) {
@@ -84,9 +91,21 @@ const DebtReminder = () => {
                   />
                 </div>
                 <Button className="mt-5" size="sm" onClick={() => handleUpdateDebt(debt.id)}>
-                  تحديث
+                  توصيل مبلغ
                 </Button>
               </div>
+              <Button
+                variant="default"
+                size="sm"
+                className="w-full mt-2 bg-green-600 hover:bg-green-700 text-white"
+                onClick={() => {
+                  updateSale({ ...debt, amountPaid: debt.amount, remaining: 0, lastReminderDate: new Date().toISOString().split('T')[0] });
+                  setDebts(prev => prev.filter(d => d.id !== debt.id));
+                  toast({ title: '✅ تم السداد الكامل', description: debt.description });
+                }}
+              >
+                ✅ تأكيد سداد المبلغ كامل
+              </Button>
             </div>
           ))}
           <Button variant="outline" onClick={handleDismiss} className="w-full">
