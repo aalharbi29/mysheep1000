@@ -44,7 +44,7 @@ const AuthPage = () => {
   };
 
   return (
-    <div className="min-h-screen items-center justify-center p-4 flex flex-row shadow-2xl opacity-100 rounded-sm border-solid gap-0 py-0 px-[20px] bg-[#928472]" dir="rtl">
+    <div className="min-h-screen items-center justify-center p-4 flex flex-row shadow-2xl opacity-100 rounded-sm border-solid gap-0 px-[20px] bg-[#928472] my-0 py-0 pb-[50px]" dir="rtl">
       <Card className="w-full max-w-md">
         <CardHeader className="text-center">
           <span className="text-6xl block mb-2">🐑</span>
