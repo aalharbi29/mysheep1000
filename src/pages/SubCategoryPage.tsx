@@ -27,7 +27,7 @@ const SubCategoryPage = () => {
 
   return (
     <div className="min-h-screen bg-background p-4 sm:p-6">
-      <div className="max-w-2xl mt-[100px] pb-[15px] mx-0 px-[5px] rounded-3xl shadow-2xl pt-[5px]">
+      <div className="max-w-2xl mt-[100px] pb-[15px] mx-0 px-[5px] rounded-3xl shadow-2xl pt-[5px] bg-[#d3cfcf]">
         <PageHeader title={breedLabel} subtitle="اختر القسم" backTo={backTo} />
 
         <div className="grid grid-cols-3 gap-4">
