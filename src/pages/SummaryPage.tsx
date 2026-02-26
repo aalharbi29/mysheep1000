@@ -60,7 +60,7 @@ const SummaryPage = () => {
 
 
   return (
-    <div className="min-h-screen bg-background p-4 sm:p-6">
+    <div className="min-h-screen bg-background p-4 sm:p-6 py-0 mb-0 mt-0">
       <div className="max-w-2xl mx-auto mt-[100px] pb-[15px]">
         <PageHeader title="الملخص" subtitle="تقرير شامل عن القطيع والمالية" backTo="/" />
 
