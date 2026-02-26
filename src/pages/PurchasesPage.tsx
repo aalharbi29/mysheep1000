@@ -20,18 +20,18 @@ const PurchasesPage = () => {
   const handleAdd = () => {
     addPurchase({ id: Date.now().toString(), date, description: desc, amount: Number(amount), quantity: Number(qty) });
     setOpen(false);
-    setDesc(''); setAmount(''); setDate(''); setQty('1');
+    setDesc('');setAmount('');setDate('');setQty('1');
   };
 
   const monthlyGroups = useMemo(() => groupByMonth(purchases), [purchases]);
 
   return (
     <div className="min-h-screen bg-background p-4 sm:p-6">
-      <div className="max-w-2xl mx-auto">
+      <div className="max-w-2xl mx-auto pt-0 mb-0 rounded-3xl pb-[15px] shadow-2xl mt-[100px]">
         <PageHeader title="المشتريات" subtitle={`الإجمالي: ${getTotalPurchases().toLocaleString()} ر.س`} backTo="/" />
 
-        {purchases.length > 0 && (
-          <div className="flex gap-2 mb-4">
+        {purchases.length > 0 &&
+        <div className="flex gap-2 mb-4">
             <Button variant="outline" className="flex-1 gap-2 h-10 border-info/30 text-info hover:bg-info/10" onClick={() => generatePurchasesReport(purchases)}>
               <FileText className="w-4 h-4" /> تقرير PDF
             </Button>
@@ -39,7 +39,7 @@ const PurchasesPage = () => {
               <Image className="w-4 h-4" /> تقرير صورة
             </Button>
           </div>
-        )}
+        }
 
         <Dialog open={open} onOpenChange={setOpen}>
           <DialogTrigger asChild>
@@ -48,10 +48,10 @@ const PurchasesPage = () => {
           <DialogContent>
             <DialogHeader><DialogTitle>إضافة عملية شراء</DialogTitle></DialogHeader>
             <div className="space-y-3 mt-3">
-              <div><Label>الوصف</Label><Input value={desc} onChange={e => setDesc(e.target.value)} /></div>
-              <div><Label>المبلغ</Label><Input type="number" value={amount} onChange={e => setAmount(e.target.value)} /></div>
-              <div><Label>العدد</Label><Input type="number" value={qty} onChange={e => setQty(e.target.value)} /></div>
-              <div><Label>التاريخ</Label><Input type="date" value={date} onChange={e => setDate(e.target.value)} /></div>
+              <div><Label>الوصف</Label><Input value={desc} onChange={(e) => setDesc(e.target.value)} /></div>
+              <div><Label>المبلغ</Label><Input type="number" value={amount} onChange={(e) => setAmount(e.target.value)} /></div>
+              <div><Label>العدد</Label><Input type="number" value={qty} onChange={(e) => setQty(e.target.value)} /></div>
+              <div><Label>التاريخ</Label><Input type="date" value={date} onChange={(e) => setDate(e.target.value)} /></div>
               <Button onClick={handleAdd} className="w-full">حفظ</Button>
             </div>
           </DialogContent>
@@ -63,21 +63,21 @@ const PurchasesPage = () => {
           const monthTotal = monthPurchases.reduce((s, x) => s + x.amount, 0);
           return (
             <MonthlyGroup key={monthKey} monthKey={monthKey} total={monthTotal} count={monthPurchases.length} variant="purchases">
-              {monthPurchases.map(p => (
-                <div key={p.id} className="rounded-xl bg-card p-4 card-shadow flex justify-between items-center">
+              {monthPurchases.map((p) =>
+              <div key={p.id} className="rounded-xl bg-card p-4 card-shadow flex justify-between items-center">
                   <div>
                     <p className="font-semibold text-card-foreground">{p.description}</p>
                     <p className="text-xs text-muted-foreground">{p.date} • {p.quantity} قطعة</p>
                   </div>
                   <span className="font-bold text-info">{p.amount.toLocaleString()} ر.س</span>
                 </div>
-              ))}
-            </MonthlyGroup>
-          );
+              )}
+            </MonthlyGroup>);
+
         })}
       </div>
-    </div>
-  );
+    </div>);
+
 };
 
 export default PurchasesPage;
