@@ -143,7 +143,7 @@ const AnimalGrid = ({ breed, category, subCategory }: AnimalGridProps) => {
               {/* Confirm button for unconfirmed animals (not needed for young) */}
               {!isConfirmed && !isDead && animal.subCategory !== 'young' &&
               <div
-                className="mt-1.5 mx-auto rounded-md px-2 py-0.5 text-[9px] font-bold cursor-pointer transition-colors flex items-center justify-center gap-0.5"
+                className="mt-1.5 mx-auto rounded-md px-2 py-0.5 text-[9px] font-bold cursor-pointer transition-colors flex items-center justify-center gap-0.5 text-secondary-foreground"
                 style={{ backgroundColor: 'rgba(56,161,105,0.15)', color: '#38A169', border: '1px solid rgba(56,161,105,0.3)' }}
                 onClick={(e) => handleOpenConfirm(e, animal.id)}>
 
