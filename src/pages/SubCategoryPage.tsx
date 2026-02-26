@@ -35,7 +35,7 @@ const SubCategoryPage = () => {
           <button
             key={sub}
             onClick={() => navigate(`${basePath}/${sub}`)}
-            className="rounded-xl bg-card p-5 text-center transition-all duration-200 card-shadow hover:card-shadow-hover hover:scale-[1.02] active:scale-[0.98] shadow-2xl">
+            className="rounded-xl p-5 text-center transition-all duration-200 card-shadow hover:card-shadow-hover hover:scale-[1.02] active:scale-[0.98] shadow-2xl bg-[#dad0c8]">
 
               <span className="text-4xl block mb-3">{SUB_CATEGORY_ICONS[sub]}</span>
               <h2 className="text-lg font-bold text-card-foreground">{SUB_CATEGORY_LABELS[sub]}</h2>
