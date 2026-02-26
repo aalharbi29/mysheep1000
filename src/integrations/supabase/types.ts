@@ -122,6 +122,75 @@ export type Database = {
         }
         Relationships: []
       }
+      market_listings: {
+        Row: {
+          animal_type: string | null
+          breed: string | null
+          category: string
+          condition: string | null
+          contact_number: string | null
+          created_at: string
+          gender: string | null
+          id: string
+          kids_age: string | null
+          kids_count: number | null
+          listing_type: string
+          location: string | null
+          media_urls: Json | null
+          price: number | null
+          quantity: number | null
+          rams_count: number | null
+          status: string
+          teeth: string | null
+          updated_at: string
+          user_id: string
+        }
+        Insert: {
+          animal_type?: string | null
+          breed?: string | null
+          category?: string
+          condition?: string | null
+          contact_number?: string | null
+          created_at?: string
+          gender?: string | null
+          id?: string
+          kids_age?: string | null
+          kids_count?: number | null
+          listing_type?: string
+          location?: string | null
+          media_urls?: Json | null
+          price?: number | null
+          quantity?: number | null
+          rams_count?: number | null
+          status?: string
+          teeth?: string | null
+          updated_at?: string
+          user_id: string
+        }
+        Update: {
+          animal_type?: string | null
+          breed?: string | null
+          category?: string
+          condition?: string | null
+          contact_number?: string | null
+          created_at?: string
+          gender?: string | null
+          id?: string
+          kids_age?: string | null
+          kids_count?: number | null
+          listing_type?: string
+          location?: string | null
+          media_urls?: Json | null
+          price?: number | null
+          quantity?: number | null
+          rams_count?: number | null
+          status?: string
+          teeth?: string | null
+          updated_at?: string
+          user_id?: string
+        }
+        Relationships: []
+      }
       profiles: {
         Row: {
           created_at: string
