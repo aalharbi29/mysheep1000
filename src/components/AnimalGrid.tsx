@@ -75,7 +75,7 @@ const AnimalGrid = ({ breed, category, subCategory }: AnimalGridProps) => {
 
   return (
     <>
-      <div className="grid grid-cols-3 sm:grid-cols-4 md:grid-cols-5 gap-3 opacity-100 shadow-xl py-0 my-[20px] mt-[100px] mb-0 rounded mx-[5px]">
+      <div className="grid grid-cols-3 sm:grid-cols-4 md:grid-cols-5 gap-3 opacity-100 my-[20px] rounded mx-[5px] shadow-none py-0 mt-[25px] mb-[15px]">
         {filtered.length === 0 &&
         <p className="col-span-full text-center text-muted-foreground my-0 py-[10px] mx-[15px]">
             لا توجد بطاقات في قسم {SUB_CATEGORY_LABELS[subCategory]}
@@ -115,7 +115,7 @@ const AnimalGrid = ({ breed, category, subCategory }: AnimalGridProps) => {
                 </div>
               }
 
-              <span className="text-3xl sm:text-4xl font-black block leading-tight" style={{ color: textColor }}>
+              <span className="sm:text-4xl font-black block leading-tight text-4xl" style={{ color: textColor }}>
                 {animal.number}
               </span>
               <span className="text-[11px] font-bold block mt-1" style={{ color: subTextColor }}>
