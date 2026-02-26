@@ -15,10 +15,8 @@ const PageHeader = ({ title, subtitle, backTo }: PageHeaderProps) => {
       {backTo &&
       <button
         onClick={() => navigate(backTo)}
-        className="gap-2 transition-colors mb-3 text-destructive border-none opacity-100 rounded shadow-xl my-[10px] mx-[15px] px-[15px] flex items-center justify-center text-center pr-[15px] mr-[25px] text-xl font-extrabold">
-
-رجـــــــوع<ArrowRight className="w-4 h-4 text-destructive" />
-          رجوع
+        className="gap-2 transition-colors mb-3 text-primary border-none opacity-100 rounded shadow-md my-[10px] mx-[15px] px-[15px] flex items-center justify-center text-center pr-[15px] mr-[25px] text-lg font-bold hover:opacity-80">
+          رجوع <ArrowRight className="w-5 h-5 text-primary" />
         </button>
       }
       <h1 className="text-foreground font-extrabold text-center mx-[50px] text-sm">{title}</h1>

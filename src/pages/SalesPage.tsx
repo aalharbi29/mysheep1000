@@ -5,37 +5,19 @@ import { CATEGORY_LABELS, SUB_CATEGORY_LABELS } from '@/types/animals';
 import { Button } from '@/components/ui/button';
 import { Input } from '@/components/ui/input';
 import { Label } from '@/components/ui/label';
-import { Dialog, DialogContent, DialogHeader, DialogTitle, DialogTrigger } from '@/components/ui/dialog';
-import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from '@/components/ui/select';
-import { Plus, Undo2, RefreshCw, FileText, Download, Image } from 'lucide-react';
+import { Dialog, DialogContent, DialogHeader, DialogTitle } from '@/components/ui/dialog';
+import { Plus, Undo2, RefreshCw, FileText, Image } from 'lucide-react';
 import { toast } from '@/hooks/use-toast';
 import { generateSalesReport, downloadSectionReportAsImage } from '@/lib/generateSectionReport';
+import AddSaleWizard from '@/components/AddSaleWizard';
 
 const SalesPage = () => {
   const { sales, addSale, updateSale, cancelSale, getTotalSales } = useLivestock();
   const [open, setOpen] = useState(false);
-  const [desc, setDesc] = useState('');
-  const [amount, setAmount] = useState('');
-  const [date, setDate] = useState('');
-  const [qty, setQty] = useState('1');
-  const [buyer, setBuyer] = useState('');
-  const [paymentType, setPaymentType] = useState<'cash' | 'debt'>('cash');
-  const [amountPaid, setAmountPaid] = useState('');
 
   const [updateOpen, setUpdateOpen] = useState(false);
   const [selectedSale, setSelectedSale] = useState<string | null>(null);
   const [newPayment, setNewPayment] = useState('');
-
-  const handleAdd = () => {
-    const total = Number(amount);
-    const paid = paymentType === 'cash' ? total : (Number(amountPaid) || 0);
-    addSale({
-      id: Date.now().toString(), date, description: desc, amount: total, quantity: Number(qty),
-      buyer, paymentType, amountPaid: paid, remaining: total - paid > 0 ? total - paid : 0,
-    });
-    setOpen(false);
-    setDesc(''); setAmount(''); setDate(''); setQty('1'); setBuyer(''); setPaymentType('cash'); setAmountPaid('');
-  };
 
   const handleUpdatePayment = () => {
     const sale = sales.find(s => s.id === selectedSale);
@@ -81,35 +63,11 @@ const SalesPage = () => {
           </div>
         )}
 
-        <Dialog open={open} onOpenChange={setOpen}>
-          <DialogTrigger asChild>
-            <Button className="w-full mb-4 gap-2"><Plus className="w-4 h-4" /> إضافة بيع</Button>
-          </DialogTrigger>
-          <DialogContent>
-            <DialogHeader><DialogTitle>إضافة عملية بيع</DialogTitle></DialogHeader>
-            <div className="space-y-3 mt-3">
-              <div><Label>الوصف</Label><Input value={desc} onChange={e => setDesc(e.target.value)} /></div>
-              <div><Label>المبلغ</Label><Input type="number" value={amount} onChange={e => setAmount(e.target.value)} /></div>
-              <div><Label>العدد</Label><Input type="number" value={qty} onChange={e => setQty(e.target.value)} /></div>
-              <div><Label>المشتري</Label><Input value={buyer} onChange={e => setBuyer(e.target.value)} /></div>
-              <div><Label>التاريخ</Label><Input type="date" value={date} onChange={e => setDate(e.target.value)} /></div>
-              <div>
-                <Label>حالة الدفع</Label>
-                <Select value={paymentType} onValueChange={v => setPaymentType(v as 'cash' | 'debt')}>
-                  <SelectTrigger><SelectValue /></SelectTrigger>
-                  <SelectContent>
-                    <SelectItem value="cash">نقد</SelectItem>
-                    <SelectItem value="debt">دين</SelectItem>
-                  </SelectContent>
-                </Select>
-              </div>
-              {paymentType === 'debt' && (
-                <div><Label>المبلغ المقبوض</Label><Input type="number" value={amountPaid} onChange={e => setAmountPaid(e.target.value)} /></div>
-              )}
-              <Button onClick={handleAdd} className="w-full">حفظ</Button>
-            </div>
-          </DialogContent>
-        </Dialog>
+        <Button className="w-full mb-4 gap-2" onClick={() => setOpen(true)}>
+          <Plus className="w-4 h-4" /> إضافة عملية بيع
+        </Button>
+
+        <AddSaleWizard open={open} onOpenChange={setOpen} />
 
         <Dialog open={updateOpen} onOpenChange={setUpdateOpen}>
           <DialogContent>
