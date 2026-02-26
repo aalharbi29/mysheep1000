@@ -15,7 +15,7 @@ const FlockPage = () => {
   const { animals } = useLivestock();
 
   return (
-    <div className="min-h-screen bg-background p-4 sm:p-6">
+    <div className="min-h-screen bg-background p-4 sm:p-6 shadow-2xl rounded-3xl">
       <div className="max-w-2xl mx-auto mt-[100px] pb-[15px]">
         <PageHeader title="القطيع" subtitle="اختر نوع الماشية" backTo="/" />
 
@@ -36,7 +36,7 @@ const FlockPage = () => {
               <button
                 key={cat.id}
                 onClick={() => navigate(cat.path)}
-                className="rounded-xl bg-card p-6 text-center transition-all duration-200 card-shadow hover:card-shadow-hover hover:scale-[1.02] active:scale-[0.98]">
+                className="rounded-xl p-6 text-center transition-all duration-200 card-shadow hover:card-shadow-hover hover:scale-[1.02] active:scale-[0.98] bg-[#dad0c8]">
 
                 <span className="text-5xl block mb-3">{cat.emoji}</span>
                 <h2 className="text-xl font-bold text-card-foreground">{cat.label}</h2>
