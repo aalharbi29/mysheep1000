@@ -16,7 +16,7 @@ const FlockPage = () => {
 
   return (
     <div className="min-h-screen p-4 sm:p-6 shadow-2xl rounded-3xl bg-[#f7f1e9]">
-      <div className="max-w-2xl mx-auto mt-[100px] pb-[15px] bg-[#d3cfcf]">
+      <div className="max-w-2xl mx-auto mt-[100px] bg-[#d3cfcf] shadow-2xl rounded-3xl pb-[15px] pt-[5px]">
         <PageHeader title="القطيع" subtitle="اختر نوع الماشية" backTo="/" />
 
         {/* Flock Report buttons */}
@@ -36,7 +36,7 @@ const FlockPage = () => {
               <button
                 key={cat.id}
                 onClick={() => navigate(cat.path)}
-                className="rounded-xl p-6 text-center transition-all duration-200 card-shadow hover:card-shadow-hover hover:scale-[1.02] active:scale-[0.98] bg-[#dad0c8]">
+                className="rounded-xl p-6 text-center transition-all duration-200 card-shadow hover:card-shadow-hover hover:scale-[1.02] active:scale-[0.98] bg-[#dad0c8] mx-[5px]">
 
                 <span className="text-5xl block mb-3">{cat.emoji}</span>
                 <h2 className="text-xl font-bold text-card-foreground">{cat.label}</h2>
