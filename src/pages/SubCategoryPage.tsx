@@ -27,7 +27,7 @@ const SubCategoryPage = () => {
 
   return (
     <div className="min-h-screen bg-background p-4 sm:p-6">
-      <div className="max-w-2xl mx-auto mt-[100px] pb-[15px]">
+      <div className="max-w-2xl mt-[100px] pb-[15px] mx-0 px-[5px] rounded-3xl shadow-2xl pt-[5px]">
         <PageHeader title={breedLabel} subtitle="اختر القسم" backTo={backTo} />
 
         <div className="grid grid-cols-3 gap-4">
@@ -35,7 +35,7 @@ const SubCategoryPage = () => {
           <button
             key={sub}
             onClick={() => navigate(`${basePath}/${sub}`)}
-            className="rounded-xl bg-card p-5 text-center transition-all duration-200 card-shadow hover:card-shadow-hover hover:scale-[1.02] active:scale-[0.98]">
+            className="rounded-xl bg-card p-5 text-center transition-all duration-200 card-shadow hover:card-shadow-hover hover:scale-[1.02] active:scale-[0.98] shadow-2xl">
 
               <span className="text-4xl block mb-3">{SUB_CATEGORY_ICONS[sub]}</span>
               <h2 className="text-lg font-bold text-card-foreground">{SUB_CATEGORY_LABELS[sub]}</h2>
