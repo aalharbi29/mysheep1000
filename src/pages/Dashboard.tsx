@@ -1,7 +1,7 @@
 import { useNavigate } from 'react-router-dom';
 import { useLivestock } from '@/context/LivestockContext';
 import { useAuth } from '@/context/AuthContext';
-import { Fence, Receipt, ShoppingCart, TrendingUp, FileText, Archive, LogOut, Store } from 'lucide-react';
+import { Fence, Receipt, ShoppingCart, TrendingUp, FileText, Archive, LogOut, Store, UserCircle } from 'lucide-react';
 import { Button } from '@/components/ui/button';
 import NotificationBell from '@/components/NotificationBell';
 
@@ -44,7 +44,10 @@ const Dashboard = () => {
             <LogOut className="w-7 h-7" />
             خروج
           </button>
-          <div className="absolute right-0 top-6">
+          <div className="absolute right-0 top-6 flex items-center gap-1">
+            <button onClick={() => navigate('/profile')} className="p-2" title="الملف الشخصي">
+              <UserCircle className="w-7 h-7 text-primary" />
+            </button>
             <NotificationBell />
           </div>
           <div className="inline-flex items-center justify-center w-16 h-16 rounded-2xl bg-primary/10 mb-4 mx-0 shadow-2xl">
