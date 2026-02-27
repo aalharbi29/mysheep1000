@@ -11,6 +11,7 @@ const categories = [
 ];
 
 const quickLinks = [
+  { id: 'my-products', label: 'منتجاتي', icon: Package, path: '/store/my-products' },
   { id: 'add-product', label: 'أضف منتج', icon: Plus, path: '/store/add-product' },
   { id: 'cart', label: 'السلة', icon: ShoppingBasket, path: '/store/cart' },
   { id: 'orders', label: 'طلباتي', icon: Receipt, path: '/store/orders' },
