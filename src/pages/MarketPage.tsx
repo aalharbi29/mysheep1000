@@ -1,5 +1,5 @@
 import { useNavigate } from 'react-router-dom';
-import { Pill, Fence, Bird, CircleDot, Package, ShoppingBag, ShoppingCart, ClipboardList, MessageCircle, Plus, ShoppingBasket, Receipt } from 'lucide-react';
+import { Pill, Fence, Bird, CircleDot, Package, Plus, ShoppingBasket, Receipt } from 'lucide-react';
 import PageHeader from '@/components/PageHeader';
 
 const categories = [
@@ -11,10 +11,6 @@ const categories = [
 ];
 
 const quickLinks = [
-  { id: 'sell', label: 'بيع', icon: ShoppingBag, path: '/market/sell' },
-  { id: 'buy', label: 'شراء', icon: ShoppingCart, path: '/market/buy' },
-  { id: 'my-listings', label: 'إعلاناتي', icon: ClipboardList, path: '/market/my-listings' },
-  { id: 'conversations', label: 'المحادثات', icon: MessageCircle, path: '/market/conversations' },
   { id: 'add-product', label: 'أضف منتج', icon: Plus, path: '/store/add-product' },
   { id: 'cart', label: 'السلة', icon: ShoppingBasket, path: '/store/cart' },
   { id: 'orders', label: 'طلباتي', icon: Receipt, path: '/store/orders' },
