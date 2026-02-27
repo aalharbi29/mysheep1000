@@ -16,7 +16,7 @@ const BreedPage = () => {
 
   return (
     <div className="min-h-screen bg-background p-4 sm:p-6">
-      <div className="max-w-2xl mx-auto mt-[100px] pb-[15px] bg-[#d3cfcf] shadow-2xl rounded-3xl">
+      <div className="max-w-2xl mx-auto mt-[100px] pb-[15px] bg-[#d3cfcf] shadow-2xl rounded-3xl border-2 border-solid border-secondary-foreground">
         <PageHeader title={title} subtitle="اختر السلالة" backTo="/flock" />
 
         <div className="grid grid-cols-2 gap-4 rounded-3xl mx-[5px]">
