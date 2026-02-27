@@ -40,6 +40,7 @@ import StoreProductPage from "./pages/StoreProductPage";
 import StoreCartPage from "./pages/StoreCartPage";
 import StoreOrdersPage from "./pages/StoreOrdersPage";
 import StoreAddProductPage from "./pages/StoreAddProductPage";
+import MyProductsPage from "./pages/MyProductsPage";
 import NotFound from "./pages/NotFound";
 import { Loader2 } from "lucide-react";
 
@@ -101,6 +102,7 @@ function AppContent() {
           <Route path="/store/cart" element={<StoreCartPage />} />
           <Route path="/store/orders" element={<StoreOrdersPage />} />
           <Route path="/store/add-product" element={<StoreAddProductPage />} />
+          <Route path="/store/my-products" element={<MyProductsPage />} />
           <Route path="*" element={<NotFound />} />
         </Routes>
       </BrowserRouter>
