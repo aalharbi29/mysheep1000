@@ -86,6 +86,76 @@ export type Database = {
         }
         Relationships: []
       }
+      chat_messages: {
+        Row: {
+          content: string
+          conversation_id: string
+          created_at: string
+          id: string
+          read: boolean | null
+          sender_id: string
+        }
+        Insert: {
+          content: string
+          conversation_id: string
+          created_at?: string
+          id?: string
+          read?: boolean | null
+          sender_id: string
+        }
+        Update: {
+          content?: string
+          conversation_id?: string
+          created_at?: string
+          id?: string
+          read?: boolean | null
+          sender_id?: string
+        }
+        Relationships: [
+          {
+            foreignKeyName: "chat_messages_conversation_id_fkey"
+            columns: ["conversation_id"]
+            isOneToOne: false
+            referencedRelation: "conversations"
+            referencedColumns: ["id"]
+          },
+        ]
+      }
+      conversations: {
+        Row: {
+          created_at: string
+          id: string
+          listing_id: string | null
+          participant1: string
+          participant2: string
+          updated_at: string
+        }
+        Insert: {
+          created_at?: string
+          id?: string
+          listing_id?: string | null
+          participant1: string
+          participant2: string
+          updated_at?: string
+        }
+        Update: {
+          created_at?: string
+          id?: string
+          listing_id?: string | null
+          participant1?: string
+          participant2?: string
+          updated_at?: string
+        }
+        Relationships: [
+          {
+            foreignKeyName: "conversations_listing_id_fkey"
+            columns: ["listing_id"]
+            isOneToOne: false
+            referencedRelation: "market_listings"
+            referencedColumns: ["id"]
+          },
+        ]
+      }
       expenses: {
         Row: {
           amount: number
@@ -122,6 +192,41 @@ export type Database = {
         }
         Relationships: []
       }
+      listing_comments: {
+        Row: {
+          content: string
+          created_at: string
+          id: string
+          listing_id: string
+          user_id: string
+          user_name: string | null
+        }
+        Insert: {
+          content: string
+          created_at?: string
+          id?: string
+          listing_id: string
+          user_id: string
+          user_name?: string | null
+        }
+        Update: {
+          content?: string
+          created_at?: string
+          id?: string
+          listing_id?: string
+          user_id?: string
+          user_name?: string | null
+        }
+        Relationships: [
+          {
+            foreignKeyName: "listing_comments_listing_id_fkey"
+            columns: ["listing_id"]
+            isOneToOne: false
+            referencedRelation: "market_listings"
+            referencedColumns: ["id"]
+          },
+        ]
+      }
       market_listings: {
         Row: {
           animal_type: string | null
@@ -130,6 +235,8 @@ export type Database = {
           condition: string | null
           contact_number: string | null
           created_at: string
+          description: string | null
+          details: Json | null
           gender: string | null
           id: string
           kids_age: string | null
@@ -142,6 +249,7 @@ export type Database = {
           rams_count: number | null
           status: string
           teeth: string | null
+          title: string | null
           updated_at: string
           user_id: string
         }
@@ -152,6 +260,8 @@ export type Database = {
           condition?: string | null
           contact_number?: string | null
           created_at?: string
+          description?: string | null
+          details?: Json | null
           gender?: string | null
           id?: string
           kids_age?: string | null
@@ -164,6 +274,7 @@ export type Database = {
           rams_count?: number | null
           status?: string
           teeth?: string | null
+          title?: string | null
           updated_at?: string
           user_id: string
         }
@@ -174,6 +285,8 @@ export type Database = {
           condition?: string | null
           contact_number?: string | null
           created_at?: string
+          description?: string | null
+          details?: Json | null
           gender?: string | null
           id?: string
           kids_age?: string | null
@@ -186,6 +299,7 @@ export type Database = {
           rams_count?: number | null
           status?: string
           teeth?: string | null
+          title?: string | null
           updated_at?: string
           user_id?: string
         }

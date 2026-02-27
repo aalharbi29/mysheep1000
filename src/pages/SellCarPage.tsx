@@ -8,37 +8,51 @@ import { Input } from '@/components/ui/input';
 import { useToast } from '@/hooks/use-toast';
 import { Loader2, Camera, Upload, Check, ArrowLeft } from 'lucide-react';
 
-const SHEEP_BREEDS = ['حري', 'نجدي', 'نعيمي', 'سواكني', 'رفيدي', 'حبصي', 'عرب', 'مهجن'];
-const GOAT_BREEDS = ['عارضي', 'شامي', 'حجازي', 'هولندي', 'بيشي', 'محايلية', 'قبرصية', 'مصرية'];
-const CONDITIONS = ['مضاريع', 'دفيع', 'ولد', 'حيل'];
+const CAR_MAKES: Record<string, string[]> = {
+  'تويوتا': ['كامري', 'كورولا', 'لاندكروزر', 'هايلكس', 'يارس', 'افالون', 'راف فور', 'برادو', 'فورتشنر', 'اف جي'],
+  'نيسان': ['باترول', 'التيما', 'صني', 'اكستيرا', 'نافارا', 'مكسيما', 'باثفايندر', 'ددسن'],
+  'هيونداي': ['سوناتا', 'النترا', 'اكسنت', 'توسان', 'سنتافي', 'كريتا', 'ازيرا'],
+  'كيا': ['اوبتيما', 'سيراتو', 'سبورتاج', 'سورنتو', 'ريو', 'كارنفال'],
+  'فورد': ['اكسبلورر', 'اكسبيدشن', 'تورس', 'فيوجن', 'ايدج', 'رينجر'],
+  'شيفروليه': ['تاهو', 'سوبربان', 'كابرس', 'ماليبو', 'سلفرادو', 'ترافيرس'],
+  'مرسيدس': ['S-Class', 'E-Class', 'C-Class', 'GLE', 'GLC', 'A-Class'],
+  'بي ام دبليو': ['الفئة 7', 'الفئة 5', 'الفئة 3', 'X5', 'X3', 'X7'],
+  'لكزس': ['LS', 'ES', 'LX', 'GX', 'RX', 'NX', 'IS'],
+  'جيب': ['رانجلر', 'شيروكي', 'جراند شيروكي', 'كومباس'],
+  'ميتسوبيشي': ['باجيرو', 'لانسر', 'اوتلاندر', 'اتراج', 'L200'],
+  'هوندا': ['اكورد', 'سيفيك', 'CR-V', 'بايلوت', 'سيتي'],
+  'أخرى': [],
+};
+
+const CONDITIONS = ['جديدة', 'مستعملة نظيفة', 'مستعملة', 'تشليح'];
+const TRANSMISSIONS = ['أوتوماتيك', 'عادي'];
+const COLORS = ['أبيض', 'أسود', 'فضي', 'رمادي', 'أحمر', 'أزرق', 'بيج', 'ذهبي', 'بني', 'أخضر', 'برتقالي'];
+
+const YEARS = Array.from({ length: 27 }, (_, i) => (2026 - i).toString());
 
 interface FormData {
-  animalType: '' | 'sheep' | 'goat';
-  breed: string;
-  gender: '' | 'male' | 'female';
-  quantity: number;
+  make: string;
+  model: string;
+  year: string;
   condition: string;
-  kidsCount: number;
-  kidsAge: string;
-  ramsCount: number;
-  teeth: string;
+  mileage: string;
+  color: string;
+  transmission: string;
   location: string;
   contactNumber: string;
   price: string;
 }
 
-const SellLivestockPage = () => {
+const SellCarPage = () => {
   const navigate = useNavigate();
   const { user } = useAuth();
   const { toast } = useToast();
   const fileInputRef = useRef<HTMLInputElement>(null);
   const cameraInputRef = useRef<HTMLInputElement>(null);
-
   const [step, setStep] = useState(1);
   const [form, setForm] = useState<FormData>({
-    animalType: '', breed: '', gender: '', quantity: 1,
-    condition: '', kidsCount: 0, kidsAge: '', ramsCount: 0,
-    teeth: '', location: '', contactNumber: '', price: '',
+    make: '', model: '', year: '', condition: '', mileage: '',
+    color: '', transmission: '', location: '', contactNumber: '', price: '',
   });
   const [mediaFiles, setMediaFiles] = useState<File[]>([]);
   const [mediaPreviews, setMediaPreviews] = useState<string[]>([]);
@@ -48,10 +62,7 @@ const SellLivestockPage = () => {
     if (!files) return;
     const newFiles = Array.from(files);
     setMediaFiles(prev => [...prev, ...newFiles]);
-    newFiles.forEach(file => {
-      const url = URL.createObjectURL(file);
-      setMediaPreviews(prev => [...prev, url]);
-    });
+    newFiles.forEach(file => setMediaPreviews(prev => [...prev, URL.createObjectURL(file)]));
   };
 
   const removeMedia = (index: number) => {
@@ -63,15 +74,11 @@ const SellLivestockPage = () => {
     if (!user) return;
     setSubmitting(true);
     try {
-      // Upload media
       const mediaUrls: string[] = [];
       for (const file of mediaFiles) {
         const ext = file.name.split('.').pop();
         const path = `${user.id}/${Date.now()}_${Math.random().toString(36).slice(2)}.${ext}`;
-        const { error } = await supabase.storage.from('market-media').upload(path, file, {
-          cacheControl: '3600',
-          upsert: false,
-        });
+        const { error } = await supabase.storage.from('market-media').upload(path, file, { cacheControl: '3600', upsert: false });
         if (!error) {
           const { data: urlData } = supabase.storage.from('market-media').getPublicUrl(path);
           mediaUrls.push(urlData.publicUrl);
@@ -79,35 +86,22 @@ const SellLivestockPage = () => {
       }
 
       // Generate AI description
-      let aiTitle = `${form.animalType === 'sheep' ? 'ضأن' : 'ماعز'} ${form.breed}`;
+      let aiTitle = `${form.make} ${form.model} ${form.year}`;
       let aiDesc = '';
       try {
         const { data: aiData } = await supabase.functions.invoke('generate-listing-description', {
-          body: { listingData: { category: 'livestock', animalType: form.animalType === 'sheep' ? 'ضأن' : 'ماعز', breed: form.breed, gender: form.gender === 'male' ? 'ذكر' : 'أنثى', quantity: form.quantity, condition: form.condition, kidsCount: form.kidsCount, kidsAge: form.kidsAge, ramsCount: form.ramsCount, teeth: form.teeth, location: form.location, price: form.price } },
+          body: { listingData: { category: 'car', ...form } },
         });
         if (aiData?.title) aiTitle = aiData.title;
         if (aiData?.description) aiDesc = aiData.description;
       } catch { /* use defaults */ }
 
       const { error } = await supabase.from('market_listings').insert({
-        user_id: user.id,
-        listing_type: 'sell',
-        category: 'livestock',
-        title: aiTitle,
-        description: aiDesc,
-        animal_type: form.animalType,
-        breed: form.breed,
-        gender: form.gender,
-        quantity: form.quantity,
-        condition: form.condition,
-        kids_count: form.kidsCount,
-        kids_age: form.kidsAge,
-        rams_count: form.ramsCount,
-        teeth: form.teeth,
-        location: form.location,
-        contact_number: form.contactNumber,
-        price: form.price ? parseFloat(form.price) : null,
-        media_urls: mediaUrls,
+        user_id: user.id, listing_type: 'sell', category: 'car',
+        title: aiTitle, description: aiDesc,
+        details: { make: form.make, model: form.model, year: form.year, condition: form.condition, mileage: form.mileage, color: form.color, transmission: form.transmission },
+        location: form.location, contact_number: form.contactNumber,
+        price: form.price ? parseFloat(form.price) : null, media_urls: mediaUrls,
       } as any);
 
       if (error) throw error;
@@ -115,143 +109,114 @@ const SellLivestockPage = () => {
       navigate('/market');
     } catch (e: any) {
       toast({ title: 'خطأ', description: e.message, variant: 'destructive' });
-    } finally {
-      setSubmitting(false);
-    }
+    } finally { setSubmitting(false); }
   };
 
   const CardOption = ({ label, selected, onClick }: { label: string; selected: boolean; onClick: () => void }) => (
-    <button
-      onClick={onClick}
-      className={`rounded-xl p-4 text-center font-bold transition-all duration-200 border-2 ${
-        selected
-          ? 'border-primary bg-primary/10 text-primary'
-          : 'border-border bg-card text-foreground hover:border-primary/50'
-      }`}
-    >
+    <button onClick={onClick} className={`rounded-xl p-4 text-center font-bold transition-all duration-200 border-2 ${selected ? 'border-primary bg-primary/10 text-primary' : 'border-border bg-card text-foreground hover:border-primary/50'}`}>
       {selected && <Check className="w-5 h-5 mx-auto mb-1 text-primary" />}
       {label}
     </button>
   );
 
-  const breeds = form.animalType === 'sheep' ? SHEEP_BREEDS : form.animalType === 'goat' ? GOAT_BREEDS : [];
+  const models = form.make ? (CAR_MAKES[form.make] || []) : [];
+  const totalSteps = 5;
 
   return (
     <div className="min-h-screen bg-secondary p-4 sm:p-6" dir="rtl">
       <div className="max-w-2xl mx-auto">
-        <PageHeader title="بيع غنم" backTo={step > 1 ? undefined : '/market/sell'} />
+        <PageHeader title="بيع سيارة" backTo={step > 1 ? undefined : '/market/sell'} />
         {step > 1 && (
           <button onClick={() => setStep(step - 1)} className="flex items-center gap-2 text-primary font-bold mb-4 hover:opacity-80">
             <ArrowLeft className="w-4 h-4" /> رجوع
           </button>
         )}
         <div className="flex gap-1 mt-4 mb-6">
-          {[1, 2, 3, 4, 5].map(s => (
-            <div key={s} className={`h-1.5 flex-1 rounded-full ${s <= step ? 'bg-primary' : 'bg-border'}`} />
+          {Array.from({ length: totalSteps }, (_, i) => (
+            <div key={i} className={`h-1.5 flex-1 rounded-full ${i + 1 <= step ? 'bg-primary' : 'bg-border'}`} />
           ))}
         </div>
 
-        {/* Step 1: Animal Type */}
         {step === 1 && (
           <div>
-            <h3 className="text-lg font-bold text-foreground mb-4">اختر النوع</h3>
-            <div className="grid grid-cols-2 gap-4">
-              <CardOption label="ضأن" selected={form.animalType === 'sheep'} onClick={() => { setForm(f => ({ ...f, animalType: 'sheep', breed: '' })); setStep(2); }} />
-              <CardOption label="ماعز" selected={form.animalType === 'goat'} onClick={() => { setForm(f => ({ ...f, animalType: 'goat', breed: '' })); setStep(2); }} />
-            </div>
-          </div>
-        )}
-
-        {/* Step 2: Breed */}
-        {step === 2 && (
-          <div>
-            <h3 className="text-lg font-bold text-foreground mb-4">اختر السلالة</h3>
+            <h3 className="text-lg font-bold text-foreground mb-4">اختر الشركة</h3>
             <div className="grid grid-cols-2 gap-3">
-              {breeds.map(b => (
-                <CardOption key={b} label={b} selected={form.breed === b} onClick={() => { setForm(f => ({ ...f, breed: b })); setStep(3); }} />
+              {Object.keys(CAR_MAKES).map(make => (
+                <CardOption key={make} label={make} selected={form.make === make} onClick={() => { setForm(f => ({ ...f, make, model: '' })); if (CAR_MAKES[make].length > 0) setStep(2); else setStep(3); }} />
               ))}
             </div>
           </div>
         )}
 
-        {/* Step 3: Gender */}
-        {step === 3 && (
+        {step === 2 && (
           <div>
-            <h3 className="text-lg font-bold text-foreground mb-4">اختر الجنس</h3>
-            <div className="grid grid-cols-2 gap-4">
-              <CardOption label="ذكر" selected={form.gender === 'male'} onClick={() => { setForm(f => ({ ...f, gender: 'male' })); setStep(4); }} />
-              <CardOption label="أنثى" selected={form.gender === 'female'} onClick={() => { setForm(f => ({ ...f, gender: 'female' })); setStep(4); }} />
+            <h3 className="text-lg font-bold text-foreground mb-4">اختر الموديل</h3>
+            <div className="grid grid-cols-2 gap-3">
+              {models.map(m => (
+                <CardOption key={m} label={m} selected={form.model === m} onClick={() => { setForm(f => ({ ...f, model: m })); setStep(3); }} />
+              ))}
+              <CardOption label="أخرى" selected={form.model === 'أخرى'} onClick={() => { setForm(f => ({ ...f, model: 'أخرى' })); setStep(3); }} />
             </div>
           </div>
         )}
 
-        {/* Step 4: Details */}
+        {step === 3 && (
+          <div>
+            <h3 className="text-lg font-bold text-foreground mb-4">سنة الصنع</h3>
+            <div className="grid grid-cols-4 gap-2">
+              {YEARS.map(y => (
+                <CardOption key={y} label={y} selected={form.year === y} onClick={() => { setForm(f => ({ ...f, year: y })); setStep(4); }} />
+              ))}
+            </div>
+          </div>
+        )}
+
         {step === 4 && (
           <div className="space-y-4">
             <h3 className="text-lg font-bold text-foreground mb-4">التفاصيل</h3>
-
             <div>
-              <label className="text-sm font-bold text-foreground mb-1 block">العدد</label>
-              <Input type="number" min={1} value={form.quantity} onChange={e => setForm(f => ({ ...f, quantity: parseInt(e.target.value) || 1 }))} />
-            </div>
-
-            <div>
-              <label className="text-sm font-bold text-foreground mb-2 block">الحالة</label>
+              <label className="text-sm font-bold text-foreground mb-2 block">حالة السيارة</label>
               <div className="grid grid-cols-2 gap-2">
-                {CONDITIONS.map(c => (
-                  <CardOption key={c} label={c} selected={form.condition === c} onClick={() => setForm(f => ({ ...f, condition: c }))} />
-                ))}
+                {CONDITIONS.map(c => <CardOption key={c} label={c} selected={form.condition === c} onClick={() => setForm(f => ({ ...f, condition: c }))} />)}
               </div>
             </div>
-
-            <div className="grid grid-cols-2 gap-3">
-              <div>
-                <label className="text-sm font-bold text-foreground mb-1 block">عدد البهم</label>
-                <Input type="number" min={0} value={form.kidsCount} onChange={e => setForm(f => ({ ...f, kidsCount: parseInt(e.target.value) || 0 }))} />
-              </div>
-              <div>
-                <label className="text-sm font-bold text-foreground mb-1 block">عمر البهم</label>
-                <Input value={form.kidsAge} onChange={e => setForm(f => ({ ...f, kidsAge: e.target.value }))} placeholder="مثال: شهرين" />
+            <div>
+              <label className="text-sm font-bold text-foreground mb-1 block">الممشى (كم)</label>
+              <Input type="number" value={form.mileage} onChange={e => setForm(f => ({ ...f, mileage: e.target.value }))} placeholder="مثال: 150000" />
+            </div>
+            <div>
+              <label className="text-sm font-bold text-foreground mb-2 block">اللون</label>
+              <div className="grid grid-cols-3 gap-2">
+                {COLORS.map(c => <CardOption key={c} label={c} selected={form.color === c} onClick={() => setForm(f => ({ ...f, color: c }))} />)}
               </div>
             </div>
-
-            <div className="grid grid-cols-2 gap-3">
-              <div>
-                <label className="text-sm font-bold text-foreground mb-1 block">عدد الفحول</label>
-                <Input type="number" min={0} value={form.ramsCount} onChange={e => setForm(f => ({ ...f, ramsCount: parseInt(e.target.value) || 0 }))} />
-              </div>
-              <div>
-                <label className="text-sm font-bold text-foreground mb-1 block">أسنان الحلال</label>
-                <Input value={form.teeth} onChange={e => setForm(f => ({ ...f, teeth: e.target.value }))} placeholder="مثال: ثني" />
+            <div>
+              <label className="text-sm font-bold text-foreground mb-2 block">ناقل الحركة</label>
+              <div className="grid grid-cols-2 gap-2">
+                {TRANSMISSIONS.map(t => <CardOption key={t} label={t} selected={form.transmission === t} onClick={() => setForm(f => ({ ...f, transmission: t }))} />)}
               </div>
             </div>
-
             <div>
               <label className="text-sm font-bold text-foreground mb-1 block">الموقع</label>
               <Input value={form.location} onChange={e => setForm(f => ({ ...f, location: e.target.value }))} placeholder="المنطقة / المدينة" />
             </div>
-
             <div>
               <label className="text-sm font-bold text-foreground mb-1 block">رقم التواصل</label>
               <Input type="tel" value={form.contactNumber} onChange={e => setForm(f => ({ ...f, contactNumber: e.target.value }))} placeholder="05xxxxxxxx" />
             </div>
-
             <div>
-              <label className="text-sm font-bold text-foreground mb-1 block">الحد (اختياري)</label>
+              <label className="text-sm font-bold text-foreground mb-1 block">السعر (اختياري)</label>
               <Input type="number" value={form.price} onChange={e => setForm(f => ({ ...f, price: e.target.value }))} placeholder="السعر بالريال" />
             </div>
-
             <Button className="w-full mt-4" size="lg" onClick={() => setStep(5)}>
               التالي <ArrowLeft className="w-4 h-4 mr-2" />
             </Button>
           </div>
         )}
 
-        {/* Step 5: Media */}
         {step === 5 && (
           <div className="space-y-4">
             <h3 className="text-lg font-bold text-foreground mb-4">الصور والفيديو</h3>
-
             {mediaPreviews.length > 0 && (
               <div className="flex gap-2 flex-wrap">
                 {mediaPreviews.map((url, i) => (
@@ -266,21 +231,16 @@ const SellLivestockPage = () => {
                 ))}
               </div>
             )}
-
             <div className="grid grid-cols-2 gap-3">
               <Button variant="outline" className="h-20 flex-col gap-2" onClick={() => fileInputRef.current?.click()}>
-                <Upload className="w-6 h-6" />
-                <span className="text-xs">من الملفات</span>
+                <Upload className="w-6 h-6" /><span className="text-xs">من الملفات</span>
               </Button>
               <Button variant="outline" className="h-20 flex-col gap-2" onClick={() => cameraInputRef.current?.click()}>
-                <Camera className="w-6 h-6" />
-                <span className="text-xs">من الكاميرا</span>
+                <Camera className="w-6 h-6" /><span className="text-xs">من الكاميرا</span>
               </Button>
             </div>
-
             <input ref={fileInputRef} type="file" accept="image/*,video/*" multiple className="hidden" onChange={e => handleFileChange(e.target.files)} />
             <input ref={cameraInputRef} type="file" accept="image/*,video/*" capture="environment" className="hidden" onChange={e => handleFileChange(e.target.files)} />
-
             <Button className="w-full mt-6" size="lg" onClick={handleSubmit} disabled={submitting}>
               {submitting ? <Loader2 className="w-5 h-5 animate-spin" /> : 'نشر الإعلان ✅'}
             </Button>
@@ -291,4 +251,4 @@ const SellLivestockPage = () => {
   );
 };
 
-export default SellLivestockPage;
+export default SellCarPage;

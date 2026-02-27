@@ -4,8 +4,8 @@ import PageHeader from '@/components/PageHeader';
 
 const cards = [
   { id: 'livestock', label: 'بيع غنم', icon: Fence, path: '/market/sell/livestock', gradient: 'from-primary to-primary/80' },
-  { id: 'car', label: 'بيع سيارة', icon: Car, path: '#', gradient: 'from-accent to-accent/80' },
-  { id: 'goods', label: 'بيع منقولات', icon: Package, path: '#', gradient: 'from-muted-foreground/60 to-muted-foreground/40' },
+  { id: 'car', label: 'بيع سيارة', icon: Car, path: '/market/sell/car', gradient: 'from-accent to-accent/80' },
+  { id: 'goods', label: 'بيع منقولات', icon: Package, path: '/market/sell/goods', gradient: 'from-muted-foreground/60 to-muted-foreground/40' },
 ];
 
 const MarketSellPage = () => {
@@ -21,13 +21,11 @@ const MarketSellPage = () => {
             return (
               <button
                 key={card.id}
-                onClick={() => card.path !== '#' && navigate(card.path)}
-                disabled={card.path === '#'}
-                className={`relative overflow-hidden rounded-xl p-5 text-center transition-all duration-200 hover:scale-[1.02] active:scale-[0.98] bg-gradient-to-bl ${card.gradient} ${card.path === '#' ? 'opacity-50 cursor-not-allowed' : ''}`}
+                onClick={() => navigate(card.path)}
+                className={`relative overflow-hidden rounded-xl p-5 text-center transition-all duration-200 hover:scale-[1.02] active:scale-[0.98] bg-gradient-to-bl ${card.gradient}`}
               >
                 <Icon className="w-8 h-8 text-primary-foreground/90 mb-2 mx-auto" />
                 <h2 className="text-primary-foreground font-extrabold text-lg">{card.label}</h2>
-                {card.path === '#' && <p className="text-primary-foreground/60 text-xs mt-1">قريباً</p>}
               </button>
             );
           })}
