@@ -86,6 +86,38 @@ export type Database = {
         }
         Relationships: []
       }
+      cart_items: {
+        Row: {
+          created_at: string
+          id: string
+          product_id: string
+          quantity: number
+          user_id: string
+        }
+        Insert: {
+          created_at?: string
+          id?: string
+          product_id: string
+          quantity?: number
+          user_id: string
+        }
+        Update: {
+          created_at?: string
+          id?: string
+          product_id?: string
+          quantity?: number
+          user_id?: string
+        }
+        Relationships: [
+          {
+            foreignKeyName: "cart_items_product_id_fkey"
+            columns: ["product_id"]
+            isOneToOne: false
+            referencedRelation: "store_products"
+            referencedColumns: ["id"]
+          },
+        ]
+      }
       chat_messages: {
         Row: {
           content: string
@@ -413,6 +445,111 @@ export type Database = {
           quantity?: number
           remaining?: number
           user_id?: string
+        }
+        Relationships: []
+      }
+      store_orders: {
+        Row: {
+          created_at: string
+          id: string
+          items: Json
+          payment_method: string | null
+          payment_status: string | null
+          seller_id: string
+          shipping_address: string | null
+          shipping_city: string | null
+          shipping_name: string | null
+          shipping_notes: string | null
+          shipping_phone: string | null
+          status: string
+          total: number
+          tracking_number: string | null
+          updated_at: string
+          user_id: string
+        }
+        Insert: {
+          created_at?: string
+          id?: string
+          items?: Json
+          payment_method?: string | null
+          payment_status?: string | null
+          seller_id: string
+          shipping_address?: string | null
+          shipping_city?: string | null
+          shipping_name?: string | null
+          shipping_notes?: string | null
+          shipping_phone?: string | null
+          status?: string
+          total?: number
+          tracking_number?: string | null
+          updated_at?: string
+          user_id: string
+        }
+        Update: {
+          created_at?: string
+          id?: string
+          items?: Json
+          payment_method?: string | null
+          payment_status?: string | null
+          seller_id?: string
+          shipping_address?: string | null
+          shipping_city?: string | null
+          shipping_name?: string | null
+          shipping_notes?: string | null
+          shipping_phone?: string | null
+          status?: string
+          total?: number
+          tracking_number?: string | null
+          updated_at?: string
+          user_id?: string
+        }
+        Relationships: []
+      }
+      store_products: {
+        Row: {
+          category: string
+          created_at: string
+          description: string | null
+          id: string
+          image_urls: Json | null
+          name: string
+          price: number
+          sale_price: number | null
+          seller_id: string
+          status: string
+          stock: number
+          sub_category: string | null
+          updated_at: string
+        }
+        Insert: {
+          category?: string
+          created_at?: string
+          description?: string | null
+          id?: string
+          image_urls?: Json | null
+          name: string
+          price?: number
+          sale_price?: number | null
+          seller_id: string
+          status?: string
+          stock?: number
+          sub_category?: string | null
+          updated_at?: string
+        }
+        Update: {
+          category?: string
+          created_at?: string
+          description?: string | null
+          id?: string
+          image_urls?: Json | null
+          name?: string
+          price?: number
+          sale_price?: number | null
+          seller_id?: string
+          status?: string
+          stock?: number
+          sub_category?: string | null
+          updated_at?: string
         }
         Relationships: []
       }
