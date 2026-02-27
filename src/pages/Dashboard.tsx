@@ -11,7 +11,7 @@ const cards = [
 { id: 'purchases', label: 'المشتريات', icon: ShoppingCart, path: '/purchases', gradient: 'from-info to-info/80' },
 { id: 'summary', label: 'الملخص', icon: FileText, path: '/summary', gradient: 'from-accent to-accent/80' },
 { id: 'reports', label: 'التقارير', icon: Archive, path: '/reports', gradient: 'from-muted-foreground/60 to-muted-foreground/40' },
-{ id: 'market', label: 'السوق', icon: Store, path: '/market', gradient: 'from-orange-500 to-orange-400' }];
+{ id: 'market', label: 'المتجر', icon: Store, path: '/market', gradient: 'from-orange-500 to-orange-400' }];
 
 
 const Dashboard = () => {
@@ -29,7 +29,7 @@ const Dashboard = () => {
     purchases: `${getTotalPurchases().toLocaleString()} ر.س`,
     summary: 'عرض التقرير',
     reports: 'التقارير المحفوظة',
-    market: 'بيع وشراء'
+    market: 'مستلزمات وأدوات'
   };
 
   return (
