@@ -1,5 +1,5 @@
 import { useEffect, useState } from 'react';
-import { useNavigate } from 'react-router-dom';
+import { useNavigate, useSearchParams } from 'react-router-dom';
 import { supabase } from '@/integrations/supabase/client';
 import { useAuth } from '@/context/AuthContext';
 import PageHeader from '@/components/PageHeader';
@@ -22,25 +22,53 @@ interface Product {
   created_at: string;
 }
 
+const CATEGORY_LABELS: Record<string, string> = {
+  medicine: 'أدوية ومستلزمات طبية',
+  sheep_tools: 'أدوات أغنام',
+  poultry_tools: 'أدوات دواجن',
+  horse_tools: 'أدوات خيل',
+  general: 'مستلزمات عامة',
+  // Legacy support
+  sheep_feed: 'أعلاف أغنام',
+  sheep_medicine: 'أدوية أغنام',
+  poultry_feed: 'أعلاف دواجن',
+  poultry_medicine: 'أدوية دواجن',
+};
+
 const CATEGORIES = [
   { id: 'all', label: 'الكل' },
-  { id: 'sheep_feed', label: 'أعلاف أغنام' },
-  { id: 'sheep_medicine', label: 'أدوية أغنام' },
+  { id: 'medicine', label: 'أدوية وطبية' },
   { id: 'sheep_tools', label: 'أدوات أغنام' },
-  { id: 'poultry_feed', label: 'أعلاف دواجن' },
-  { id: 'poultry_medicine', label: 'أدوية دواجن' },
   { id: 'poultry_tools', label: 'أدوات دواجن' },
+  { id: 'horse_tools', label: 'أدوات خيل' },
   { id: 'general', label: 'مستلزمات عامة' },
 ];
 
+// Map old categories to new ones for filtering
+const CATEGORY_GROUPS: Record<string, string[]> = {
+  medicine: ['medicine', 'sheep_medicine', 'poultry_medicine'],
+  sheep_tools: ['sheep_tools', 'sheep_feed'],
+  poultry_tools: ['poultry_tools', 'poultry_feed'],
+  horse_tools: ['horse_tools'],
+  general: ['general'],
+};
+
 const StorePage = () => {
   const navigate = useNavigate();
+  const [searchParams] = useSearchParams();
   const { user } = useAuth();
   const [products, setProducts] = useState<Product[]>([]);
   const [loading, setLoading] = useState(true);
   const [search, setSearch] = useState('');
-  const [activeCategory, setActiveCategory] = useState('all');
+  const [activeCategory, setActiveCategory] = useState(searchParams.get('category') || 'all');
   const [cartCount, setCartCount] = useState(0);
+
+  useEffect(() => {
+    const cat = searchParams.get('category');
+    if (cat && CATEGORY_LABELS[cat]) {
+      setActiveCategory(cat);
+    }
+  }, [searchParams]);
 
   useEffect(() => {
     const fetchProducts = async () => {
@@ -51,7 +79,14 @@ const StorePage = () => {
         .order('created_at', { ascending: false });
 
       if (activeCategory !== 'all') {
-        query = query.eq('category', activeCategory);
+        const group = CATEGORY_GROUPS[activeCategory];
+        if (group && group.length > 1) {
+          query = query.in('category', group);
+        } else if (group) {
+          query = query.eq('category', group[0]);
+        } else {
+          query = query.eq('category', activeCategory);
+        }
       }
       if (search) {
         query = query.ilike('name', `%${search}%`);
@@ -81,7 +116,7 @@ const StorePage = () => {
   return (
     <div className="min-h-screen bg-secondary p-4 sm:p-6" dir="rtl">
       <div className="max-w-2xl mx-auto">
-        <PageHeader title="المتجر" backTo="/market" />
+        <PageHeader title={CATEGORY_LABELS[activeCategory] || 'المتجر'} backTo="/market" />
 
         {/* Top actions */}
         <div className="flex gap-2 mt-4">
@@ -100,12 +135,7 @@ const StorePage = () => {
         {/* Search */}
         <div className="relative mt-3">
           <Search className="absolute right-3 top-1/2 -translate-y-1/2 w-4 h-4 text-muted-foreground" />
-          <Input
-            className="pr-10"
-            placeholder="ابحث عن منتج..."
-            value={search}
-            onChange={e => setSearch(e.target.value)}
-          />
+          <Input className="pr-10" placeholder="ابحث عن منتج..." value={search} onChange={e => setSearch(e.target.value)} />
         </div>
 
         {/* Categories */}

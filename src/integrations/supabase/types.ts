@@ -337,23 +337,61 @@ export type Database = {
         }
         Relationships: []
       }
+      product_comments: {
+        Row: {
+          content: string
+          created_at: string
+          id: string
+          product_id: string
+          user_id: string
+          user_name: string | null
+        }
+        Insert: {
+          content: string
+          created_at?: string
+          id?: string
+          product_id: string
+          user_id: string
+          user_name?: string | null
+        }
+        Update: {
+          content?: string
+          created_at?: string
+          id?: string
+          product_id?: string
+          user_id?: string
+          user_name?: string | null
+        }
+        Relationships: [
+          {
+            foreignKeyName: "product_comments_product_id_fkey"
+            columns: ["product_id"]
+            isOneToOne: false
+            referencedRelation: "store_products"
+            referencedColumns: ["id"]
+          },
+        ]
+      }
       profiles: {
         Row: {
           created_at: string
           display_name: string | null
           id: string
+          phone: string | null
           user_id: string
         }
         Insert: {
           created_at?: string
           display_name?: string | null
           id?: string
+          phone?: string | null
           user_id: string
         }
         Update: {
           created_at?: string
           display_name?: string | null
           id?: string
+          phone?: string | null
           user_id?: string
         }
         Relationships: []

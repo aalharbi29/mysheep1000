@@ -11,12 +11,10 @@ import { Loader2, Camera, X } from 'lucide-react';
 import { toast } from '@/hooks/use-toast';
 
 const CATEGORIES = [
-  { id: 'sheep_feed', label: 'أعلاف أغنام' },
-  { id: 'sheep_medicine', label: 'أدوية أغنام' },
+  { id: 'medicine', label: 'أدوية ومستلزمات طبية' },
   { id: 'sheep_tools', label: 'أدوات أغنام' },
-  { id: 'poultry_feed', label: 'أعلاف دواجن' },
-  { id: 'poultry_medicine', label: 'أدوية دواجن' },
   { id: 'poultry_tools', label: 'أدوات دواجن' },
+  { id: 'horse_tools', label: 'أدوات خيل' },
   { id: 'general', label: 'مستلزمات عامة' },
 ];
 
@@ -24,7 +22,7 @@ const StoreAddProductPage = () => {
   const navigate = useNavigate();
   const { user } = useAuth();
   const [form, setForm] = useState({
-    name: '', description: '', category: 'sheep_feed', price: '', sale_price: '', stock: '1',
+    name: '', description: '', category: 'medicine', price: '', sale_price: '', stock: '1',
   });
   const [images, setImages] = useState<File[]>([]);
   const [previews, setPreviews] = useState<string[]>([]);
