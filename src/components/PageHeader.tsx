@@ -11,11 +11,11 @@ const PageHeader = ({ title, subtitle, backTo }: PageHeaderProps) => {
   const navigate = useNavigate();
 
   return (
-    <header className="mb-6 rounded-full shadow-2xl opacity-100 border border-solid border-sidebar-border pt-0 px-[15px] pr-0 pl-0 mx-0 ml-[15px] mr-[15px] my-[15px] py-px mt-[15px]">
+    <header className="rounded-full shadow-2xl opacity-100 border pt-0 px-[15px] pr-0 pl-0 mx-0 ml-[15px] mr-[15px] my-[15px] py-px border-dashed border-secondary-foreground mt-[20px] mb-[20px]">
       {backTo &&
       <button
         onClick={() => navigate(backTo)}
-        className="gap-2 transition-colors mb-3 text-primary border-none opacity-100 rounded my-[10px] mx-[15px] px-[15px] flex items-center justify-center pr-[15px] mr-[25px] hover:opacity-80 text-center font-extrabold text-2xl pt-[5px] shadow-2xl">
+        className="transition-colors mb-3 text-primary border-none opacity-100 rounded mx-[15px] px-[15px] pr-[15px] mr-[25px] hover:opacity-80 text-center font-extrabold text-2xl pt-[5px] shadow-2xl flex-row flex items-center justify-center gap-[8px] my-0 py-px pb-0">
           رجوع <ArrowRight className="w-5 h-5 text-primary" />
         </button>
       }
