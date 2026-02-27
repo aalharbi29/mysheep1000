@@ -87,7 +87,7 @@ const StoreCartPage = () => {
       }));
       const orderTotal = sellerItems.reduce((s, i) => s + getPrice(i.product) * i.quantity, 0);
 
-      await supabase.from('store_orders').insert({
+      const orderData = {
         user_id: user.id,
         seller_id: sellerId,
         items: orderItems as any,
@@ -100,7 +100,16 @@ const StoreCartPage = () => {
         status: 'pending',
         payment_method: 'cod',
         payment_status: 'pending',
-      });
+      };
+
+      const { data: insertedOrder } = await supabase.from('store_orders').insert(orderData).select().single();
+
+      // Call edge function for external notifications (WhatsApp/SMS/Email)
+      if (insertedOrder) {
+        supabase.functions.invoke('notify-seller', {
+          body: { record: insertedOrder },
+        }).catch(err => console.error('Notify error:', err));
+      }
     }
 
     // Clear cart
