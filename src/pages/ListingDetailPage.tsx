@@ -5,9 +5,14 @@ import { useAuth } from '@/context/AuthContext';
 import PageHeader from '@/components/PageHeader';
 import { Button } from '@/components/ui/button';
 import { Input } from '@/components/ui/input';
+import { Textarea } from '@/components/ui/textarea';
 import { useToast } from '@/hooks/use-toast';
-import { Loader2, Phone, MapPin, MessageCircle, Send, X } from 'lucide-react';
-import { Dialog, DialogContent } from '@/components/ui/dialog';
+import { Loader2, Phone, MapPin, MessageCircle, Send, X, Edit2, Trash2 } from 'lucide-react';
+import { Dialog, DialogContent, DialogHeader, DialogTitle } from '@/components/ui/dialog';
+import {
+  AlertDialog, AlertDialogAction, AlertDialogCancel, AlertDialogContent,
+  AlertDialogDescription, AlertDialogFooter, AlertDialogHeader, AlertDialogTitle, AlertDialogTrigger,
+} from '@/components/ui/alert-dialog';
 
 interface Listing {
   id: string; category: string; title: string; description: string;
@@ -33,6 +38,10 @@ const ListingDetailPage = () => {
   const [sendingComment, setSendingComment] = useState(false);
   const [selectedMedia, setSelectedMedia] = useState<string | null>(null);
   const [ownerName, setOwnerName] = useState('');
+  const [editing, setEditing] = useState(false);
+  const [editPrice, setEditPrice] = useState('');
+  const [editDesc, setEditDesc] = useState('');
+  const [editLocation, setEditLocation] = useState('');
 
   useEffect(() => {
     const fetchListing = async () => {
@@ -40,11 +49,9 @@ const ListingDetailPage = () => {
       const { data } = await supabase.from('market_listings').select('*').eq('id', id).single();
       if (data) {
         setListing(data as any);
-        // Fetch owner name
         const { data: profile } = await supabase.from('profiles').select('display_name').eq('user_id', (data as any).user_id).single();
         if (profile) setOwnerName(profile.display_name || 'مستخدم');
       }
-      // Fetch comments
       const { data: commentsData } = await supabase
         .from('listing_comments')
         .select('*')
@@ -55,7 +62,6 @@ const ListingDetailPage = () => {
     };
     fetchListing();
 
-    // Realtime comments
     const channel = supabase
       .channel(`comments-${id}`)
       .on('postgres_changes', { event: 'INSERT', schema: 'public', table: 'listing_comments', filter: `listing_id=eq.${id}` },
@@ -80,7 +86,6 @@ const ListingDetailPage = () => {
   const startPrivateChat = async () => {
     if (!user || !listing) return;
     if (user.id === listing.user_id) return;
-    // Check existing conversation
     const { data: existing } = await supabase.from('conversations').select('id')
       .or(`and(participant1.eq.${user.id},participant2.eq.${listing.user_id}),and(participant1.eq.${listing.user_id},participant2.eq.${user.id})`)
       .eq('listing_id', listing.id).single();
@@ -92,8 +97,43 @@ const ListingDetailPage = () => {
     navigate(`/market/chat/${(conv as any).id}`);
   };
 
+  const handleDelete = async () => {
+    if (!listing) return;
+    const { error } = await supabase.from('market_listings').delete().eq('id', listing.id);
+    if (error) {
+      toast({ title: 'خطأ', description: error.message, variant: 'destructive' });
+    } else {
+      toast({ title: 'تم حذف الإعلان ✅' });
+      navigate('/market');
+    }
+  };
+
+  const openEdit = () => {
+    if (!listing) return;
+    setEditPrice(listing.price?.toString() || '');
+    setEditDesc(listing.description || '');
+    setEditLocation(listing.location || '');
+    setEditing(true);
+  };
+
+  const handleSaveEdit = async () => {
+    if (!listing) return;
+    const { error } = await supabase.from('market_listings').update({
+      price: editPrice ? parseFloat(editPrice) : null,
+      description: editDesc,
+      location: editLocation,
+    } as any).eq('id', listing.id);
+    if (error) {
+      toast({ title: 'خطأ', description: error.message, variant: 'destructive' });
+    } else {
+      toast({ title: 'تم التعديل ✅' });
+      setEditing(false);
+      setListing(prev => prev ? { ...prev, price: editPrice ? parseFloat(editPrice) : prev.price, description: editDesc, location: editLocation } : prev);
+    }
+  };
+
   if (loading) return <div className="min-h-screen flex justify-center items-center bg-secondary"><Loader2 className="w-8 h-8 animate-spin text-primary" /></div>;
-  if (!listing) return <div className="min-h-screen bg-secondary p-4" dir="rtl"><PageHeader title="الإعلان غير موجود" backTo="/market/buy" /></div>;
+  if (!listing) return <div className="min-h-screen bg-secondary p-4" dir="rtl"><PageHeader title="الإعلان غير موجود" backTo="/market" /></div>;
 
   const isOwner = user?.id === listing.user_id;
   const whatsappUrl = listing.contact_number ? `https://wa.me/966${listing.contact_number.replace(/^0/, '')}` : '';
@@ -101,17 +141,41 @@ const ListingDetailPage = () => {
   return (
     <div className="min-h-screen bg-secondary p-4 sm:p-6" dir="rtl">
       <div className="max-w-2xl mx-auto">
-        <PageHeader title={listing.title || 'تفاصيل الإعلان'} backTo="/market/buy" />
+        <PageHeader title={listing.title || 'تفاصيل الإعلان'} backTo="/market" />
 
-        {/* Media Gallery */}
+        {/* Owner actions */}
+        {isOwner && (
+          <div className="flex gap-2 mt-4">
+            <Button size="sm" variant="outline" onClick={openEdit}>
+              <Edit2 className="w-4 h-4 ml-1" /> تعديل
+            </Button>
+            <AlertDialog>
+              <AlertDialogTrigger asChild>
+                <Button size="sm" variant="destructive"><Trash2 className="w-4 h-4 ml-1" /> حذف</Button>
+              </AlertDialogTrigger>
+              <AlertDialogContent dir="rtl">
+                <AlertDialogHeader>
+                  <AlertDialogTitle>حذف الإعلان؟</AlertDialogTitle>
+                  <AlertDialogDescription>لا يمكن التراجع عن هذا الإجراء.</AlertDialogDescription>
+                </AlertDialogHeader>
+                <AlertDialogFooter>
+                  <AlertDialogCancel>إلغاء</AlertDialogCancel>
+                  <AlertDialogAction onClick={handleDelete}>حذف</AlertDialogAction>
+                </AlertDialogFooter>
+              </AlertDialogContent>
+            </AlertDialog>
+          </div>
+        )}
+
+        {/* Media Gallery - Small thumbnails */}
         {listing.media_urls?.length > 0 && (
           <div className="flex gap-2 overflow-x-auto mt-4 pb-2">
             {(listing.media_urls as string[]).map((url, i) => (
-              <button key={i} onClick={() => setSelectedMedia(url)} className="flex-shrink-0">
+              <button key={i} onClick={() => setSelectedMedia(url)} className="flex-shrink-0 rounded-lg overflow-hidden border-2 border-border hover:border-primary transition-colors">
                 {url.match(/\.(mp4|mov|webm)/i) ? (
-                  <video src={url} className="w-32 h-32 rounded-xl object-cover" />
+                  <video src={url} className="w-16 h-16 object-cover" />
                 ) : (
-                  <img src={url} alt="" className="w-32 h-32 rounded-xl object-cover" />
+                  <img src={url} alt="" className="w-16 h-16 object-cover" />
                 )}
               </button>
             ))}
@@ -222,6 +286,28 @@ const ListingDetailPage = () => {
           ) : (
             <img src={selectedMedia || ''} alt="" className="w-full max-h-[85vh] object-contain rounded-lg" />
           )}
+        </DialogContent>
+      </Dialog>
+
+      {/* Edit dialog */}
+      <Dialog open={editing} onOpenChange={(open) => !open && setEditing(false)}>
+        <DialogContent dir="rtl">
+          <DialogHeader><DialogTitle>تعديل الإعلان</DialogTitle></DialogHeader>
+          <div className="space-y-4">
+            <div>
+              <label className="text-sm font-bold mb-1 block">الوصف</label>
+              <Textarea value={editDesc} onChange={e => setEditDesc(e.target.value)} rows={3} />
+            </div>
+            <div>
+              <label className="text-sm font-bold mb-1 block">الموقع</label>
+              <Input value={editLocation} onChange={e => setEditLocation(e.target.value)} />
+            </div>
+            <div>
+              <label className="text-sm font-bold mb-1 block">السعر</label>
+              <Input type="number" value={editPrice} onChange={e => setEditPrice(e.target.value)} />
+            </div>
+            <Button className="w-full" onClick={handleSaveEdit}>حفظ التعديلات</Button>
+          </div>
         </DialogContent>
       </Dialog>
     </div>
