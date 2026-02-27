@@ -31,17 +31,28 @@ const StoreOrdersPage = () => {
   const [tab, setTab] = useState<'my' | 'seller'>('my');
   const [selectedOrder, setSelectedOrder] = useState<Order | null>(null);
 
+  const fetchOrders = async () => {
+    if (!user) return;
+    setLoading(true);
+    const { data: myOrders } = await supabase.from('store_orders').select('*').eq('user_id', user.id).order('created_at', { ascending: false });
+    const { data: sOrders } = await supabase.from('store_orders').select('*').eq('seller_id', user.id).order('created_at', { ascending: false });
+    setOrders((myOrders as any[]) || []);
+    setSellerOrders((sOrders as any[]) || []);
+    setLoading(false);
+  };
+
   useEffect(() => {
     if (!user) return;
-    const fetchOrders = async () => {
-      setLoading(true);
-      const { data: myOrders } = await supabase.from('store_orders').select('*').eq('user_id', user.id).order('created_at', { ascending: false });
-      const { data: sOrders } = await supabase.from('store_orders').select('*').eq('seller_id', user.id).order('created_at', { ascending: false });
-      setOrders((myOrders as any[]) || []);
-      setSellerOrders((sOrders as any[]) || []);
-      setLoading(false);
-    };
     fetchOrders();
+
+    // Realtime: refresh when orders change
+    const channel = supabase
+      .channel('seller-orders-realtime')
+      .on('postgres_changes', { event: '*', schema: 'public', table: 'store_orders', filter: `seller_id=eq.${user.id}` }, () => fetchOrders())
+      .on('postgres_changes', { event: '*', schema: 'public', table: 'store_orders', filter: `user_id=eq.${user.id}` }, () => fetchOrders())
+      .subscribe();
+
+    return () => { supabase.removeChannel(channel); };
   }, [user]);
 
   const updateOrderStatus = async (orderId: string, status: string) => {

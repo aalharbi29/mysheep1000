@@ -6,6 +6,7 @@ import { BrowserRouter, Routes, Route } from "react-router-dom";
 import { LivestockProvider } from "@/context/LivestockContext";
 import { AuthProvider, useAuth } from "@/context/AuthContext";
 import DebtReminder from "@/components/DebtReminder";
+import SellerOrderNotification from "@/components/SellerOrderNotification";
 import VaccinationReminder from "@/components/VaccinationReminder";
 import AuthPage from "./pages/AuthPage";
 import Dashboard from "./pages/Dashboard";
@@ -63,6 +64,7 @@ function AppContent() {
     <LivestockProvider>
       <DebtReminder />
       <VaccinationReminder />
+      <SellerOrderNotification />
       <BrowserRouter>
         <Routes>
           <Route path="/" element={<Dashboard />} />
