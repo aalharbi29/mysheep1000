@@ -3,6 +3,7 @@ import { useLivestock } from '@/context/LivestockContext';
 import { useAuth } from '@/context/AuthContext';
 import { Fence, Receipt, ShoppingCart, TrendingUp, FileText, Archive, LogOut, Store } from 'lucide-react';
 import { Button } from '@/components/ui/button';
+import NotificationBell from '@/components/NotificationBell';
 
 const cards = [
 { id: 'flock', label: 'القطيع', icon: Fence, path: '/flock', gradient: 'from-primary to-primary/80' },
@@ -43,6 +44,9 @@ const Dashboard = () => {
             <LogOut className="w-7 h-7" />
             خروج
           </button>
+          <div className="absolute right-0 top-6">
+            <NotificationBell />
+          </div>
           <div className="inline-flex items-center justify-center w-16 h-16 rounded-2xl bg-primary/10 mb-4 mx-0 shadow-2xl">
             <Fence className="w-8 h-8 text-primary" />
           </div>
