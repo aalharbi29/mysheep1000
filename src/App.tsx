@@ -34,6 +34,11 @@ import MyListingsPage from "./pages/MyListingsPage";
 import ListingDetailPage from "./pages/ListingDetailPage";
 import ConversationsPage from "./pages/ConversationsPage";
 import ChatPage from "./pages/ChatPage";
+import StorePage from "./pages/StorePage";
+import StoreProductPage from "./pages/StoreProductPage";
+import StoreCartPage from "./pages/StoreCartPage";
+import StoreOrdersPage from "./pages/StoreOrdersPage";
+import StoreAddProductPage from "./pages/StoreAddProductPage";
 import NotFound from "./pages/NotFound";
 import { Loader2 } from "lucide-react";
 
@@ -89,6 +94,11 @@ function AppContent() {
           <Route path="/market/listing/:id" element={<ListingDetailPage />} />
           <Route path="/market/conversations" element={<ConversationsPage />} />
           <Route path="/market/chat/:conversationId" element={<ChatPage />} />
+          <Route path="/store" element={<StorePage />} />
+          <Route path="/store/product/:id" element={<StoreProductPage />} />
+          <Route path="/store/cart" element={<StoreCartPage />} />
+          <Route path="/store/orders" element={<StoreOrdersPage />} />
+          <Route path="/store/add-product" element={<StoreAddProductPage />} />
           <Route path="*" element={<NotFound />} />
         </Routes>
       </BrowserRouter>
