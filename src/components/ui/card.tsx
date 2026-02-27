@@ -3,20 +3,20 @@ import * as React from "react";
 import { cn } from "@/lib/utils";
 
 const Card = React.forwardRef<HTMLDivElement, React.HTMLAttributes<HTMLDivElement>>(({ className, ...props }, ref) =>
-<div ref={ref} className={cn("border bg-card text-card-foreground shadow-sm rounded-3xl mt-0 mb-[150px]", className)} {...props} />
+<div ref={ref} className={cn("bg-card text-card-foreground shadow-sm rounded-3xl mt-0 mb-[150px] border-solid border-4 border-sidebar-ring", className)} {...props} />
 );
 Card.displayName = "Card";
 
 const CardHeader = React.forwardRef<HTMLDivElement, React.HTMLAttributes<HTMLDivElement>>(
   ({ className, ...props }, ref) =>
-  <div ref={ref} className={cn("flex flex-col space-y-1.5 p-6 rounded-3xl shadow-2xl mb-[20px] ml-[10px] mr-[10px] bg-[#ececdf]", className)} {...props} />
+  <div ref={ref} className={cn("flex flex-col space-y-1.5 p-6 rounded-3xl shadow-2xl mb-[20px] ml-[10px] mr-[10px] bg-yellow-50", className)} {...props} />
 
 );
 CardHeader.displayName = "CardHeader";
 
 const CardTitle = React.forwardRef<HTMLParagraphElement, React.HTMLAttributes<HTMLHeadingElement>>(
   ({ className, ...props }, ref) =>
-  <h3 ref={ref} className={cn("text-2xl font-semibold leading-none tracking-tight", className)} {...props} />
+  <h3 ref={ref} className={cn("text-2xl font-semibold leading-none tracking-tight text-accent", className)} {...props} />
 
 );
 CardTitle.displayName = "CardTitle";

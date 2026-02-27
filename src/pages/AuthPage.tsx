@@ -51,7 +51,7 @@ const AuthPage = () => {
           <CardTitle className="text-2xl font-bold text-foreground">
             {isLogin ? 'تسجيل الدخول' : 'إنشاء حساب جديد'}
           </CardTitle>
-          <p className="text-sm text-muted-foreground mt-1">إدارة القطيع</p>
+          <p className="text-sm mt-1 text-accent font-extrabold">إدارة القطيع</p>
         </CardHeader>
         <CardContent>
           <form onSubmit={handleSubmit} className="space-y-4">
