@@ -1,10 +1,12 @@
 import { useNavigate } from 'react-router-dom';
-import { ArrowRight, ShoppingBag, ShoppingCart } from 'lucide-react';
+import { ShoppingBag, ShoppingCart, ClipboardList, MessageCircle } from 'lucide-react';
 import PageHeader from '@/components/PageHeader';
 
 const cards = [
   { id: 'sell', label: 'بيع', icon: ShoppingBag, path: '/market/sell', gradient: 'from-success to-success/80' },
   { id: 'buy', label: 'شراء', icon: ShoppingCart, path: '/market/buy', gradient: 'from-info to-info/80' },
+  { id: 'my-listings', label: 'إعلاناتي', icon: ClipboardList, path: '/market/my-listings', gradient: 'from-primary to-primary/80' },
+  { id: 'conversations', label: 'المحادثات', icon: MessageCircle, path: '/market/conversations', gradient: 'from-accent to-accent/80' },
 ];
 
 const MarketPage = () => {
