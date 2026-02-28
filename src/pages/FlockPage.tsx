@@ -20,7 +20,7 @@ const FlockPage = () => {
         <PageHeader title="القطيع" subtitle="اختر نوع الماشية" backTo="/" />
 
         {/* Flock Report buttons */}
-        <div className="flex gap-2 mb-4">
+        <div className="flex gap-2 mb-4 bg-transparent">
           <Button variant="outline" className="flex-1 gap-2 h-10 border-primary/30 text-primary hover:bg-primary/10" onClick={() => generateFlockReport(animals)}>
             <FileText className="w-4 h-4" /> تقرير القطيع PDF
           </Button>
