@@ -5,12 +5,12 @@ import { Button } from '@/components/ui/button';
 import { Input } from '@/components/ui/input';
 import { Label } from '@/components/ui/label';
 import { Dialog, DialogContent, DialogHeader, DialogTitle, DialogTrigger } from '@/components/ui/dialog';
-import { Plus, FileText, Image } from 'lucide-react';
+import { Plus, FileText, Image, Trash2 } from 'lucide-react';
 import { generatePurchasesReport, downloadSectionReportAsImage } from '@/lib/generateSectionReport';
 import MonthlyGroup, { groupByMonth } from '@/components/MonthlyGroup';
 
 const PurchasesPage = () => {
-  const { purchases, addPurchase, getTotalPurchases } = useLivestock();
+  const { purchases, addPurchase, deletePurchase, getTotalPurchases } = useLivestock();
   const [open, setOpen] = useState(false);
   const [desc, setDesc] = useState('');
   const [amount, setAmount] = useState('');
@@ -69,7 +69,10 @@ const PurchasesPage = () => {
                     <p className="font-semibold text-card-foreground">{p.description}</p>
                     <p className="text-xs text-muted-foreground">{p.date} • {p.quantity} قطعة</p>
                   </div>
-                  <span className="font-bold text-info">{p.amount.toLocaleString()} ر.س</span>
+                  <div className="flex items-center gap-2">
+                    <span className="font-bold text-info">{p.amount.toLocaleString()} ر.س</span>
+                    <button onClick={() => { if (confirm('هل أنت متأكد من حذف هذا الشراء؟')) { deletePurchase(p.id); } }} className="text-muted-foreground hover:text-destructive transition-colors"><Trash2 className="w-4 h-4" /></button>
+                  </div>
                 </div>
               )}
             </MonthlyGroup>);

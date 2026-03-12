@@ -18,11 +18,13 @@ interface LivestockContextType {
   updateBirthRecord: (animalId: string, record: BirthRecord) => void;
   deleteBirthRecord: (animalId: string, recordId: string) => void;
   addExpense: (expense: Expense) => void;
+  deleteExpense: (id: string) => void;
   addSale: (sale: Sale) => void;
   updateSale: (sale: Sale) => void;
   deleteSale: (id: string) => void;
   cancelSale: (sale: Sale) => void;
   addPurchase: (purchase: Purchase) => void;
+  deletePurchase: (id: string) => void;
   updateAllColors: (breed: string, subCategory: string, color: string) => void;
   getAnimalsByBreed: (category: string, breed: string) => Animal[];
   getAnimalById: (id: string) => Animal | undefined;
@@ -369,6 +371,14 @@ export function LivestockProvider({ children }: { children: ReactNode }) {
     });
   }, [userId]);
 
+  const deleteExpense = useCallback((id: string) => {
+    if (!userId) return;
+    setExpenses(prev => prev.filter(e => e.id !== id));
+    supabase.from('expenses').delete().eq('id', id).eq('user_id', userId).then(({ error }) => {
+      if (error) console.error('Error deleting expense:', error);
+    });
+  }, [userId]);
+
   const addSale = useCallback((sale: Sale) => {
     if (!userId) return;
     setSales(prev => [...prev, sale]);
@@ -427,6 +437,14 @@ export function LivestockProvider({ children }: { children: ReactNode }) {
     });
   }, [userId]);
 
+  const deletePurchase = useCallback((id: string) => {
+    if (!userId) return;
+    setPurchases(prev => prev.filter(p => p.id !== id));
+    supabase.from('purchases').delete().eq('id', id).eq('user_id', userId).then(({ error }) => {
+      if (error) console.error('Error deleting purchase:', error);
+    });
+  }, [userId]);
+
   const updateAllColors = useCallback((breed: string, subCategory: string, color: string) => {
     if (!userId) return;
     setAnimals(prev =>
@@ -468,7 +486,7 @@ export function LivestockProvider({ children }: { children: ReactNode }) {
         animals, expenses, sales, purchases, loading,
         addAnimal, updateAnimal, deleteAnimal, markAnimalDead,
         addBirthRecord, updateBirthRecord, deleteBirthRecord,
-        addExpense, addSale, updateSale, deleteSale, cancelSale, addPurchase,
+        addExpense, deleteExpense, addSale, updateSale, deleteSale, cancelSale, addPurchase, deletePurchase,
         updateAllColors,
         getAnimalsByBreed, getAnimalById, getAnimalByNumber,
         getTotalExpenses, getTotalSales, getTotalPurchases,

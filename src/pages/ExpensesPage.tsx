@@ -13,7 +13,7 @@ import { generateExpensesReport, downloadSectionReportAsImage } from '@/lib/gene
 import MonthlyGroup, { groupByMonth } from '@/components/MonthlyGroup';
 
 const ExpensesPage = () => {
-  const { expenses, addExpense, getTotalExpenses } = useLivestock();
+  const { expenses, addExpense, deleteExpense, getTotalExpenses } = useLivestock();
   const [open, setOpen] = useState(false);
   const [date, setDate] = useState(new Date().toISOString().split('T')[0]);
   const [selectedCategory, setSelectedCategory] = useState<ExpenseCategoryKey | ''>('');
@@ -264,7 +264,10 @@ const ExpensesPage = () => {
                           </p>
                         }
                       </div>
-                      <span className="font-bold text-destructive whitespace-nowrap mr-2">{e.amount.toLocaleString()} ر.س</span>
+                      <div className="flex flex-col items-end gap-1">
+                        <span className="font-bold text-destructive whitespace-nowrap">{e.amount.toLocaleString()} ر.س</span>
+                        <button onClick={() => { if (confirm('هل أنت متأكد من حذف هذا المصروف؟')) { deleteExpense(e.id); toast({ title: '🗑️ تم الحذف', description: 'تم حذف المصروف بنجاح' }); } }} className="text-muted-foreground hover:text-destructive transition-colors"><Trash2 className="w-4 h-4" /></button>
+                      </div>
                     </div>
                   </div>);
 
