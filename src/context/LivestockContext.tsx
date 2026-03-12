@@ -486,7 +486,7 @@ export function LivestockProvider({ children }: { children: ReactNode }) {
         animals, expenses, sales, purchases, loading,
         addAnimal, updateAnimal, deleteAnimal, markAnimalDead,
         addBirthRecord, updateBirthRecord, deleteBirthRecord,
-        addExpense, addSale, updateSale, deleteSale, cancelSale, addPurchase,
+        addExpense, deleteExpense, addSale, updateSale, deleteSale, cancelSale, addPurchase, deletePurchase,
         updateAllColors,
         getAnimalsByBreed, getAnimalById, getAnimalByNumber,
         getTotalExpenses, getTotalSales, getTotalPurchases,
