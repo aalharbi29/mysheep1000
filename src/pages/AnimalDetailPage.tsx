@@ -91,8 +91,17 @@ const AnimalDetailPage = () => {
     const record: BirthRecord = { id: Date.now().toString(), date: birthDate, offspring };
     addBirthRecord(animal.id, record);
 
+    // Check for stillborn offspring and add alert note to mother
+    const hasStillborn = offspring.some(o => o.fate === 'stillborn');
+    if (hasStillborn) {
+      const existingNotes = animal.notes || '';
+      const stillbornNote = `⚠️ طشت بتاريخ ${birthDate}`;
+      const updatedNotes = existingNotes ? `${existingNotes}\n${stillbornNote}` : stillbornNote;
+      updateAnimal({ ...animal, notes: updatedNotes, birthRecords: [...animal.birthRecords, record] });
+    }
+
     offspring.forEach((off) => {
-      if (off.number > 0) {
+      if (off.number > 0 && off.fate !== 'stillborn') {
         addAnimal({
           id: `${animal.breed}-young-${off.number}-${Date.now()}`,
           number: off.number,
