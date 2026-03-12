@@ -61,7 +61,7 @@ const SummaryBirthsPage = () => {
 
         <div className="grid grid-cols-2 gap-3 mb-6">
           <StatCard label="إجمالي المواليد" value={`${totalBirths}`} />
-          {(['flock', 'sold', 'died', 'infant'] as OffspringFate[]).map(fate => (
+          {(['flock', 'sold', 'died', 'infant', 'stillborn'] as OffspringFate[]).map(fate => (
             <StatCard key={fate} label={FATE_LABELS[fate]} value={`${birthsByFate[fate] || 0}`} />
           ))}
         </div>

@@ -140,6 +140,13 @@ const AnimalGrid = ({ breed, category, subCategory }: AnimalGridProps) => {
                 </span>
               }
 
+              {/* Stillborn alert indicator */}
+              {animal.notes?.includes('طشت') &&
+              <div className="absolute top-1 right-1 w-5 h-5 flex items-center justify-center animate-pulse" title="طشت - تحتاج متابعة">
+                  <span className="text-sm">⚠️</span>
+                </div>
+              }
+
               {/* Confirm button for unconfirmed animals (not needed for young) */}
               {!isConfirmed && !isDead && animal.subCategory !== 'young' &&
               <div

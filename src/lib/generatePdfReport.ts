@@ -353,6 +353,7 @@ function fateEmoji(fate: OffspringFate): string {
     sold: '💰',
     died: '💀',
     infant: '🍼',
+    stillborn: '⚠️',
   };
   return map[fate] || '❓';
 }

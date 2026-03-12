@@ -91,8 +91,17 @@ const AnimalDetailPage = () => {
     const record: BirthRecord = { id: Date.now().toString(), date: birthDate, offspring };
     addBirthRecord(animal.id, record);
 
+    // Check for stillborn offspring and add alert note to mother
+    const hasStillborn = offspring.some(o => o.fate === 'stillborn');
+    if (hasStillborn) {
+      const existingNotes = animal.notes || '';
+      const stillbornNote = `⚠️ طشت بتاريخ ${birthDate}`;
+      const updatedNotes = existingNotes ? `${existingNotes}\n${stillbornNote}` : stillbornNote;
+      updateAnimal({ ...animal, notes: updatedNotes, birthRecords: [...animal.birthRecords, record] });
+    }
+
     offspring.forEach((off) => {
-      if (off.number > 0) {
+      if (off.number > 0 && off.fate !== 'stillborn') {
         addAnimal({
           id: `${animal.breed}-young-${off.number}-${Date.now()}`,
           number: off.number,
@@ -290,6 +299,19 @@ const AnimalDetailPage = () => {
             <p className="mt-3 text-sm font-bold text-black/70">{animal.notes}</p>
           )}
         </div>
+
+        {/* Stillborn alert banner */}
+        {animal.notes?.includes('طشت') && (
+          <div className="rounded-xl bg-amber-100 border-2 border-amber-400 p-4 mb-6 flex items-center gap-3 animate-pulse">
+            <span className="text-2xl">⚠️</span>
+            <div>
+              <p className="font-bold text-amber-800">تنبيه متابعة</p>
+              {animal.notes.split('\n').filter(n => n.includes('طشت')).map((line, i) => (
+                <p key={i} className="text-sm text-amber-700 font-semibold">{line}</p>
+              ))}
+            </div>
+          </div>
+        )}
 
         {/* Death status banner */}
         {animal.status === 'dead' && (

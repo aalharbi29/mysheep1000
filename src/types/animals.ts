@@ -3,7 +3,7 @@ export type SheepBreed = 'harri' | 'najdi' | 'naimi' | 'sawakni' | 'mixed_sheep'
 export type GoatBreed = 'aradi' | 'shami' | 'masri' | 'badwi' | 'hijazi' | 'mixed_goat';
 export type AnimalGender = 'male' | 'female';
 
-export type OffspringFate = 'flock' | 'sold' | 'died' | 'infant';
+export type OffspringFate = 'flock' | 'sold' | 'died' | 'infant' | 'stillborn';
 export type AnimalSubCategory = 'mothers' | 'young' | 'rams';
 
 export interface Offspring {
@@ -197,4 +197,5 @@ export const FATE_LABELS: Record<OffspringFate, string> = {
   sold: 'تم بيعه',
   died: 'نفق',
   infant: 'رضيع',
+  stillborn: 'مولود ميت (طشت)',
 };
