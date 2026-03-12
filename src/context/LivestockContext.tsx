@@ -18,11 +18,13 @@ interface LivestockContextType {
   updateBirthRecord: (animalId: string, record: BirthRecord) => void;
   deleteBirthRecord: (animalId: string, recordId: string) => void;
   addExpense: (expense: Expense) => void;
+  deleteExpense: (id: string) => void;
   addSale: (sale: Sale) => void;
   updateSale: (sale: Sale) => void;
   deleteSale: (id: string) => void;
   cancelSale: (sale: Sale) => void;
   addPurchase: (purchase: Purchase) => void;
+  deletePurchase: (id: string) => void;
   updateAllColors: (breed: string, subCategory: string, color: string) => void;
   getAnimalsByBreed: (category: string, breed: string) => Animal[];
   getAnimalById: (id: string) => Animal | undefined;
