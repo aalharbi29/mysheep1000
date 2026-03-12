@@ -13,7 +13,7 @@ import { generateExpensesReport, downloadSectionReportAsImage } from '@/lib/gene
 import MonthlyGroup, { groupByMonth } from '@/components/MonthlyGroup';
 
 const ExpensesPage = () => {
-  const { expenses, addExpense, getTotalExpenses } = useLivestock();
+  const { expenses, addExpense, deleteExpense, getTotalExpenses } = useLivestock();
   const [open, setOpen] = useState(false);
   const [date, setDate] = useState(new Date().toISOString().split('T')[0]);
   const [selectedCategory, setSelectedCategory] = useState<ExpenseCategoryKey | ''>('');
