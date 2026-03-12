@@ -300,6 +300,19 @@ const AnimalDetailPage = () => {
           )}
         </div>
 
+        {/* Stillborn alert banner */}
+        {animal.notes?.includes('طشت') && (
+          <div className="rounded-xl bg-amber-100 border-2 border-amber-400 p-4 mb-6 flex items-center gap-3 animate-pulse">
+            <span className="text-2xl">⚠️</span>
+            <div>
+              <p className="font-bold text-amber-800">تنبيه متابعة</p>
+              {animal.notes.split('\n').filter(n => n.includes('طشت')).map((line, i) => (
+                <p key={i} className="text-sm text-amber-700 font-semibold">{line}</p>
+              ))}
+            </div>
+          </div>
+        )}
+
         {/* Death status banner */}
         {animal.status === 'dead' && (
           <div className="rounded-xl bg-destructive/10 border border-destructive/30 p-4 mb-6 text-center">
