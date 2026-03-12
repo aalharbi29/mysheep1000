@@ -10,7 +10,7 @@ import { generatePurchasesReport, downloadSectionReportAsImage } from '@/lib/gen
 import MonthlyGroup, { groupByMonth } from '@/components/MonthlyGroup';
 
 const PurchasesPage = () => {
-  const { purchases, addPurchase, getTotalPurchases } = useLivestock();
+  const { purchases, addPurchase, deletePurchase, getTotalPurchases } = useLivestock();
   const [open, setOpen] = useState(false);
   const [desc, setDesc] = useState('');
   const [amount, setAmount] = useState('');
