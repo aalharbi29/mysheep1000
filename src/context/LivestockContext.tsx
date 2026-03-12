@@ -371,6 +371,14 @@ export function LivestockProvider({ children }: { children: ReactNode }) {
     });
   }, [userId]);
 
+  const deleteExpense = useCallback((id: string) => {
+    if (!userId) return;
+    setExpenses(prev => prev.filter(e => e.id !== id));
+    supabase.from('expenses').delete().eq('id', id).eq('user_id', userId).then(({ error }) => {
+      if (error) console.error('Error deleting expense:', error);
+    });
+  }, [userId]);
+
   const addSale = useCallback((sale: Sale) => {
     if (!userId) return;
     setSales(prev => [...prev, sale]);
