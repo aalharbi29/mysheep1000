@@ -197,4 +197,5 @@ export const FATE_LABELS: Record<OffspringFate, string> = {
   sold: 'تم بيعه',
   died: 'نفق',
   infant: 'رضيع',
+  stillborn: 'مولود ميت (طشت)',
 };
