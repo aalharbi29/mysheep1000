@@ -437,6 +437,14 @@ export function LivestockProvider({ children }: { children: ReactNode }) {
     });
   }, [userId]);
 
+  const deletePurchase = useCallback((id: string) => {
+    if (!userId) return;
+    setPurchases(prev => prev.filter(p => p.id !== id));
+    supabase.from('purchases').delete().eq('id', id).eq('user_id', userId).then(({ error }) => {
+      if (error) console.error('Error deleting purchase:', error);
+    });
+  }, [userId]);
+
   const updateAllColors = useCallback((breed: string, subCategory: string, color: string) => {
     if (!userId) return;
     setAnimals(prev =>
