@@ -248,8 +248,24 @@ export function LivestockProvider({ children }: { children: ReactNode }) {
       setLoading(true);
       try {
         // Load all data in parallel
+        // Fetch all animals in pages to avoid the 1000 row default limit
+        const fetchAllAnimals = async () => {
+          const allAnimals: any[] = [];
+          let from = 0;
+          const pageSize = 1000;
+          while (true) {
+            const { data, error } = await supabase.from('animals').select('*').eq('user_id', userId).range(from, from + pageSize - 1);
+            if (error) { console.error('Error loading animals:', error); break; }
+            if (!data || data.length === 0) break;
+            allAnimals.push(...data);
+            if (data.length < pageSize) break;
+            from += pageSize;
+          }
+          return { data: allAnimals, error: null };
+        };
+
         const [animalsRes, expensesRes, salesRes, purchasesRes] = await Promise.all([
-          supabase.from('animals').select('*').eq('user_id', userId),
+          fetchAllAnimals(),
           supabase.from('expenses').select('*').eq('user_id', userId),
           supabase.from('sales').select('*').eq('user_id', userId),
           supabase.from('purchases').select('*').eq('user_id', userId),
