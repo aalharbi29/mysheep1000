@@ -69,6 +69,7 @@ function AppContent() {
       <DebtReminder />
       <VaccinationReminder />
       <SellerOrderNotification />
+      <SyncStatusIndicator />
       <BrowserRouter>
         <Routes>
           <Route path="/" element={<Dashboard />} />
