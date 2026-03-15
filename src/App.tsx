@@ -8,6 +8,7 @@ import { AuthProvider, useAuth } from "@/context/AuthContext";
 import DebtReminder from "@/components/DebtReminder";
 import SellerOrderNotification from "@/components/SellerOrderNotification";
 import VaccinationReminder from "@/components/VaccinationReminder";
+import SyncStatusIndicator from "@/components/SyncStatusIndicator";
 import AuthPage from "./pages/AuthPage";
 import Dashboard from "./pages/Dashboard";
 import FlockPage from "./pages/FlockPage";
@@ -68,6 +69,7 @@ function AppContent() {
       <DebtReminder />
       <VaccinationReminder />
       <SellerOrderNotification />
+      <SyncStatusIndicator />
       <BrowserRouter>
         <Routes>
           <Route path="/" element={<Dashboard />} />
