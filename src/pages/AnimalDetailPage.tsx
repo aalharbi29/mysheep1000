@@ -380,16 +380,6 @@ const AnimalDetailPage = () => {
                     <div><Label className="text-xs">رقم البطاقة</Label><Input type="number" placeholder="أدخل رقم البطاقة" value={o.assignedNumber || ''} onChange={e => updateOffspringField(index, 'assignedNumber', Number(e.target.value))} /></div>
                     <div className="grid grid-cols-2 gap-2">
                       <div>
-                        <Label className="text-xs">النوع</Label>
-                        <Select value={o.gender || 'female'} onValueChange={v => updateOffspringField(index, 'gender', v)}>
-                          <SelectTrigger className="h-8"><SelectValue /></SelectTrigger>
-                          <SelectContent>
-                            <SelectItem value="male">ذكر</SelectItem>
-                            <SelectItem value="female">أنثى</SelectItem>
-                          </SelectContent>
-                        </Select>
-                      </div>
-                      <div>
                         <Label className="text-xs">المصير</Label>
                         <Select value={o.fate || 'flock'} onValueChange={v => updateOffspringField(index, 'fate', v)}>
                           <SelectTrigger className="h-8"><SelectValue /></SelectTrigger>
@@ -400,23 +390,42 @@ const AnimalDetailPage = () => {
                           </SelectContent>
                         </Select>
                       </div>
+                      {o.fate !== 'stillborn' && (
+                        <div>
+                          <Label className="text-xs">النوع</Label>
+                          <Select value={o.gender || 'female'} onValueChange={v => updateOffspringField(index, 'gender', v)}>
+                            <SelectTrigger className="h-8"><SelectValue /></SelectTrigger>
+                            <SelectContent>
+                              <SelectItem value="male">ذكر</SelectItem>
+                              <SelectItem value="female">أنثى</SelectItem>
+                            </SelectContent>
+                          </Select>
+                        </div>
+                      )}
                     </div>
-                    <div>
-                      <Label className="text-xs">لون التاق</Label>
-                      <Select value={o.color || 'أبيض'} onValueChange={v => updateOffspringField(index, 'color', v)}>
-                        <SelectTrigger className="h-8"><SelectValue /></SelectTrigger>
-                        <SelectContent>
-                          {Object.keys(ANIMAL_COLORS).map(c => (
-                            <SelectItem key={c} value={c}>
-                              <span className="flex items-center gap-2">
-                                <span className="w-3 h-3 rounded-full border" style={{ backgroundColor: ANIMAL_COLORS[c] }} />
-                                {c}
-                              </span>
-                            </SelectItem>
-                          ))}
-                        </SelectContent>
-                      </Select>
-                    </div>
+                    {o.fate !== 'stillborn' && (
+                      <div>
+                        <Label className="text-xs">لون التاق</Label>
+                        <Select value={o.color || 'أبيض'} onValueChange={v => updateOffspringField(index, 'color', v)}>
+                          <SelectTrigger className="h-8"><SelectValue /></SelectTrigger>
+                          <SelectContent>
+                            {Object.keys(ANIMAL_COLORS).map(c => (
+                              <SelectItem key={c} value={c}>
+                                <span className="flex items-center gap-2">
+                                  <span className="w-3 h-3 rounded-full border" style={{ backgroundColor: ANIMAL_COLORS[c] }} />
+                                  {c}
+                                </span>
+                              </SelectItem>
+                            ))}
+                          </SelectContent>
+                        </Select>
+                      </div>
+                    )}
+                    {o.fate === 'stillborn' && (
+                      <div className="rounded-md bg-amber-50 border border-amber-200 p-2">
+                        <p className="text-xs text-amber-700 text-center font-semibold">⚠️ مولود ميت (طشت) - لا يحتاج لبيانات إضافية</p>
+                      </div>
+                    )}
                   </div>
                 ))}
 
