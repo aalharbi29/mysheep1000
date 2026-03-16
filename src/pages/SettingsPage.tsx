@@ -33,14 +33,13 @@ const SettingsPage = () => {
   // Data reset
   const [deletingSection, setDeletingSection] = useState<string | null>(null);
 
-  // Load phone on mount
-  useState(() => {
+  useEffect(() => {
     if (!user || phoneLoaded) return;
     supabase.from('profiles').select('phone').eq('user_id', user.id).single().then(({ data }) => {
       if (data?.phone) setPhone(data.phone);
       setPhoneLoaded(true);
     });
-  });
+  }, [user, phoneLoaded]);
 
   const handleChangePassword = async () => {
     if (newPassword.length < 6) {
