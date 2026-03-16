@@ -18,7 +18,6 @@ import {
 
 const SettingsPage = () => {
   const { user, signOut } = useAuth();
-  const { refreshData } = useLivestock();
 
   // Password change
   const [newPassword, setNewPassword] = useState('');
