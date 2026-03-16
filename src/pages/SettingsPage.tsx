@@ -105,8 +105,7 @@ const SettingsPage = () => {
       toast({ title: 'حدث خطأ أثناء الحذف', variant: 'destructive' });
     } else {
       toast({ title: `تم حذف بيانات ${sectionLabels[section]} بنجاح ✅` });
-      refreshData();
-    }
+      window.location.reload();
     setDeletingSection(null);
   };
 
