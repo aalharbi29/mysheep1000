@@ -45,6 +45,9 @@ const Dashboard = () => {
             خروج
           </button>
           <div className="absolute right-0 top-6 flex items-center gap-1">
+            <button onClick={() => navigate('/settings')} className="p-2" title="الإعدادات">
+              <Settings className="w-7 h-7 text-muted-foreground" />
+            </button>
             <button onClick={() => navigate('/profile')} className="p-2" title="الملف الشخصي">
               <UserCircle className="w-7 h-7 text-primary" />
             </button>
