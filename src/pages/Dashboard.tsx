@@ -1,7 +1,7 @@
 import { useNavigate } from 'react-router-dom';
 import { useLivestock } from '@/context/LivestockContext';
 import { useAuth } from '@/context/AuthContext';
-import { Fence, Receipt, ShoppingCart, TrendingUp, FileText, Archive, LogOut, Store, UserCircle } from 'lucide-react';
+import { Fence, Receipt, ShoppingCart, TrendingUp, FileText, Archive, LogOut, Store, UserCircle, Settings } from 'lucide-react';
 import { Button } from '@/components/ui/button';
 import NotificationBell from '@/components/NotificationBell';
 
