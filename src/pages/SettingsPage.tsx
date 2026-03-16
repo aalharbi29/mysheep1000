@@ -106,6 +106,7 @@ const SettingsPage = () => {
     } else {
       toast({ title: `تم حذف بيانات ${sectionLabels[section]} بنجاح ✅` });
       window.location.reload();
+    }
     setDeletingSection(null);
   };
 
