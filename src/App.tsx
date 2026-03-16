@@ -44,6 +44,7 @@ import StoreAddProductPage from "./pages/StoreAddProductPage";
 import MyProductsPage from "./pages/MyProductsPage";
 import NotificationsPage from "./pages/NotificationsPage";
 import ProfilePage from "./pages/ProfilePage";
+import SettingsPage from "./pages/SettingsPage";
 import NotFound from "./pages/NotFound";
 import { Loader2 } from "lucide-react";
 
