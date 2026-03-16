@@ -44,6 +44,7 @@ import StoreAddProductPage from "./pages/StoreAddProductPage";
 import MyProductsPage from "./pages/MyProductsPage";
 import NotificationsPage from "./pages/NotificationsPage";
 import ProfilePage from "./pages/ProfilePage";
+import SettingsPage from "./pages/SettingsPage";
 import NotFound from "./pages/NotFound";
 import { Loader2 } from "lucide-react";
 
@@ -109,6 +110,7 @@ function AppContent() {
           <Route path="/store/my-products" element={<MyProductsPage />} />
           <Route path="/notifications" element={<NotificationsPage />} />
           <Route path="/profile" element={<ProfilePage />} />
+          <Route path="/settings" element={<SettingsPage />} />
           <Route path="*" element={<NotFound />} />
         </Routes>
       </BrowserRouter>
