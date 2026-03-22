@@ -56,7 +56,7 @@ const Dashboard = () => {
           <div className="inline-flex items-center justify-center w-16 h-16 rounded-2xl bg-primary/10 mb-4 mx-0 shadow-2xl">
             <Fence className="w-8 h-8 text-primary" />
           </div>
-          <h1 className="font-extrabold text-4xl mx-[25px] text-[#6075af]">الحظيرة النموذجية
+          <h1 className="font-extrabold mx-[25px] text-[#6075af] text-2xl">الحظيرة النموذجية
           </h1>
           <p className="mt-1 text-xl font-bold mx-[3px] text-[#755e1f]/[0.97]">إدارة ومتابعة القطيع</p>
         </header>
