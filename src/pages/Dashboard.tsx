@@ -34,7 +34,7 @@ const Dashboard = () => {
   };
 
   return (
-    <div className="min-h-screen p-4 sm:p-6 text-red-400 bg-secondary">
+    <div className="min-h-screen p-4 sm:p-6 text-red-400 bg-[sidebar-accent-foreground] bg-slate-950">
       <div className="max-w-2xl mx-auto">
         <header className="text-center mb-8 pt-6 relative">
           <button
@@ -44,7 +44,7 @@ const Dashboard = () => {
             <LogOut className="w-7 h-7" />
             خروج
           </button>
-          <div className="absolute right-0 top-6 flex items-center gap-1">
+          <div className="absolute right-0 top-6 flex items-center gap-[2px] border border-solid border-accent bg-inherit rounded-2xl">
             <button onClick={() => navigate('/settings')} className="p-2" title="الإعدادات">
               <Settings className="w-7 h-7 text-muted-foreground" />
             </button>
@@ -53,10 +53,10 @@ const Dashboard = () => {
             </button>
             <NotificationBell />
           </div>
-          <div className="inline-flex items-center justify-center w-16 h-16 rounded-2xl bg-primary/10 mb-4 mx-0 shadow-2xl">
+          <div className="inline-flex items-center justify-center w-16 h-16 rounded-2xl bg-primary/10 mx-0 shadow-2xl text-xs mr-[15px] mb-[16px] pt-0">
             <Fence className="w-8 h-8 text-primary" />
           </div>
-          <h1 className="font-extrabold mx-[25px] text-[#6075af] text-2xl">الحظيرة النموذجية
+          <h1 className="font-extrabold mx-[25px] text-[#6075af] text-2xl pt-0">الحظيرة النموذجية
           </h1>
           <p className="mt-1 text-xl font-bold mx-[3px] text-[#755e1f]/[0.97]">إدارة ومتابعة القطيع</p>
         </header>
