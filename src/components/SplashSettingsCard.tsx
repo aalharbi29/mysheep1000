@@ -1,4 +1,4 @@
-import { useState } from 'react';
+import { useState, useEffect } from 'react';
 import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card';
 import { Input } from '@/components/ui/input';
 import { Label } from '@/components/ui/label';
@@ -6,28 +6,58 @@ import { Button } from '@/components/ui/button';
 import { Switch } from '@/components/ui/switch';
 import { Slider } from '@/components/ui/slider';
 import { toast } from '@/hooks/use-toast';
-import { Monitor, Eye, Save } from 'lucide-react';
-import { SplashSettings, getSplashSettings, saveSplashSettings, defaultSplashSettings } from '@/lib/splashSettings';
+import { Monitor, Eye, Save, Loader2 } from 'lucide-react';
+import { SplashSettings, fetchSplashSettings, saveSplashSettingsToDb, saveSplashSettingsLocal, defaultSplashSettings } from '@/lib/splashSettings';
+import { useAuth } from '@/context/AuthContext';
 import logoSvg from '@/assets/logo.svg';
 
 const SplashSettingsCard = () => {
-  const [settings, setSettings] = useState<SplashSettings>(getSplashSettings);
+  const { user } = useAuth();
+  const [settings, setSettings] = useState<SplashSettings>(defaultSplashSettings);
   const [previewing, setPreviewing] = useState<'phase1' | 'phase2' | null>(null);
+  const [loading, setLoading] = useState(true);
+  const [saving, setSaving] = useState(false);
+
+  useEffect(() => {
+    if (!user) return;
+    fetchSplashSettings(user.id).then(s => {
+      setSettings(s);
+      setLoading(false);
+    });
+  }, [user]);
 
   const update = (partial: Partial<SplashSettings>) => {
     setSettings(prev => ({ ...prev, ...partial }));
   };
 
-  const handleSave = () => {
-    saveSplashSettings(settings);
+  const handleSave = async () => {
+    if (!user) return;
+    setSaving(true);
+    await saveSplashSettingsToDb(settings, user.id);
+    saveSplashSettingsLocal(settings);
     toast({ title: 'تم حفظ إعدادات شاشة البداية ✅' });
+    setSaving(false);
   };
 
-  const handleReset = () => {
+  const handleReset = async () => {
+    if (!user) return;
+    setSaving(true);
     setSettings({ ...defaultSplashSettings });
-    saveSplashSettings(defaultSplashSettings);
+    await saveSplashSettingsToDb(defaultSplashSettings, user.id);
+    saveSplashSettingsLocal(defaultSplashSettings);
     toast({ title: 'تم إعادة الإعدادات الافتراضية ✅' });
+    setSaving(false);
   };
+
+  if (loading) {
+    return (
+      <Card>
+        <CardContent className="flex items-center justify-center py-8">
+          <Loader2 className="w-6 h-6 animate-spin text-muted-foreground" />
+        </CardContent>
+      </Card>
+    );
+  }
 
   return (
     <Card>
@@ -51,24 +81,14 @@ const SplashSettingsCard = () => {
               <div className="space-y-1">
                 <Label className="text-sm">لون الخلفية</Label>
                 <div className="flex gap-2 items-center">
-                  <input
-                    type="color"
-                    value={settings.bgColor}
-                    onChange={e => update({ bgColor: e.target.value })}
-                    className="w-10 h-10 rounded border cursor-pointer"
-                  />
+                  <input type="color" value={settings.bgColor} onChange={e => update({ bgColor: e.target.value })} className="w-10 h-10 rounded border cursor-pointer" />
                   <Input value={settings.bgColor} onChange={e => update({ bgColor: e.target.value })} dir="ltr" className="text-xs" />
                 </div>
               </div>
               <div className="space-y-1">
                 <Label className="text-sm">لون النص</Label>
                 <div className="flex gap-2 items-center">
-                  <input
-                    type="color"
-                    value={settings.textColor}
-                    onChange={e => update({ textColor: e.target.value })}
-                    className="w-10 h-10 rounded border cursor-pointer"
-                  />
+                  <input type="color" value={settings.textColor} onChange={e => update({ textColor: e.target.value })} className="w-10 h-10 rounded border cursor-pointer" />
                   <Input value={settings.textColor} onChange={e => update({ textColor: e.target.value })} dir="ltr" className="text-xs" />
                 </div>
               </div>
@@ -93,19 +113,10 @@ const SplashSettingsCard = () => {
               </div>
               <div className="space-y-2">
                 <Label className="text-sm">المدة: {(settings.phase1Duration / 1000).toFixed(1)} ثانية</Label>
-                <Slider
-                  value={[settings.phase1Duration]}
-                  onValueChange={([v]) => update({ phase1Duration: v })}
-                  min={500}
-                  max={5000}
-                  step={100}
-                />
+                <Slider value={[settings.phase1Duration]} onValueChange={([v]) => update({ phase1Duration: v })} min={500} max={5000} step={100} />
               </div>
               {previewing === 'phase1' && (
-                <div
-                  className="rounded-lg p-6 flex flex-col items-center justify-center gap-3 min-h-[150px]"
-                  style={{ backgroundColor: settings.bgColor, color: settings.textColor }}
-                >
+                <div className="rounded-lg p-6 flex flex-col items-center justify-center gap-3 min-h-[150px]" style={{ backgroundColor: settings.bgColor, color: settings.textColor }}>
                   <h1 className="text-xl font-bold">{settings.phase1Title}</h1>
                   {settings.phase1ShowLogo && <img src={logoSvg} alt="شعار" className="w-20 h-20 invert" />}
                 </div>
@@ -135,19 +146,10 @@ const SplashSettingsCard = () => {
               </div>
               <div className="space-y-2">
                 <Label className="text-sm">المدة: {(settings.phase2Duration / 1000).toFixed(1)} ثانية</Label>
-                <Slider
-                  value={[settings.phase2Duration]}
-                  onValueChange={([v]) => update({ phase2Duration: v })}
-                  min={500}
-                  max={5000}
-                  step={100}
-                />
+                <Slider value={[settings.phase2Duration]} onValueChange={([v]) => update({ phase2Duration: v })} min={500} max={5000} step={100} />
               </div>
               {previewing === 'phase2' && (
-                <div
-                  className="rounded-lg p-6 flex flex-col items-center justify-center gap-3 min-h-[150px] text-center"
-                  style={{ backgroundColor: settings.bgColor, color: settings.textColor }}
-                >
+                <div className="rounded-lg p-6 flex flex-col items-center justify-center gap-3 min-h-[150px] text-center" style={{ backgroundColor: settings.bgColor, color: settings.textColor }}>
                   <p className="text-lg opacity-80">{settings.phase2Line1}</p>
                   <h2 className="text-xl font-bold">{settings.phase2Line2}</h2>
                   <p className="text-sm opacity-60">{settings.phase2Line3}</p>
@@ -157,11 +159,11 @@ const SplashSettingsCard = () => {
 
             {/* Actions */}
             <div className="flex gap-2">
-              <Button onClick={handleSave} className="flex-1">
-                <Save className="w-4 h-4 ml-2" />
+              <Button onClick={handleSave} className="flex-1" disabled={saving}>
+                {saving ? <Loader2 className="w-4 h-4 animate-spin ml-2" /> : <Save className="w-4 h-4 ml-2" />}
                 حفظ الإعدادات
               </Button>
-              <Button onClick={handleReset} variant="outline">
+              <Button onClick={handleReset} variant="outline" disabled={saving}>
                 إعادة ضبط
               </Button>
             </div>
@@ -169,8 +171,8 @@ const SplashSettingsCard = () => {
         )}
 
         {!settings.enabled && (
-          <Button onClick={handleSave} className="w-full">
-            <Save className="w-4 h-4 ml-2" />
+          <Button onClick={handleSave} className="w-full" disabled={saving}>
+            {saving ? <Loader2 className="w-4 h-4 animate-spin ml-2" /> : <Save className="w-4 h-4 ml-2" />}
             حفظ
           </Button>
         )}
