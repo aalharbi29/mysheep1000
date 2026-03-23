@@ -15,6 +15,7 @@ import {
   Lock, Phone, Trash2, LogOut, Loader2, Settings, Eye, EyeOff, 
   Fence, Receipt, TrendingUp, ShoppingCart, Syringe 
 } from 'lucide-react';
+import SplashSettingsCard from '@/components/SplashSettingsCard';
 
 const SettingsPage = () => {
   const { user, signOut } = useAuth();
