@@ -76,6 +76,7 @@ const SplashScreen = ({ onComplete }: { onComplete: () => void }) => {
             className="h-28 object-contain"
             style={{
               animation: 'glow-pulse 2.5s ease-in-out infinite',
+              mixBlendMode: 'multiply',
             }}
           />
           <p className="text-sm opacity-60 mt-2">{settings.phase2Line3}</p>
