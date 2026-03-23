@@ -523,6 +523,12 @@ export type Database = {
         Row: {
           bg_color: string
           created_at: string
+          dev_logo_brightness: number
+          dev_logo_glow: boolean
+          dev_logo_glow_color: string
+          dev_logo_glow_intensity: number
+          dev_logo_size: number
+          dev_logo_visible: boolean
           enabled: boolean
           id: string
           phase1_duration: number
@@ -539,6 +545,12 @@ export type Database = {
         Insert: {
           bg_color?: string
           created_at?: string
+          dev_logo_brightness?: number
+          dev_logo_glow?: boolean
+          dev_logo_glow_color?: string
+          dev_logo_glow_intensity?: number
+          dev_logo_size?: number
+          dev_logo_visible?: boolean
           enabled?: boolean
           id?: string
           phase1_duration?: number
@@ -555,6 +567,12 @@ export type Database = {
         Update: {
           bg_color?: string
           created_at?: string
+          dev_logo_brightness?: number
+          dev_logo_glow?: boolean
+          dev_logo_glow_color?: string
+          dev_logo_glow_intensity?: number
+          dev_logo_size?: number
+          dev_logo_visible?: boolean
           enabled?: boolean
           id?: string
           phase1_duration?: number
