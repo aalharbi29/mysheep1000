@@ -17,6 +17,8 @@ export interface SplashSettings {
   devLogoGlow: boolean;
   devLogoGlowColor: string;
   devLogoGlowIntensity: number;
+  customMainLogoUrl: string | null;
+  customDevLogoUrl: string | null;
 }
 
 export const defaultSplashSettings: SplashSettings = {
@@ -36,6 +38,8 @@ export const defaultSplashSettings: SplashSettings = {
   devLogoGlow: true,
   devLogoGlowColor: '#ffffff',
   devLogoGlowIntensity: 30,
+  customMainLogoUrl: null,
+  customDevLogoUrl: null,
 };
 
 function rowToSettings(row: any): SplashSettings {
@@ -56,6 +60,8 @@ function rowToSettings(row: any): SplashSettings {
     devLogoGlow: row.dev_logo_glow ?? true,
     devLogoGlowColor: row.dev_logo_glow_color ?? '#ffffff',
     devLogoGlowIntensity: row.dev_logo_glow_intensity ?? 30,
+    customMainLogoUrl: row.custom_main_logo_url ?? null,
+    customDevLogoUrl: row.custom_dev_logo_url ?? null,
   };
 }
 
@@ -78,6 +84,8 @@ function settingsToRow(settings: SplashSettings, userId: string) {
     dev_logo_glow: settings.devLogoGlow,
     dev_logo_glow_color: settings.devLogoGlowColor,
     dev_logo_glow_intensity: settings.devLogoGlowIntensity,
+    custom_main_logo_url: settings.customMainLogoUrl,
+    custom_dev_logo_url: settings.customDevLogoUrl,
   };
 }
 

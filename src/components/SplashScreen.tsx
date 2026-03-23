@@ -10,6 +10,9 @@ const SplashScreen = ({ onComplete }: { onComplete: () => void }) => {
   const [phase, setPhase] = useState<SplashPhase>('logo');
   const [fadeOut, setFadeOut] = useState(false);
 
+  const mainLogoSrc = settings.customMainLogoUrl || null;
+  const devLogoSrc = settings.customDevLogoUrl || hrsaniLabsLogo;
+
   useEffect(() => {
     if (!settings.enabled) {
       onComplete();
@@ -50,20 +53,24 @@ const SplashScreen = ({ onComplete }: { onComplete: () => void }) => {
         <div className="flex flex-col items-center gap-6 animate-fade-in">
           <h1 className="text-3xl font-bold mb-2">{settings.phase1Title}</h1>
           {settings.phase1ShowLogo && (
-            <div className="relative w-48 h-48">
-              <img src={logoSvg} alt="" className="absolute invert" style={{ inset: '-4px', width: 'calc(100% + 8px)', height: 'calc(100% + 8px)' }} />
-              <div className="absolute inset-0 w-full h-full" style={{
-                WebkitMaskImage: `url(${logoSvg})`,
-                maskImage: `url(${logoSvg})`,
-                WebkitMaskSize: 'contain',
-                maskSize: 'contain',
-                WebkitMaskRepeat: 'no-repeat',
-                maskRepeat: 'no-repeat',
-                WebkitMaskPosition: 'center',
-                maskPosition: 'center',
-                backgroundColor: settings.bgColor
-              }} />
-            </div>
+            mainLogoSrc ? (
+              <img src={mainLogoSrc} alt="" className="w-48 h-48 object-contain" />
+            ) : (
+              <div className="relative w-48 h-48">
+                <img src={logoSvg} alt="" className="absolute invert" style={{ inset: '-4px', width: 'calc(100% + 8px)', height: 'calc(100% + 8px)' }} />
+                <div className="absolute inset-0 w-full h-full" style={{
+                  WebkitMaskImage: `url(${logoSvg})`,
+                  maskImage: `url(${logoSvg})`,
+                  WebkitMaskSize: 'contain',
+                  maskSize: 'contain',
+                  WebkitMaskRepeat: 'no-repeat',
+                  maskRepeat: 'no-repeat',
+                  WebkitMaskPosition: 'center',
+                  maskPosition: 'center',
+                  backgroundColor: settings.bgColor
+                }} />
+              </div>
+            )
           )}
         </div>
       )}
@@ -72,7 +79,7 @@ const SplashScreen = ({ onComplete }: { onComplete: () => void }) => {
           <p className="text-xl opacity-80">{settings.phase2Line1}</p>
           {settings.devLogoVisible && (
             <img
-              src={hrsaniLabsLogo}
+              src={devLogoSrc}
               alt="Al-Hrsani Labs"
               className="object-contain"
               style={{
