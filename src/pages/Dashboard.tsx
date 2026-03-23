@@ -54,7 +54,7 @@ const Dashboard = () => {
             </button>
             <NotificationBell />
           </div>
-          <div className="inline-flex items-center justify-center w-20 h-20 mx-0 mb-[16px] pt-0 rounded-2xl" style={{ filter: 'drop-shadow(0 0 8px rgba(255,255,255,0.4)) drop-shadow(0 0 16px rgba(255,255,255,0.2))' }}>
+          <div className="inline-flex items-center justify-center w-20 h-20 mx-0 mb-[16px] pt-0 rounded-2xl animate-[pulse_3s_cubic-bezier(0.4,0,0.6,1)_infinite]">
             <div className="relative w-16 h-16">
               <img src={logoSvg} alt="شعار التطبيق" className="absolute invert mr-[7px] pl-0" style={{ inset: '-3px', width: 'calc(100% + 6px)', height: 'calc(100% + 6px)' }} />
               <div className="absolute inset-0 w-full h-full" style={{
