@@ -196,6 +196,9 @@ const SettingsPage = () => {
             </CardContent>
           </Card>
 
+          {/* Splash Screen Settings */}
+          <SplashSettingsCard />
+
           {/* Delete Data Sections */}
           <Card>
             <CardHeader className="pb-3">
