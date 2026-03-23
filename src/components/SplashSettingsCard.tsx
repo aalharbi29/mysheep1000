@@ -1,0 +1,182 @@
+import { useState } from 'react';
+import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card';
+import { Input } from '@/components/ui/input';
+import { Label } from '@/components/ui/label';
+import { Button } from '@/components/ui/button';
+import { Switch } from '@/components/ui/switch';
+import { Slider } from '@/components/ui/slider';
+import { toast } from '@/hooks/use-toast';
+import { Monitor, Eye, Save } from 'lucide-react';
+import { SplashSettings, getSplashSettings, saveSplashSettings, defaultSplashSettings } from '@/lib/splashSettings';
+import logoSvg from '@/assets/logo.svg';
+
+const SplashSettingsCard = () => {
+  const [settings, setSettings] = useState<SplashSettings>(getSplashSettings);
+  const [previewing, setPreviewing] = useState<'phase1' | 'phase2' | null>(null);
+
+  const update = (partial: Partial<SplashSettings>) => {
+    setSettings(prev => ({ ...prev, ...partial }));
+  };
+
+  const handleSave = () => {
+    saveSplashSettings(settings);
+    toast({ title: 'تم حفظ إعدادات شاشة البداية ✅' });
+  };
+
+  const handleReset = () => {
+    setSettings({ ...defaultSplashSettings });
+    saveSplashSettings(defaultSplashSettings);
+    toast({ title: 'تم إعادة الإعدادات الافتراضية ✅' });
+  };
+
+  return (
+    <Card>
+      <CardHeader className="pb-3">
+        <CardTitle className="text-lg flex items-center gap-2">
+          <Monitor className="w-5 h-5 text-primary" />
+          إعدادات شاشة البداية
+        </CardTitle>
+      </CardHeader>
+      <CardContent className="space-y-5">
+        {/* Enable/Disable */}
+        <div className="flex items-center justify-between">
+          <Label>تفعيل شاشة البداية</Label>
+          <Switch checked={settings.enabled} onCheckedChange={v => update({ enabled: v })} />
+        </div>
+
+        {settings.enabled && (
+          <>
+            {/* Colors */}
+            <div className="grid grid-cols-2 gap-3">
+              <div className="space-y-1">
+                <Label className="text-sm">لون الخلفية</Label>
+                <div className="flex gap-2 items-center">
+                  <input
+                    type="color"
+                    value={settings.bgColor}
+                    onChange={e => update({ bgColor: e.target.value })}
+                    className="w-10 h-10 rounded border cursor-pointer"
+                  />
+                  <Input value={settings.bgColor} onChange={e => update({ bgColor: e.target.value })} dir="ltr" className="text-xs" />
+                </div>
+              </div>
+              <div className="space-y-1">
+                <Label className="text-sm">لون النص</Label>
+                <div className="flex gap-2 items-center">
+                  <input
+                    type="color"
+                    value={settings.textColor}
+                    onChange={e => update({ textColor: e.target.value })}
+                    className="w-10 h-10 rounded border cursor-pointer"
+                  />
+                  <Input value={settings.textColor} onChange={e => update({ textColor: e.target.value })} dir="ltr" className="text-xs" />
+                </div>
+              </div>
+            </div>
+
+            {/* Phase 1 */}
+            <div className="border rounded-lg p-3 space-y-3">
+              <div className="flex items-center justify-between">
+                <h3 className="font-semibold text-sm">الصفحة الأولى (الشعار)</h3>
+                <Button size="sm" variant="ghost" onClick={() => setPreviewing(previewing === 'phase1' ? null : 'phase1')}>
+                  <Eye className="w-4 h-4 ml-1" />
+                  معاينة
+                </Button>
+              </div>
+              <div className="space-y-2">
+                <Label className="text-sm">العنوان</Label>
+                <Input value={settings.phase1Title} onChange={e => update({ phase1Title: e.target.value })} />
+              </div>
+              <div className="flex items-center justify-between">
+                <Label className="text-sm">إظهار الشعار</Label>
+                <Switch checked={settings.phase1ShowLogo} onCheckedChange={v => update({ phase1ShowLogo: v })} />
+              </div>
+              <div className="space-y-2">
+                <Label className="text-sm">المدة: {(settings.phase1Duration / 1000).toFixed(1)} ثانية</Label>
+                <Slider
+                  value={[settings.phase1Duration]}
+                  onValueChange={([v]) => update({ phase1Duration: v })}
+                  min={500}
+                  max={5000}
+                  step={100}
+                />
+              </div>
+              {previewing === 'phase1' && (
+                <div
+                  className="rounded-lg p-6 flex flex-col items-center justify-center gap-3 min-h-[150px]"
+                  style={{ backgroundColor: settings.bgColor, color: settings.textColor }}
+                >
+                  <h1 className="text-xl font-bold">{settings.phase1Title}</h1>
+                  {settings.phase1ShowLogo && <img src={logoSvg} alt="شعار" className="w-20 h-20 invert" />}
+                </div>
+              )}
+            </div>
+
+            {/* Phase 2 */}
+            <div className="border rounded-lg p-3 space-y-3">
+              <div className="flex items-center justify-between">
+                <h3 className="font-semibold text-sm">الصفحة الثانية (التطوير)</h3>
+                <Button size="sm" variant="ghost" onClick={() => setPreviewing(previewing === 'phase2' ? null : 'phase2')}>
+                  <Eye className="w-4 h-4 ml-1" />
+                  معاينة
+                </Button>
+              </div>
+              <div className="space-y-2">
+                <Label className="text-sm">السطر الأول</Label>
+                <Input value={settings.phase2Line1} onChange={e => update({ phase2Line1: e.target.value })} />
+              </div>
+              <div className="space-y-2">
+                <Label className="text-sm">السطر الثاني (الاسم)</Label>
+                <Input value={settings.phase2Line2} onChange={e => update({ phase2Line2: e.target.value })} />
+              </div>
+              <div className="space-y-2">
+                <Label className="text-sm">السطر الثالث</Label>
+                <Input value={settings.phase2Line3} onChange={e => update({ phase2Line3: e.target.value })} />
+              </div>
+              <div className="space-y-2">
+                <Label className="text-sm">المدة: {(settings.phase2Duration / 1000).toFixed(1)} ثانية</Label>
+                <Slider
+                  value={[settings.phase2Duration]}
+                  onValueChange={([v]) => update({ phase2Duration: v })}
+                  min={500}
+                  max={5000}
+                  step={100}
+                />
+              </div>
+              {previewing === 'phase2' && (
+                <div
+                  className="rounded-lg p-6 flex flex-col items-center justify-center gap-3 min-h-[150px] text-center"
+                  style={{ backgroundColor: settings.bgColor, color: settings.textColor }}
+                >
+                  <p className="text-lg opacity-80">{settings.phase2Line1}</p>
+                  <h2 className="text-xl font-bold">{settings.phase2Line2}</h2>
+                  <p className="text-sm opacity-60">{settings.phase2Line3}</p>
+                </div>
+              )}
+            </div>
+
+            {/* Actions */}
+            <div className="flex gap-2">
+              <Button onClick={handleSave} className="flex-1">
+                <Save className="w-4 h-4 ml-2" />
+                حفظ الإعدادات
+              </Button>
+              <Button onClick={handleReset} variant="outline">
+                إعادة ضبط
+              </Button>
+            </div>
+          </>
+        )}
+
+        {!settings.enabled && (
+          <Button onClick={handleSave} className="w-full">
+            <Save className="w-4 h-4 ml-2" />
+            حفظ
+          </Button>
+        )}
+      </CardContent>
+    </Card>
+  );
+};
+
+export default SplashSettingsCard;
