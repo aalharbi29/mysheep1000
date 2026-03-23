@@ -55,7 +55,7 @@ const Dashboard = () => {
             <NotificationBell />
           </div>
           <div className="inline-flex items-center justify-center w-16 h-16 bg-primary/10 mx-0 shadow-2xl text-xs mr-[15px] mb-[16px] pt-0 rounded-2xl">
-            <Fence className="w-8 h-8 text-primary" />
+            <img src={logoSvg} alt="شعار التطبيق" className="w-10 h-10" />
           </div>
           <h1 className="font-extrabold mx-[25px] text-[#6075af] text-2xl pt-0">الحظيرة النموذجية
           </h1>
