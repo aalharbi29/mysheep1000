@@ -49,7 +49,7 @@ const SplashScreen = ({ onComplete }: { onComplete: () => void }) => {
         <div className="flex flex-col items-center gap-6 animate-fade-in">
           <h1 className="text-3xl font-bold mb-2">{settings.phase1Title}</h1>
           {settings.phase1ShowLogo && (
-            <div className="relative w-48 h-48" style={{ filter: 'drop-shadow(0 0 12px rgba(255,255,255,0.5)) drop-shadow(0 0 25px rgba(255,255,255,0.3)) drop-shadow(0 0 40px rgba(255,255,255,0.15))' }}>
+            <div className="relative w-48 h-48">
               <img src={logoSvg} alt="" className="absolute invert" style={{ inset: '-4px', width: 'calc(100% + 8px)', height: 'calc(100% + 8px)' }} />
               <div className="absolute inset-0 w-full h-full" style={{
                 WebkitMaskImage: `url(${logoSvg})`,
@@ -69,7 +69,7 @@ const SplashScreen = ({ onComplete }: { onComplete: () => void }) => {
       {phase === 'credits' && (
         <div className="flex flex-col items-center gap-4 animate-fade-in text-center">
           <p className="text-xl opacity-80">{settings.phase2Line1}</p>
-          <h2 className="text-2xl font-bold flex gap-[2px]">
+          <h2 className="text-2xl font-bold flex gap-[2px]" style={{ direction: 'ltr', unicodeBidi: 'bidi-override' }}>
             {settings.phase2Line2.split('').map((char, i) => (
               <span
                 key={i}
