@@ -1,13 +1,12 @@
 import { useNavigate } from 'react-router-dom';
 import { useLivestock } from '@/context/LivestockContext';
 import { useAuth } from '@/context/AuthContext';
-import { Receipt, ShoppingCart, TrendingUp, FileText, Archive, LogOut, Store, UserCircle, Settings } from 'lucide-react';
+import { Fence, Receipt, ShoppingCart, TrendingUp, FileText, Archive, LogOut, Store, UserCircle, Settings } from 'lucide-react';
 import { Button } from '@/components/ui/button';
 import NotificationBell from '@/components/NotificationBell';
-import logoSvg from '@/assets/logo.svg';
 
 const cards = [
-{ id: 'flock', label: 'القطيع', icon: null, path: '/flock', gradient: 'from-primary to-primary/80' },
+{ id: 'flock', label: 'القطيع', icon: Fence, path: '/flock', gradient: 'from-primary to-primary/80' },
 { id: 'expenses', label: 'المصروفات', icon: Receipt, path: '/expenses', gradient: 'from-destructive/80 to-destructive/60' },
 { id: 'sales', label: 'المبيعات', icon: TrendingUp, path: '/sales', gradient: 'from-success to-success/80' },
 { id: 'purchases', label: 'المشتريات', icon: ShoppingCart, path: '/purchases', gradient: 'from-info to-info/80' },
@@ -55,7 +54,7 @@ const Dashboard = () => {
             <NotificationBell />
           </div>
           <div className="inline-flex items-center justify-center w-16 h-16 bg-primary/10 mx-0 shadow-2xl text-xs mr-[15px] mb-[16px] pt-0 rounded-2xl">
-            <img src={logoSvg} alt="شعار التطبيق" className="w-10 h-10" />
+            <Fence className="w-8 h-8 bg-[sidebar-accent-foreground] border-0 text-destructive-foreground bg-teal-50" />
           </div>
           <h1 className="font-extrabold mx-[25px] text-[#6075af] text-2xl pt-0">الحظيرة النموذجية
           </h1>
@@ -70,13 +69,9 @@ const Dashboard = () => {
                 onClick={() => navigate(card.path)}
                 className={`relative overflow-hidden rounded-xl p-5 text-right transition-all duration-200 card-shadow hover:card-shadow-hover hover:scale-[1.02] active:scale-[0.98] bg-gradient-to-bl ${card.gradient} ${card.id === 'flock' ? 'col-span-2' : ''}`}>
 
-                {card.id === 'flock' ? (
-                  <img src={logoSvg} alt="القطيع" className="w-8 h-8 mb-3 mx-auto invert" />
-                ) : Icon ? (
-                  <Icon className="w-7 h-7 mb-3 mr-[50px] border-inherit text-accent-foreground" />
-                ) : null}
+                <Icon className="w-7 h-7 mb-3 mr-[50px] border-inherit text-accent-foreground" />
                 <h2 className="text-primary-foreground text-center font-extrabold text-xl">{card.label}</h2>
-                <p className="text-sm text-primary-foreground/75 mt-1 text-center font-extrabold">{stats[card.id]}</p>
+                <p className="text-primary-foreground/75 mt-1 text-center font-extrabold my-[7px] text-sm">{stats[card.id]}</p>
               </button>);
 
           })}
