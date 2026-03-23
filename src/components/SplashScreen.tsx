@@ -70,15 +70,19 @@ const SplashScreen = ({ onComplete }: { onComplete: () => void }) => {
       {phase === 'credits' && (
         <div className="flex flex-col items-center gap-4 animate-fade-in text-center">
           <p className="text-xl opacity-80">{settings.phase2Line1}</p>
-          <img
-            src={hrsaniLabsLogo}
-            alt="Al-Hrsani Labs"
-            className="h-28 object-contain"
-            style={{
-              animation: 'glow-pulse 2.5s ease-in-out infinite',
-              mixBlendMode: 'multiply',
-            }}
-          />
+          {settings.devLogoVisible && (
+            <img
+              src={hrsaniLabsLogo}
+              alt="Al-Hrsani Labs"
+              className="object-contain"
+              style={{
+                height: `${settings.devLogoSize}px`,
+                filter: `brightness(${settings.devLogoBrightness / 100})${settings.devLogoGlow ? ` drop-shadow(0 0 ${settings.devLogoGlowIntensity / 3}px ${settings.devLogoGlowColor})` : ''}`,
+                mixBlendMode: 'multiply',
+                animation: settings.devLogoGlow ? 'glow-pulse 2.5s ease-in-out infinite' : 'none',
+              }}
+            />
+          )}
           <p className="text-sm opacity-60 mt-2">{settings.phase2Line3}</p>
         </div>
       )}
