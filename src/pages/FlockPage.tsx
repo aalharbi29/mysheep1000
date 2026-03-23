@@ -16,7 +16,7 @@ const FlockPage = () => {
 
   return (
     <div className="min-h-screen p-4 sm:p-6 shadow-2xl rounded-3xl border-0 bg-slate-950">
-      <div className="max-w-2xl mx-auto mt-[100px] bg-[#d3cfcf] shadow-2xl rounded-3xl pb-[15px] pt-[5px] border-solid border-2 border-secondary-foreground">
+      <div className="max-w-2xl mx-auto mt-[100px] bg-[#d3cfcf] shadow-2xl rounded-3xl pb-[15px] pt-[5px] border-solid border-2 border-accent">
         <PageHeader title="القطيع" subtitle="اختر نوع الماشية" backTo="/" />
 
         {/* Flock Report buttons */}
