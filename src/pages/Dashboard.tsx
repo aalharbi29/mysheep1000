@@ -54,8 +54,21 @@ const Dashboard = () => {
             </button>
             <NotificationBell />
           </div>
-          <div className="inline-flex items-center justify-center w-16 h-16 mx-0 shadow-2xl text-xs mr-[15px] mb-[16px] pt-0 rounded-2xl text-secondary bg-inherit">
-            <img src={logoSvg} alt="شعار التطبيق" className="w-10 h-10 object-fill bg-gray-400 text-primary-foreground pl-0 mt-0 border rounded-full border-none" />
+          <div className="inline-flex items-center justify-center w-20 h-20 mx-0 mb-[16px] pt-0 rounded-2xl" style={{ filter: 'drop-shadow(0 0 8px rgba(255,255,255,0.4)) drop-shadow(0 0 16px rgba(255,255,255,0.2))' }}>
+            <div className="relative w-16 h-16">
+              <img src={logoSvg} alt="شعار التطبيق" className="absolute invert" style={{ inset: '-3px', width: 'calc(100% + 6px)', height: 'calc(100% + 6px)' }} />
+              <div className="absolute inset-0 w-full h-full" style={{
+                WebkitMaskImage: `url(${logoSvg})`,
+                maskImage: `url(${logoSvg})`,
+                WebkitMaskSize: 'contain',
+                maskSize: 'contain',
+                WebkitMaskRepeat: 'no-repeat',
+                maskRepeat: 'no-repeat',
+                WebkitMaskPosition: 'center',
+                maskPosition: 'center',
+                backgroundColor: '#020617'
+              }} />
+            </div>
           </div>
           <h1 className="font-extrabold mx-[25px] text-[#6075af] text-2xl pt-0">الحظيرة النموذجية
           </h1>
