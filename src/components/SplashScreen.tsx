@@ -1,5 +1,6 @@
 import { useState, useEffect } from 'react';
 import logoSvg from '@/assets/logo.svg';
+import hrsaniLabsLogo from '@/assets/hrsani-labs-logo.png';
 import { getSplashSettings } from '@/lib/splashSettings';
 
 type SplashPhase = 'logo' | 'credits' | 'done';
