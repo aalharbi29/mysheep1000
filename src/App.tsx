@@ -58,6 +58,13 @@ function AppContent() {
   const [splashDone, setSplashDone] = useState(false);
   const handleSplashComplete = useCallback(() => setSplashDone(true), []);
 
+  // Sync splash settings from DB to localStorage after login
+  useEffect(() => {
+    if (user) {
+      fetchSplashSettings(user.id).then(s => saveSplashSettingsLocal(s));
+    }
+  }, [user]);
+
   if (!splashDone) {
     return <SplashScreen onComplete={handleSplashComplete} />;
   }
