@@ -11,6 +11,12 @@ export interface SplashSettings {
   bgColor: string;
   textColor: string;
   enabled: boolean;
+  devLogoVisible: boolean;
+  devLogoSize: number;
+  devLogoBrightness: number;
+  devLogoGlow: boolean;
+  devLogoGlowColor: string;
+  devLogoGlowIntensity: number;
 }
 
 export const defaultSplashSettings: SplashSettings = {
@@ -24,6 +30,12 @@ export const defaultSplashSettings: SplashSettings = {
   bgColor: '#928472',
   textColor: '#ffffff',
   enabled: true,
+  devLogoVisible: true,
+  devLogoSize: 112,
+  devLogoBrightness: 100,
+  devLogoGlow: true,
+  devLogoGlowColor: '#ffffff',
+  devLogoGlowIntensity: 30,
 };
 
 function rowToSettings(row: any): SplashSettings {
@@ -38,6 +50,12 @@ function rowToSettings(row: any): SplashSettings {
     bgColor: row.bg_color,
     textColor: row.text_color,
     enabled: row.enabled,
+    devLogoVisible: row.dev_logo_visible ?? true,
+    devLogoSize: row.dev_logo_size ?? 112,
+    devLogoBrightness: row.dev_logo_brightness ?? 100,
+    devLogoGlow: row.dev_logo_glow ?? true,
+    devLogoGlowColor: row.dev_logo_glow_color ?? '#ffffff',
+    devLogoGlowIntensity: row.dev_logo_glow_intensity ?? 30,
   };
 }
 
@@ -54,6 +72,12 @@ function settingsToRow(settings: SplashSettings, userId: string) {
     bg_color: settings.bgColor,
     text_color: settings.textColor,
     enabled: settings.enabled,
+    dev_logo_visible: settings.devLogoVisible,
+    dev_logo_size: settings.devLogoSize,
+    dev_logo_brightness: settings.devLogoBrightness,
+    dev_logo_glow: settings.devLogoGlow,
+    dev_logo_glow_color: settings.devLogoGlowColor,
+    dev_logo_glow_intensity: settings.devLogoGlowIntensity,
   };
 }
 
