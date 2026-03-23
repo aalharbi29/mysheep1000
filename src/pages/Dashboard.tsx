@@ -6,7 +6,7 @@ import { Receipt, ShoppingCart, TrendingUp, FileText, Archive, LogOut, Store, Us
 import { Button } from '@/components/ui/button';
 import NotificationBell from '@/components/NotificationBell';
 import logoSvg from '@/assets/logo.svg';
-import { getSplashSettings } from '@/lib/splashSettings';
+import { useSplashSettings } from '@/hooks/useSplashSettings';
 
 const cards = [
 { id: 'flock', label: 'القطيع', icon: null, path: '/flock', gradient: 'from-primary to-primary/80' },
@@ -22,7 +22,7 @@ const Dashboard = () => {
   const navigate = useNavigate();
   const { animals, getTotalExpenses, getTotalSales, getTotalPurchases, getAliveAnimalsCount, getDeadAnimalsCount, loading } = useLivestock();
   const { signOut } = useAuth();
-  const [splashSettings] = useState(() => getSplashSettings());
+  const { settings: splashSettings } = useSplashSettings();
   const customMainLogo = splashSettings.customMainLogoUrl;
 
   const deadCount = getDeadAnimalsCount();

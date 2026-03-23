@@ -8,7 +8,7 @@ import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card';
 import { toast } from 'sonner';
 import { Loader2, Eye, EyeOff, Phone, Mail } from 'lucide-react';
 import logoSvg from '@/assets/logo.svg';
-import { getSplashSettings } from '@/lib/splashSettings';
+import { useSplashSettings } from '@/hooks/useSplashSettings';
 
 const AuthPage = () => {
   const [isLogin, setIsLogin] = useState(true);
@@ -21,7 +21,7 @@ const AuthPage = () => {
   const [loading, setLoading] = useState(false);
   const [showPassword, setShowPassword] = useState(false);
   const [socialLoading, setSocialLoading] = useState<'google' | 'apple' | null>(null);
-  const [splashSettings] = useState(() => getSplashSettings());
+  const { settings: splashSettings } = useSplashSettings();
   const customMainLogo = splashSettings.customMainLogoUrl;
 
   const handleSocialLogin = async (provider: 'google' | 'apple') => {
