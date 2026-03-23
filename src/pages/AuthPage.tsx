@@ -8,6 +8,7 @@ import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card';
 import { toast } from 'sonner';
 import { Loader2, Eye, EyeOff, Phone, Mail } from 'lucide-react';
 import logoSvg from '@/assets/logo.svg';
+import { getSplashSettings } from '@/lib/splashSettings';
 
 const AuthPage = () => {
   const [isLogin, setIsLogin] = useState(true);
@@ -20,6 +21,8 @@ const AuthPage = () => {
   const [loading, setLoading] = useState(false);
   const [showPassword, setShowPassword] = useState(false);
   const [socialLoading, setSocialLoading] = useState<'google' | 'apple' | null>(null);
+  const [splashSettings] = useState(() => getSplashSettings());
+  const customMainLogo = splashSettings.customMainLogoUrl;
 
   const handleSocialLogin = async (provider: 'google' | 'apple') => {
     setSocialLoading(provider);
@@ -98,18 +101,24 @@ const AuthPage = () => {
     <div className="min-h-screen items-center justify-center p-4 flex flex-col gap-6 shadow-2xl opacity-100 rounded-sm border-solid px-[20px] bg-[#928472] my-0 py-0 pb-[50px]" dir="rtl">
       {/* Outline Logo */}
       <div className="relative w-32 h-32 animate-[pulse_3s_cubic-bezier(0.4,0,0.6,1)_infinite] mt-8">
-        <img src={logoSvg} alt="" className="absolute invert" style={{ inset: '-4px', width: 'calc(100% + 8px)', height: 'calc(100% + 8px)' }} />
-        <div className="absolute inset-0 w-full h-full" style={{
-          WebkitMaskImage: `url(${logoSvg})`,
-          maskImage: `url(${logoSvg})`,
-          WebkitMaskSize: 'contain',
-          maskSize: 'contain',
-          WebkitMaskRepeat: 'no-repeat',
-          maskRepeat: 'no-repeat',
-          WebkitMaskPosition: 'center',
-          maskPosition: 'center',
-          backgroundColor: '#928472'
-        }} />
+        {customMainLogo ? (
+          <img src={customMainLogo} alt="" className="w-full h-full object-contain" />
+        ) : (
+          <>
+            <img src={logoSvg} alt="" className="absolute invert" style={{ inset: '-4px', width: 'calc(100% + 8px)', height: 'calc(100% + 8px)' }} />
+            <div className="absolute inset-0 w-full h-full" style={{
+              WebkitMaskImage: `url(${logoSvg})`,
+              maskImage: `url(${logoSvg})`,
+              WebkitMaskSize: 'contain',
+              maskSize: 'contain',
+              WebkitMaskRepeat: 'no-repeat',
+              maskRepeat: 'no-repeat',
+              WebkitMaskPosition: 'center',
+              maskPosition: 'center',
+              backgroundColor: '#928472'
+            }} />
+          </>
+        )}
       </div>
 
       <Card className="w-full max-w-md">

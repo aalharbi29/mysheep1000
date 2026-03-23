@@ -1,3 +1,4 @@
+import { useState } from 'react';
 import { useNavigate } from 'react-router-dom';
 import { useLivestock } from '@/context/LivestockContext';
 import { useAuth } from '@/context/AuthContext';
@@ -5,6 +6,7 @@ import { Receipt, ShoppingCart, TrendingUp, FileText, Archive, LogOut, Store, Us
 import { Button } from '@/components/ui/button';
 import NotificationBell from '@/components/NotificationBell';
 import logoSvg from '@/assets/logo.svg';
+import { getSplashSettings } from '@/lib/splashSettings';
 
 const cards = [
 { id: 'flock', label: 'القطيع', icon: null, path: '/flock', gradient: 'from-primary to-primary/80' },
@@ -20,6 +22,8 @@ const Dashboard = () => {
   const navigate = useNavigate();
   const { animals, getTotalExpenses, getTotalSales, getTotalPurchases, getAliveAnimalsCount, getDeadAnimalsCount, loading } = useLivestock();
   const { signOut } = useAuth();
+  const [splashSettings] = useState(() => getSplashSettings());
+  const customMainLogo = splashSettings.customMainLogoUrl;
 
   const deadCount = getDeadAnimalsCount();
   const aliveCount = getAliveAnimalsCount();
@@ -55,20 +59,24 @@ const Dashboard = () => {
             <NotificationBell />
           </div>
           <div className="inline-flex items-center justify-center w-20 h-20 mx-0 pt-0 rounded-2xl animate-[pulse_3s_cubic-bezier(0.4,0,0.6,1)_infinite] text-center mb-[10px]">
-            <div className="relative w-16 h-16">
-              <img src={logoSvg} alt="شعار التطبيق" className="absolute invert mr-[7px] pl-0" style={{ inset: '-3px', width: 'calc(100% + 6px)', height: 'calc(100% + 6px)' }} />
-              <div className="absolute inset-0 w-full h-full" style={{
-                WebkitMaskImage: `url(${logoSvg})`,
-                maskImage: `url(${logoSvg})`,
-                WebkitMaskSize: 'contain',
-                maskSize: 'contain',
-                WebkitMaskRepeat: 'no-repeat',
-                maskRepeat: 'no-repeat',
-                WebkitMaskPosition: 'center',
-                maskPosition: 'center',
-                backgroundColor: '#020617'
-              }} />
-            </div>
+            {customMainLogo ? (
+              <img src={customMainLogo} alt="شعار التطبيق" className="w-16 h-16 object-contain" />
+            ) : (
+              <div className="relative w-16 h-16">
+                <img src={logoSvg} alt="شعار التطبيق" className="absolute invert mr-[7px] pl-0" style={{ inset: '-3px', width: 'calc(100% + 6px)', height: 'calc(100% + 6px)' }} />
+                <div className="absolute inset-0 w-full h-full" style={{
+                  WebkitMaskImage: `url(${logoSvg})`,
+                  maskImage: `url(${logoSvg})`,
+                  WebkitMaskSize: 'contain',
+                  maskSize: 'contain',
+                  WebkitMaskRepeat: 'no-repeat',
+                  maskRepeat: 'no-repeat',
+                  WebkitMaskPosition: 'center',
+                  maskPosition: 'center',
+                  backgroundColor: '#020617'
+                }} />
+              </div>
+            )}
           </div>
           <h1 className="font-extrabold mx-[25px] text-[#6075af] text-2xl pt-0">الحظيرة النموذجية
           </h1>
