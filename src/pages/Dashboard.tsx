@@ -7,7 +7,7 @@ import NotificationBell from '@/components/NotificationBell';
 import logoSvg from '@/assets/logo.svg';
 
 const cards = [
-{ id: 'flock', label: 'القطيع', icon: Fence, path: '/flock', gradient: 'from-primary to-primary/80' },
+{ id: 'flock', label: 'القطيع', icon: null, path: '/flock', gradient: 'from-primary to-primary/80' },
 { id: 'expenses', label: 'المصروفات', icon: Receipt, path: '/expenses', gradient: 'from-destructive/80 to-destructive/60' },
 { id: 'sales', label: 'المبيعات', icon: TrendingUp, path: '/sales', gradient: 'from-success to-success/80' },
 { id: 'purchases', label: 'المشتريات', icon: ShoppingCart, path: '/purchases', gradient: 'from-info to-info/80' },
