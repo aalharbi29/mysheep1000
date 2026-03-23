@@ -8,15 +8,11 @@ export function useSplashSettings() {
   const [loading, setLoading] = useState(true);
 
   useEffect(() => {
-    if (!user) {
-      setLoading(false);
-      return;
-    }
-    fetchSplashSettings(user.id).then(s => {
+    fetchSplashSettings().then(s => {
       setSettings(s);
       setLoading(false);
     });
-  }, [user]);
+  }, []);
 
   return { settings, loading };
 }
