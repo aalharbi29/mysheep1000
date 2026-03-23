@@ -519,6 +519,57 @@ export type Database = {
         }
         Relationships: []
       }
+      splash_settings: {
+        Row: {
+          bg_color: string
+          created_at: string
+          enabled: boolean
+          id: string
+          phase1_duration: number
+          phase1_show_logo: boolean
+          phase1_title: string
+          phase2_duration: number
+          phase2_line1: string
+          phase2_line2: string
+          phase2_line3: string
+          text_color: string
+          updated_at: string
+          user_id: string
+        }
+        Insert: {
+          bg_color?: string
+          created_at?: string
+          enabled?: boolean
+          id?: string
+          phase1_duration?: number
+          phase1_show_logo?: boolean
+          phase1_title?: string
+          phase2_duration?: number
+          phase2_line1?: string
+          phase2_line2?: string
+          phase2_line3?: string
+          text_color?: string
+          updated_at?: string
+          user_id: string
+        }
+        Update: {
+          bg_color?: string
+          created_at?: string
+          enabled?: boolean
+          id?: string
+          phase1_duration?: number
+          phase1_show_logo?: boolean
+          phase1_title?: string
+          phase2_duration?: number
+          phase2_line1?: string
+          phase2_line2?: string
+          phase2_line3?: string
+          text_color?: string
+          updated_at?: string
+          user_id?: string
+        }
+        Relationships: []
+      }
       store_orders: {
         Row: {
           created_at: string
