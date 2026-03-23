@@ -1,19 +1,29 @@
 import { useState, useEffect } from 'react';
 import logoSvg from '@/assets/logo.svg';
 import hrsaniLabsLogo from '@/assets/hrsani-labs-logo.png';
-import { getSplashSettings } from '@/lib/splashSettings';
+import { getSplashSettings, fetchSplashSettings, SplashSettings } from '@/lib/splashSettings';
 
 type SplashPhase = 'logo' | 'credits' | 'done';
 
 const SplashScreen = ({ onComplete }: { onComplete: () => void }) => {
-  const [settings] = useState(() => getSplashSettings());
+  const [settings, setSettings] = useState<SplashSettings>(() => getSplashSettings());
   const [phase, setPhase] = useState<SplashPhase>('logo');
   const [fadeOut, setFadeOut] = useState(false);
+  const [ready, setReady] = useState(false);
 
   const mainLogoSrc = settings.customMainLogoUrl || null;
   const devLogoSrc = settings.customDevLogoUrl || hrsaniLabsLogo;
 
+  // Fetch global settings from DB, then start animation
   useEffect(() => {
+    fetchSplashSettings().then(s => {
+      setSettings(s);
+      setReady(true);
+    }).catch(() => setReady(true));
+  }, []);
+
+  useEffect(() => {
+    if (!ready) return;
     if (!settings.enabled) {
       onComplete();
       return;
@@ -40,9 +50,9 @@ const SplashScreen = ({ onComplete }: { onComplete: () => void }) => {
       clearTimeout(timer1);
       clearTimeout(timer2);
     };
-  }, [onComplete, settings]);
+  }, [onComplete, settings, ready]);
 
-  if (phase === 'done' || !settings.enabled) return null;
+  if (!ready || phase === 'done' || !settings.enabled) return null;
 
   return (
     <div

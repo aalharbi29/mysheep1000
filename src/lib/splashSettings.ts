@@ -89,11 +89,13 @@ function settingsToRow(settings: SplashSettings, userId: string) {
   };
 }
 
-export async function fetchSplashSettings(userId: string): Promise<SplashSettings> {
+export async function fetchSplashSettings(userId?: string): Promise<SplashSettings> {
+  // Try to fetch global settings (most recently updated)
   const { data } = await supabase
     .from('splash_settings')
     .select('*')
-    .eq('user_id', userId)
+    .order('updated_at', { ascending: false })
+    .limit(1)
     .single();
   if (data) return rowToSettings(data);
   return { ...defaultSplashSettings };

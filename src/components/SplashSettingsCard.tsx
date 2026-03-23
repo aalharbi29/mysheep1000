@@ -25,12 +25,11 @@ const SplashSettingsCard = () => {
   const devLogoRef = useRef<HTMLInputElement>(null);
 
   useEffect(() => {
-    if (!user) return;
-    fetchSplashSettings(user.id).then(s => {
+    fetchSplashSettings().then(s => {
       setSettings(s);
       setLoading(false);
     });
-  }, [user]);
+  }, []);
 
   const update = (partial: Partial<SplashSettings>) => {
     setSettings(prev => ({ ...prev, ...partial }));
