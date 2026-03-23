@@ -54,6 +54,12 @@ const queryClient = new QueryClient();
 
 function AppContent() {
   const { user, loading } = useAuth();
+  const [splashDone, setSplashDone] = useState(false);
+  const handleSplashComplete = useCallback(() => setSplashDone(true), []);
+
+  if (!splashDone) {
+    return <SplashScreen onComplete={handleSplashComplete} />;
+  }
 
   if (loading) {
     return (
