@@ -54,8 +54,8 @@ const Dashboard = () => {
             </button>
             <NotificationBell />
           </div>
-          <div className="inline-flex items-center justify-center w-16 h-16 bg-primary/10 mx-0 shadow-2xl text-xs mr-[15px] mb-[16px] pt-0 rounded-2xl text-secondary">
-            <img src={logoSvg} alt="شعار التطبيق" className="w-10 h-10" />
+          <div className="inline-flex items-center justify-center w-16 h-16 mx-0 shadow-2xl text-xs mr-[15px] mb-[16px] pt-0 rounded-2xl text-secondary bg-inherit">
+            <img src={logoSvg} alt="شعار التطبيق" className="w-10 h-10 object-fill bg-gray-400 text-primary-foreground pl-0 mt-0 border rounded-full border-none" />
           </div>
           <h1 className="font-extrabold mx-[25px] text-[#6075af] text-2xl pt-0">الحظيرة النموذجية
           </h1>
