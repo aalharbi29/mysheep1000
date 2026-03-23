@@ -100,8 +100,8 @@ const ExpensesPage = () => {
   const monthlyGroups = useMemo(() => groupByMonth(expenses), [expenses]);
 
   return (
-    <div className="min-h-screen bg-background p-4 sm:p-6 rounded-3xl">
-      <div className="max-w-2xl mx-auto my-[30px] mt-[100px] pb-[15px]">
+    <div className="min-h-screen p-4 sm:p-6 rounded-3xl bg-gray-900">
+      <div className="max-w-2xl mx-auto my-[30px] mt-[100px] pb-[15px] border-accent border border-solid rounded-3xl bg-primary-foreground">
         <PageHeader title="المصروفات" subtitle={`الإجمالي: ${getTotalExpenses().toLocaleString()} ر.س`} backTo="/" />
 
         {Object.keys(categoryTotals).length > 0 &&
@@ -266,7 +266,7 @@ const ExpensesPage = () => {
                       </div>
                       <div className="flex flex-col items-end gap-1">
                         <span className="font-bold text-destructive whitespace-nowrap">{e.amount.toLocaleString()} ر.س</span>
-                        <button onClick={() => { if (confirm('هل أنت متأكد من حذف هذا المصروف؟')) { deleteExpense(e.id); toast({ title: '🗑️ تم الحذف', description: 'تم حذف المصروف بنجاح' }); } }} className="text-muted-foreground hover:text-destructive transition-colors"><Trash2 className="w-4 h-4" /></button>
+                        <button onClick={() => {if (confirm('هل أنت متأكد من حذف هذا المصروف؟')) {deleteExpense(e.id);toast({ title: '🗑️ تم الحذف', description: 'تم حذف المصروف بنجاح' });}}} className="text-muted-foreground hover:text-destructive transition-colors"><Trash2 className="w-4 h-4" /></button>
                       </div>
                     </div>
                   </div>);
