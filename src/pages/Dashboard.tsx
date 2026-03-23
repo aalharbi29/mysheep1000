@@ -36,7 +36,7 @@ const Dashboard = () => {
   return (
     <div className="min-h-screen p-4 sm:p-6 text-red-400 bg-[sidebar-accent-foreground] bg-slate-950">
       <div className="max-w-2xl mx-auto">
-        <header className="text-center mb-8 pt-6 relative">
+        <header className="text-center relative mb-[15px] pt-[15px]">
           <button
             onClick={signOut}
             className="absolute left-0 top-6 flex items-center gap-2 px-4 py-2 text-destructive hover:opacity-80 transition-colors font-bold text-base rounded-lg border bg-inherit border-accent pl-[12px] pr-[12px] pb-[2px] pt-[2px]"
