@@ -60,8 +60,8 @@ const SummaryPage = () => {
 
 
   return (
-    <div className="min-h-screen bg-background p-4 sm:p-6 py-0 mb-0 mt-0">
-      <div className="max-w-2xl mx-auto mt-[100px] pb-[15px]">
+    <div className="min-h-screen bg-background p-4 sm:p-6 py-0 mb-0 mt-0 border-4 border-accent border-solid">
+      <div className="max-w-2xl mx-auto mt-[100px] my-[70px] pb-0 mb-[25px] rounded-3xl border-4 border-accent text-center">
         <PageHeader title="الملخص" subtitle="تقرير شامل عن القطيع والمالية" backTo="/" />
 
         {/* Net Profit/Loss Hero */}
