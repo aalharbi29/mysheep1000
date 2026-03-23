@@ -100,7 +100,7 @@ const ExpensesPage = () => {
   const monthlyGroups = useMemo(() => groupByMonth(expenses), [expenses]);
 
   return (
-    <div className="min-h-screen p-4 sm:p-6 rounded-3xl bg-gray-900">
+    <div className="min-h-screen p-4 sm:p-6 rounded-3xl bg-gray-900 border border-solid border-accent">
       <div className="max-w-2xl mx-auto my-[30px] mt-[100px] pb-[15px] border-accent border border-solid rounded-3xl bg-primary-foreground">
         <PageHeader title="المصروفات" subtitle={`الإجمالي: ${getTotalExpenses().toLocaleString()} ر.س`} backTo="/" />
 
