@@ -78,7 +78,6 @@ const SplashScreen = ({ onComplete }: { onComplete: () => void }) => {
               style={{
                 height: `${settings.devLogoSize}px`,
                 filter: `brightness(${settings.devLogoBrightness / 100})${settings.devLogoGlow ? ` drop-shadow(0 0 ${settings.devLogoGlowIntensity / 3}px ${settings.devLogoGlowColor})` : ''}`,
-                mixBlendMode: 'multiply',
                 animation: settings.devLogoGlow ? 'glow-pulse 2.5s ease-in-out infinite' : 'none',
               }}
             />

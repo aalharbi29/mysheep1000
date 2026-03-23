@@ -196,7 +196,6 @@ const SplashSettingsCard = () => {
                       style={{
                         height: `${settings.devLogoSize}px`,
                         filter: `brightness(${settings.devLogoBrightness / 100})${settings.devLogoGlow ? ` drop-shadow(0 0 ${settings.devLogoGlowIntensity / 3}px ${settings.devLogoGlowColor})` : ''}`,
-                        mixBlendMode: 'multiply',
                       }}
                       className="object-contain"
                     />
