@@ -1,5 +1,6 @@
 import { useState, useEffect } from 'react';
 import logoSvg from '@/assets/logo.svg';
+import hrsaniLabsLogo from '@/assets/hrsani-labs-logo.png';
 import { getSplashSettings } from '@/lib/splashSettings';
 
 type SplashPhase = 'logo' | 'credits' | 'done';
@@ -69,19 +70,14 @@ const SplashScreen = ({ onComplete }: { onComplete: () => void }) => {
       {phase === 'credits' && (
         <div className="flex flex-col items-center gap-4 animate-fade-in text-center">
           <p className="text-xl opacity-80">{settings.phase2Line1}</p>
-          <h2 className="text-2xl font-bold flex gap-[2px]" style={{ direction: 'ltr', unicodeBidi: 'bidi-override' }}>
-            {settings.phase2Line2.split('').map((char, i) => (
-              <span
-                key={i}
-                className="inline-block"
-                style={{
-                  animation: char === ' ' ? 'none' : `bounce-letter 0.6s ease-in-out ${i * 0.07}s infinite`,
-                }}
-              >
-                {char === ' ' ? '\u00A0' : char}
-              </span>
-            ))}
-          </h2>
+          <img
+            src={hrsaniLabsLogo}
+            alt="Al-Hrsani Labs"
+            className="h-28 object-contain"
+            style={{
+              animation: 'glow-pulse 2.5s ease-in-out infinite',
+            }}
+          />
           <p className="text-sm opacity-60 mt-2">{settings.phase2Line3}</p>
         </div>
       )}
