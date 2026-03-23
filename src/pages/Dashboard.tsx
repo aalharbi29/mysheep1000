@@ -39,21 +39,21 @@ const Dashboard = () => {
         <header className="text-center mb-8 pt-6 relative">
           <button
             onClick={signOut}
-            className="absolute left-0 top-6 flex items-center gap-2 px-4 py-2 text-destructive hover:opacity-80 transition-colors font-bold text-base rounded-lg border border-destructive/30 bg-destructive/10"
+            className="absolute left-0 top-6 flex items-center gap-2 px-4 py-2 text-destructive hover:opacity-80 transition-colors font-bold text-base rounded-lg border bg-inherit border-accent pl-[12px] pr-[12px] pb-[2px] pt-[2px]"
             title="تسجيل الخروج">
             <LogOut className="w-7 h-7" />
             خروج
           </button>
           <div className="absolute right-0 top-6 flex items-center gap-[2px] border border-solid border-accent bg-inherit rounded-2xl">
             <button onClick={() => navigate('/settings')} className="p-2" title="الإعدادات">
-              <Settings className="w-7 h-7 text-muted-foreground" />
+              <Settings className="text-muted-foreground h-[20px] w-[20px]" />
             </button>
             <button onClick={() => navigate('/profile')} className="p-2" title="الملف الشخصي">
-              <UserCircle className="w-7 h-7 text-primary" />
+              <UserCircle className="text-primary h-[20px] w-[20px]" />
             </button>
             <NotificationBell />
           </div>
-          <div className="inline-flex items-center justify-center w-16 h-16 rounded-2xl bg-primary/10 mx-0 shadow-2xl text-xs mr-[15px] mb-[16px] pt-0">
+          <div className="inline-flex items-center justify-center w-16 h-16 bg-primary/10 mx-0 shadow-2xl text-xs mr-[15px] mb-[16px] pt-0 rounded-2xl">
             <Fence className="w-8 h-8 text-primary" />
           </div>
           <h1 className="font-extrabold mx-[25px] text-[#6075af] text-2xl pt-0">الحظيرة النموذجية
@@ -69,7 +69,7 @@ const Dashboard = () => {
                 onClick={() => navigate(card.path)}
                 className={`relative overflow-hidden rounded-xl p-5 text-right transition-all duration-200 card-shadow hover:card-shadow-hover hover:scale-[1.02] active:scale-[0.98] bg-gradient-to-bl ${card.gradient} ${card.id === 'flock' ? 'col-span-2' : ''}`}>
 
-                <Icon className="w-7 h-7 text-primary-foreground/90 mb-3 mr-[50px]" />
+                <Icon className="w-7 h-7 mb-3 mr-[50px] border-inherit text-accent-foreground" />
                 <h2 className="text-primary-foreground text-center font-extrabold text-xl">{card.label}</h2>
                 <p className="text-sm text-primary-foreground/75 mt-1 text-center font-extrabold">{stats[card.id]}</p>
               </button>);

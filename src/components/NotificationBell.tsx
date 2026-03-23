@@ -11,11 +11,11 @@ const NotificationBell = () => {
 
   const fetchCount = async () => {
     if (!user) return;
-    const { count } = await supabase
-      .from('notifications')
-      .select('*', { count: 'exact', head: true })
-      .eq('user_id', user.id)
-      .eq('is_read', false);
+    const { count } = await supabase.
+    from('notifications').
+    select('*', { count: 'exact', head: true }).
+    eq('user_id', user.id).
+    eq('is_read', false);
     setUnreadCount(count || 0);
   };
 
@@ -23,27 +23,27 @@ const NotificationBell = () => {
     fetchCount();
     if (!user) return;
 
-    const channel = supabase
-      .channel('notification-bell')
-      .on('postgres_changes', {
-        event: '*', schema: 'public', table: 'notifications',
-        filter: `user_id=eq.${user.id}`
-      }, () => fetchCount())
-      .subscribe();
+    const channel = supabase.
+    channel('notification-bell').
+    on('postgres_changes', {
+      event: '*', schema: 'public', table: 'notifications',
+      filter: `user_id=eq.${user.id}`
+    }, () => fetchCount()).
+    subscribe();
 
-    return () => { supabase.removeChannel(channel); };
+    return () => {supabase.removeChannel(channel);};
   }, [user]);
 
   return (
     <button onClick={() => navigate('/notifications')} className="relative p-2">
-      <Bell className="w-7 h-7 text-primary" />
-      {unreadCount > 0 && (
-        <span className="absolute -top-1 -right-1 bg-destructive text-destructive-foreground text-[10px] font-bold rounded-full w-5 h-5 flex items-center justify-center">
+      <Bell className="text-destructive-foreground bg-inherit h-[20px] w-[20px]" />
+      {unreadCount > 0 &&
+      <span className="absolute -top-1 -right-1 bg-destructive text-destructive-foreground text-[10px] font-bold rounded-full w-5 h-5 flex items-center justify-center">
           {unreadCount > 9 ? '9+' : unreadCount}
         </span>
-      )}
-    </button>
-  );
+      }
+    </button>);
+
 };
 
 export default NotificationBell;
