@@ -109,12 +109,12 @@ const ExpensesPage = () => {
             {Object.entries(categoryTotals).sort(([, a], [, b]) => b - a).map(([cat, total]) => {
             const catInfo = Object.values(EXPENSE_CATEGORIES).find((c) => c.label === cat);
             return (
-              <div key={cat} className="rounded-xl bg-card p-3 card-shadow">
+              <div key={cat} className="rounded-xl bg-card p-3 card-shadow pt-[5px] pl-[12px] pb-[5px]">
                   <div className="flex items-center gap-1 mb-1">
                     <span>{catInfo?.icon || '📋'}</span>
                     <span className="text-xs text-muted-foreground">{cat}</span>
                   </div>
-                  <p className="text-lg font-bold text-destructive">{total.toLocaleString()} <span className="text-xs font-normal">ر.س</span></p>
+                  <p className="text-lg font-bold text-destructive text-center">{total.toLocaleString()} <span className="text-xs font-normal">ر.س</span></p>
                 </div>);
 
           })}

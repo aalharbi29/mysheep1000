@@ -32,7 +32,7 @@ const PageHeader = ({ title, subtitle, backTo }: PageHeaderProps) => {
       </div>
       <header className="shadow-2xl opacity-100 border pt-0 pr-0 pl-0 ml-[15px] mr-[15px] py-px border-secondary-foreground rounded-2xl border-none px-[25px] mx-[50px] bg-inherit">
         <h1 className="text-foreground font-extrabold text-center mx-[50px] text-2xl">{title}</h1>
-        {subtitle && <p className="text-muted-foreground mt-1 text-center mx-[50px] mb-[5px] mr-[50px] font-extrabold text-sm">{subtitle}</p>}
+        {subtitle && <p className="mt-1 text-center mx-[50px] mb-[5px] mr-[50px] font-extrabold text-sm text-destructive">{subtitle}</p>}
       </header>
     </div>);
 
