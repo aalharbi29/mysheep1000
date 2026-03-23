@@ -1,3 +1,4 @@
+import { useState, useCallback } from "react";
 import { Toaster } from "@/components/ui/toaster";
 import { Toaster as Sonner } from "@/components/ui/sonner";
 import { TooltipProvider } from "@/components/ui/tooltip";
@@ -9,6 +10,7 @@ import DebtReminder from "@/components/DebtReminder";
 import SellerOrderNotification from "@/components/SellerOrderNotification";
 import VaccinationReminder from "@/components/VaccinationReminder";
 import SyncStatusIndicator from "@/components/SyncStatusIndicator";
+import SplashScreen from "@/components/SplashScreen";
 import AuthPage from "./pages/AuthPage";
 import Dashboard from "./pages/Dashboard";
 import FlockPage from "./pages/FlockPage";
