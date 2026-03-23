@@ -1,9 +1,10 @@
 import { useNavigate } from 'react-router-dom';
 import { useLivestock } from '@/context/LivestockContext';
 import { useAuth } from '@/context/AuthContext';
-import { Fence, Receipt, ShoppingCart, TrendingUp, FileText, Archive, LogOut, Store, UserCircle, Settings } from 'lucide-react';
+import { Receipt, ShoppingCart, TrendingUp, FileText, Archive, LogOut, Store, UserCircle, Settings } from 'lucide-react';
 import { Button } from '@/components/ui/button';
 import NotificationBell from '@/components/NotificationBell';
+import logoSvg from '@/assets/logo.svg';
 
 const cards = [
 { id: 'flock', label: 'القطيع', icon: Fence, path: '/flock', gradient: 'from-primary to-primary/80' },
