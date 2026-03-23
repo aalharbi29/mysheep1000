@@ -26,8 +26,8 @@ const PurchasesPage = () => {
   const monthlyGroups = useMemo(() => groupByMonth(purchases), [purchases]);
 
   return (
-    <div className="min-h-screen bg-background p-4 sm:p-6">
-      <div className="max-w-2xl pt-0 mb-0 rounded-3xl pb-[15px] shadow-2xl mt-[100px] mx-0 px-[5px]">
+    <div className="min-h-screen p-4 sm:p-6 bg-gray-900 border-solid rounded-3xl border-4 border-accent">
+      <div className="max-w-2xl pt-0 mb-0 rounded-3xl pb-[15px] shadow-2xl mt-[100px] mx-0 px-[5px] bg-primary-foreground border-accent border-2 border-solid">
         <PageHeader title="المشتريات" subtitle={`الإجمالي: ${getTotalPurchases().toLocaleString()} ر.س`} backTo="/" />
 
         {purchases.length > 0 &&
