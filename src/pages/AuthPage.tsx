@@ -103,34 +103,20 @@ const AuthPage = () => {
       dir="rtl"
     >
       {/* Outline Logo */}
-      <div className="relative animate-[pulse_3s_cubic-bezier(0.4,0,0.6,1)_infinite] mt-8" style={{ width: splashSettings.authLogoWidth, height: splashSettings.authLogoHeight }}>
-        {customMainLogo ? (
-          <img src={customMainLogo} alt="" style={{ width: splashSettings.authLogoWidth, height: splashSettings.authLogoHeight }} />
-        ) : (
-          <>
-            <img
-              src={logoSvg}
-              alt=""
-              className="absolute invert"
-              style={{ inset: "-4px", width: "calc(100% + 8px)", height: "calc(100% + 8px)" }}
-            />
-            <div
-              className="absolute inset-0 w-full h-full"
-              style={{
-                WebkitMaskImage: `url(${logoSvg})`,
-                maskImage: `url(${logoSvg})`,
-                WebkitMaskSize: "contain",
-                maskSize: "contain",
-                WebkitMaskRepeat: "no-repeat",
-                maskRepeat: "no-repeat",
-                WebkitMaskPosition: "center",
-                maskPosition: "center",
-                backgroundColor: "#928472",
-              }}
-            />
-          </>
-        )}
-      </div>
+      {customMainLogo ? (
+        <img src={customMainLogo} alt="" className="animate-[pulse_3s_cubic-bezier(0.4,0,0.6,1)_infinite] mt-8" style={{ width: splashSettings.authLogoWidth, height: splashSettings.authLogoHeight }} />
+      ) : (
+        <div className="relative animate-[pulse_3s_cubic-bezier(0.4,0,0.6,1)_infinite] mt-8" style={{ width: splashSettings.authLogoWidth, height: splashSettings.authLogoHeight }}>
+          <img src={logoSvg} alt="" className="absolute invert" style={{ inset: "-4px", width: "calc(100% + 8px)", height: "calc(100% + 8px)" }} />
+          <div className="absolute inset-0 w-full h-full" style={{
+            WebkitMaskImage: `url(${logoSvg})`, maskImage: `url(${logoSvg})`,
+            WebkitMaskSize: "contain", maskSize: "contain",
+            WebkitMaskRepeat: "no-repeat", maskRepeat: "no-repeat",
+            WebkitMaskPosition: "center", maskPosition: "center",
+            backgroundColor: "#928472",
+          }} />
+        </div>
+      )}
 
       <Card className="w-full max-w-md">
         <CardHeader className="text-center">

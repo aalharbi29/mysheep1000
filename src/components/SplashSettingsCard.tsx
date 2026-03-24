@@ -330,7 +330,7 @@ const SplashSettingsCard = () => {
                   </div>
                 </div>
                 <div className="flex justify-center p-2 rounded bg-muted">
-                  <img src={mainLogoSrc} alt="معاينة" className="object-contain" style={{ width: settings.splashLogoWidth / 2, height: settings.splashLogoHeight / 2 }} />
+                  <img src={mainLogoSrc} alt="معاينة" style={{ width: settings.splashLogoWidth / 2, height: settings.splashLogoHeight / 2 }} />
                 </div>
               </div>
 
@@ -348,7 +348,7 @@ const SplashSettingsCard = () => {
                   </div>
                 </div>
                 <div className="flex justify-center p-2 rounded bg-muted">
-                  <img src={mainLogoSrc} alt="معاينة" className="object-contain" style={{ width: settings.authLogoWidth / 2, height: settings.authLogoHeight / 2 }} />
+                  <img src={mainLogoSrc} alt="معاينة" style={{ width: settings.authLogoWidth / 2, height: settings.authLogoHeight / 2 }} />
                 </div>
               </div>
 
@@ -366,7 +366,7 @@ const SplashSettingsCard = () => {
                   </div>
                 </div>
                 <div className="flex justify-center p-2 rounded bg-muted">
-                  <img src={mainLogoSrc} alt="معاينة" className="object-contain" style={{ width: settings.dashboardLogoWidth, height: settings.dashboardLogoHeight }} />
+                  <img src={mainLogoSrc} alt="معاينة" style={{ width: settings.dashboardLogoWidth, height: settings.dashboardLogoHeight }} />
                 </div>
               </div>
             </div>
