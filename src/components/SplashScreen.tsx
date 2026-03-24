@@ -69,14 +69,10 @@ const SplashScreen = ({ onComplete }: { onComplete: () => void }) => {
               <div className="relative" style={{ width: settings.splashLogoWidth, height: settings.splashLogoHeight }}>
                 <img src={logoSvg} alt="" className="absolute invert" style={{ inset: '-4px', width: 'calc(100% + 8px)', height: 'calc(100% + 8px)' }} />
                 <div className="absolute inset-0 w-full h-full" style={{
-                  WebkitMaskImage: `url(${logoSvg})`,
-                  maskImage: `url(${logoSvg})`,
-                  WebkitMaskSize: 'contain',
-                  maskSize: 'contain',
-                  WebkitMaskRepeat: 'no-repeat',
-                  maskRepeat: 'no-repeat',
-                  WebkitMaskPosition: 'center',
-                  maskPosition: 'center',
+                  WebkitMaskImage: `url(${logoSvg})`, maskImage: `url(${logoSvg})`,
+                  WebkitMaskSize: 'contain', maskSize: 'contain',
+                  WebkitMaskRepeat: 'no-repeat', maskRepeat: 'no-repeat',
+                  WebkitMaskPosition: 'center', maskPosition: 'center',
                   backgroundColor: settings.bgColor
                 }} />
               </div>
