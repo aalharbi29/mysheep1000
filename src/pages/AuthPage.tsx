@@ -105,7 +105,7 @@ const AuthPage = () => {
       {/* Outline Logo */}
       <div className="relative animate-[pulse_3s_cubic-bezier(0.4,0,0.6,1)_infinite] mt-8" style={{ width: splashSettings.authLogoWidth, height: splashSettings.authLogoHeight }}>
         {customMainLogo ? (
-          <img src={customMainLogo} alt="" className="w-full h-full object-contain" />
+          <img src={customMainLogo} alt="" style={{ width: splashSettings.authLogoWidth, height: splashSettings.authLogoHeight }} />
         ) : (
           <>
             <img
