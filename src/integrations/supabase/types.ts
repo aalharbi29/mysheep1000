@@ -521,10 +521,14 @@ export type Database = {
       }
       splash_settings: {
         Row: {
+          auth_logo_height: number
+          auth_logo_width: number
           bg_color: string
           created_at: string
           custom_dev_logo_url: string | null
           custom_main_logo_url: string | null
+          dashboard_logo_height: number
+          dashboard_logo_width: number
           dev_logo_brightness: number
           dev_logo_glow: boolean
           dev_logo_glow_color: string
@@ -540,15 +544,21 @@ export type Database = {
           phase2_line1: string
           phase2_line2: string
           phase2_line3: string
+          splash_logo_height: number
+          splash_logo_width: number
           text_color: string
           updated_at: string
           user_id: string
         }
         Insert: {
+          auth_logo_height?: number
+          auth_logo_width?: number
           bg_color?: string
           created_at?: string
           custom_dev_logo_url?: string | null
           custom_main_logo_url?: string | null
+          dashboard_logo_height?: number
+          dashboard_logo_width?: number
           dev_logo_brightness?: number
           dev_logo_glow?: boolean
           dev_logo_glow_color?: string
@@ -564,15 +574,21 @@ export type Database = {
           phase2_line1?: string
           phase2_line2?: string
           phase2_line3?: string
+          splash_logo_height?: number
+          splash_logo_width?: number
           text_color?: string
           updated_at?: string
           user_id: string
         }
         Update: {
+          auth_logo_height?: number
+          auth_logo_width?: number
           bg_color?: string
           created_at?: string
           custom_dev_logo_url?: string | null
           custom_main_logo_url?: string | null
+          dashboard_logo_height?: number
+          dashboard_logo_width?: number
           dev_logo_brightness?: number
           dev_logo_glow?: boolean
           dev_logo_glow_color?: string
@@ -588,6 +604,8 @@ export type Database = {
           phase2_line1?: string
           phase2_line2?: string
           phase2_line3?: string
+          splash_logo_height?: number
+          splash_logo_width?: number
           text_color?: string
           updated_at?: string
           user_id?: string
