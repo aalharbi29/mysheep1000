@@ -100,7 +100,7 @@ const AuthPage = () => {
   return (
     <div className="min-h-screen items-center justify-center p-4 flex flex-col gap-6 shadow-2xl opacity-100 rounded-sm border-solid px-[20px] bg-[#928472] my-0 py-0 pb-[50px]" dir="rtl">
       {/* Outline Logo */}
-      <div className="relative w-32 h-32 animate-[pulse_3s_cubic-bezier(0.4,0,0.6,1)_infinite] mt-8">
+      <div className="relative w-48 h-36 animate-[pulse_3s_cubic-bezier(0.4,0,0.6,1)_infinite] mt-8">
         {customMainLogo ? (
           <img src={customMainLogo} alt="" className="w-full h-full object-contain" />
         ) : (
