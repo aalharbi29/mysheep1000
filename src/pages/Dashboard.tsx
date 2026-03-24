@@ -60,7 +60,7 @@ const Dashboard = () => {
           </div>
           <div className="inline-flex items-center justify-center mx-0 pt-0 rounded-2xl animate-[pulse_3s_cubic-bezier(0.4,0,0.6,1)_infinite] text-center mb-[10px]" style={{ width: splashSettings.dashboardLogoWidth + 16, height: splashSettings.dashboardLogoHeight + 16 }}>
             {customMainLogo ? (
-              <img src={customMainLogo} alt="شعار التطبيق" className="object-contain" style={{ width: splashSettings.dashboardLogoWidth, height: splashSettings.dashboardLogoHeight }} />
+              <img src={customMainLogo} alt="شعار التطبيق" style={{ width: splashSettings.dashboardLogoWidth, height: splashSettings.dashboardLogoHeight }} />
             ) : (
               <div className="relative" style={{ width: splashSettings.dashboardLogoWidth, height: splashSettings.dashboardLogoHeight }}>
                 <img src={logoSvg} alt="شعار التطبيق" className="absolute invert mr-[7px] pl-0" style={{ inset: '-3px', width: 'calc(100% + 6px)', height: 'calc(100% + 6px)' }} />
