@@ -19,6 +19,12 @@ export interface SplashSettings {
   devLogoGlowIntensity: number;
   customMainLogoUrl: string | null;
   customDevLogoUrl: string | null;
+  splashLogoWidth: number;
+  splashLogoHeight: number;
+  authLogoWidth: number;
+  authLogoHeight: number;
+  dashboardLogoWidth: number;
+  dashboardLogoHeight: number;
 }
 
 export const defaultSplashSettings: SplashSettings = {
@@ -40,6 +46,12 @@ export const defaultSplashSettings: SplashSettings = {
   devLogoGlowIntensity: 30,
   customMainLogoUrl: null,
   customDevLogoUrl: null,
+  splashLogoWidth: 192,
+  splashLogoHeight: 192,
+  authLogoWidth: 200,
+  authLogoHeight: 128,
+  dashboardLogoWidth: 64,
+  dashboardLogoHeight: 64,
 };
 
 function rowToSettings(row: any): SplashSettings {
@@ -62,6 +74,12 @@ function rowToSettings(row: any): SplashSettings {
     devLogoGlowIntensity: row.dev_logo_glow_intensity ?? 30,
     customMainLogoUrl: row.custom_main_logo_url ?? null,
     customDevLogoUrl: row.custom_dev_logo_url ?? null,
+    splashLogoWidth: row.splash_logo_width ?? 192,
+    splashLogoHeight: row.splash_logo_height ?? 192,
+    authLogoWidth: row.auth_logo_width ?? 200,
+    authLogoHeight: row.auth_logo_height ?? 128,
+    dashboardLogoWidth: row.dashboard_logo_width ?? 64,
+    dashboardLogoHeight: row.dashboard_logo_height ?? 64,
   };
 }
 
@@ -86,6 +104,12 @@ function settingsToRow(settings: SplashSettings, userId: string) {
     dev_logo_glow_intensity: settings.devLogoGlowIntensity,
     custom_main_logo_url: settings.customMainLogoUrl,
     custom_dev_logo_url: settings.customDevLogoUrl,
+    splash_logo_width: settings.splashLogoWidth,
+    splash_logo_height: settings.splashLogoHeight,
+    auth_logo_width: settings.authLogoWidth,
+    auth_logo_height: settings.authLogoHeight,
+    dashboard_logo_width: settings.dashboardLogoWidth,
+    dashboard_logo_height: settings.dashboardLogoHeight,
   };
 }
 

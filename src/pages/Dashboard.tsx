@@ -58,11 +58,11 @@ const Dashboard = () => {
             </button>
             <NotificationBell />
           </div>
-          <div className="inline-flex items-center justify-center w-20 h-20 mx-0 pt-0 rounded-2xl animate-[pulse_3s_cubic-bezier(0.4,0,0.6,1)_infinite] text-center mb-[10px]">
+          <div className="inline-flex items-center justify-center mx-0 pt-0 rounded-2xl animate-[pulse_3s_cubic-bezier(0.4,0,0.6,1)_infinite] text-center mb-[10px]" style={{ width: splashSettings.dashboardLogoWidth + 16, height: splashSettings.dashboardLogoHeight + 16 }}>
             {customMainLogo ? (
-              <img src={customMainLogo} alt="شعار التطبيق" className="w-16 h-16 object-contain" />
+              <img src={customMainLogo} alt="شعار التطبيق" className="object-contain" style={{ width: splashSettings.dashboardLogoWidth, height: splashSettings.dashboardLogoHeight }} />
             ) : (
-              <div className="relative w-16 h-16">
+              <div className="relative" style={{ width: splashSettings.dashboardLogoWidth, height: splashSettings.dashboardLogoHeight }}>
                 <img src={logoSvg} alt="شعار التطبيق" className="absolute invert mr-[7px] pl-0" style={{ inset: '-3px', width: 'calc(100% + 6px)', height: 'calc(100% + 6px)' }} />
                 <div className="absolute inset-0 w-full h-full" style={{
                   WebkitMaskImage: `url(${logoSvg})`,

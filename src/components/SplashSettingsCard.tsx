@@ -312,6 +312,65 @@ const SplashSettingsCard = () => {
               )}
             </div>
 
+            {/* Logo Dimensions */}
+            <div className="border rounded-lg p-3 space-y-4">
+              <h3 className="font-semibold text-sm">أبعاد الشعار (بالبكسل)</h3>
+              
+              {/* Splash Logo */}
+              <div className="space-y-2 border-b pb-3">
+                <h4 className="text-xs font-medium text-muted-foreground">شاشة البداية</h4>
+                <div className="grid grid-cols-2 gap-3">
+                  <div className="space-y-1">
+                    <Label className="text-xs">العرض: {settings.splashLogoWidth}px</Label>
+                    <Slider value={[settings.splashLogoWidth]} onValueChange={([v]) => update({ splashLogoWidth: v })} min={40} max={400} step={4} />
+                  </div>
+                  <div className="space-y-1">
+                    <Label className="text-xs">الارتفاع: {settings.splashLogoHeight}px</Label>
+                    <Slider value={[settings.splashLogoHeight]} onValueChange={([v]) => update({ splashLogoHeight: v })} min={40} max={400} step={4} />
+                  </div>
+                </div>
+                <div className="flex justify-center p-2 rounded bg-muted">
+                  <img src={mainLogoSrc} alt="معاينة" className="object-contain" style={{ width: settings.splashLogoWidth / 2, height: settings.splashLogoHeight / 2 }} />
+                </div>
+              </div>
+
+              {/* Auth Logo */}
+              <div className="space-y-2 border-b pb-3">
+                <h4 className="text-xs font-medium text-muted-foreground">صفحة الدخول</h4>
+                <div className="grid grid-cols-2 gap-3">
+                  <div className="space-y-1">
+                    <Label className="text-xs">العرض: {settings.authLogoWidth}px</Label>
+                    <Slider value={[settings.authLogoWidth]} onValueChange={([v]) => update({ authLogoWidth: v })} min={40} max={400} step={4} />
+                  </div>
+                  <div className="space-y-1">
+                    <Label className="text-xs">الارتفاع: {settings.authLogoHeight}px</Label>
+                    <Slider value={[settings.authLogoHeight]} onValueChange={([v]) => update({ authLogoHeight: v })} min={40} max={400} step={4} />
+                  </div>
+                </div>
+                <div className="flex justify-center p-2 rounded bg-muted">
+                  <img src={mainLogoSrc} alt="معاينة" className="object-contain" style={{ width: settings.authLogoWidth / 2, height: settings.authLogoHeight / 2 }} />
+                </div>
+              </div>
+
+              {/* Dashboard Logo */}
+              <div className="space-y-2">
+                <h4 className="text-xs font-medium text-muted-foreground">الصفحة الرئيسية</h4>
+                <div className="grid grid-cols-2 gap-3">
+                  <div className="space-y-1">
+                    <Label className="text-xs">العرض: {settings.dashboardLogoWidth}px</Label>
+                    <Slider value={[settings.dashboardLogoWidth]} onValueChange={([v]) => update({ dashboardLogoWidth: v })} min={40} max={400} step={4} />
+                  </div>
+                  <div className="space-y-1">
+                    <Label className="text-xs">الارتفاع: {settings.dashboardLogoHeight}px</Label>
+                    <Slider value={[settings.dashboardLogoHeight]} onValueChange={([v]) => update({ dashboardLogoHeight: v })} min={40} max={400} step={4} />
+                  </div>
+                </div>
+                <div className="flex justify-center p-2 rounded bg-muted">
+                  <img src={mainLogoSrc} alt="معاينة" className="object-contain" style={{ width: settings.dashboardLogoWidth, height: settings.dashboardLogoHeight }} />
+                </div>
+              </div>
+            </div>
+
             {/* Actions */}
             <div className="flex gap-2">
               <Button onClick={handleSave} className="flex-1" disabled={saving}>
