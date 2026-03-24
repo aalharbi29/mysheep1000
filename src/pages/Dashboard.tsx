@@ -39,7 +39,7 @@ const Dashboard = () => {
   };
 
   return (
-    <div className="min-h-screen p-4 sm:p-6 bg-[sidebar-accent-foreground] bg-slate-950 text-popover pt-0 pb-0">
+    <div className="min-h-screen p-4 sm:p-6 bg-[sidebar-accent-foreground] text-popover pt-0 pb-0 border-8 border-solid border-slate-500 bg-emerald-950">
       <div className="max-w-2xl mx-auto">
         <header className="text-center relative mb-[15px] pt-[15px]">
           <button
