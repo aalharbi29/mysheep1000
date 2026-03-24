@@ -103,7 +103,7 @@ const AuthPage = () => {
       dir="rtl"
     >
       {/* Outline Logo */}
-      <div className="relative w-50 h-50 animate-[pulse_3s_cubic-bezier(0.4,0,0.6,1)_infinite] mt-8">
+      <div className="relative w-50 h-32 animate-[pulse_3s_cubic-bezier(0.4,0,0.6,1)_infinite] mt-8">
         {customMainLogo ? (
           <img src={customMainLogo} alt="" className="w-full h-full object-contain" />
         ) : (
