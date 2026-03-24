@@ -64,7 +64,7 @@ const SplashScreen = ({ onComplete }: { onComplete: () => void }) => {
           <h1 className="text-3xl font-bold mb-2">{settings.phase1Title}</h1>
           {settings.phase1ShowLogo && (
             mainLogoSrc ? (
-              <img src={mainLogoSrc} alt="" className="object-contain" style={{ width: settings.splashLogoWidth, height: settings.splashLogoHeight }} />
+              <img src={mainLogoSrc} alt="" style={{ width: settings.splashLogoWidth, height: settings.splashLogoHeight }} />
             ) : (
               <div className="relative" style={{ width: settings.splashLogoWidth, height: settings.splashLogoHeight }}>
                 <img src={logoSvg} alt="" className="absolute invert" style={{ inset: '-4px', width: 'calc(100% + 8px)', height: 'calc(100% + 8px)' }} />
