@@ -99,7 +99,7 @@ const AuthPage = () => {
 
   return (
     <div
-      className="min-h-screen items-center justify-center p-4 flex flex-col gap-6 shadow-2xl opacity-100 rounded-sm border-solid px-[20px] bg-[#928472] my-0 py-0 pb-[50px]"
+      className="min-h-screen items-center justify-center p-4 flex flex-col gap-6 shadow-2xl opacity-100 rounded-sm border-solid px-[20px] my-0 py-0 pb-[50px] bg-teal-950"
       dir="rtl"
     >
       {/* Outline Logo */}
