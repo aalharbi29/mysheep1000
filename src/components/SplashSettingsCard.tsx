@@ -12,6 +12,7 @@ import { useAuth } from '@/context/AuthContext';
 import { supabase } from '@/integrations/supabase/client';
 import logoSvg from '@/assets/logo.svg';
 import hrsaniLabsLogo from '@/assets/hrsani-labs-logo.png';
+import AlHrsaniLabsAnimation from '@/components/AlHrsaniLabsAnimation';
 
 const SplashSettingsCard = () => {
   const { user } = useAuth();
@@ -297,14 +298,9 @@ const SplashSettingsCard = () => {
                 <div className="rounded-lg p-6 flex flex-col items-center justify-center gap-3 min-h-[150px] text-center" style={{ backgroundColor: settings.bgColor, color: settings.textColor }}>
                   <p className="text-lg opacity-80">{settings.phase2Line1}</p>
                   {settings.devLogoVisible && (
-                    <img
-                      src={devLogoSrc}
-                      alt="Al-Hrsani Labs"
-                      style={{
-                        height: `${settings.devLogoSize}px`,
-                        filter: `brightness(${settings.devLogoBrightness / 100})${settings.devLogoGlow ? ` drop-shadow(0 0 ${settings.devLogoGlowIntensity / 3}px ${settings.devLogoGlowColor})` : ''}`,
-                      }}
-                      className="object-contain"
+                    <AlHrsaniLabsAnimation
+                      width={Math.min(400, settings.devLogoSize * 4)}
+                      height={settings.devLogoSize * 2.5}
                     />
                   )}
                   <p className="text-sm opacity-60">{settings.phase2Line3}</p>
