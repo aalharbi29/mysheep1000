@@ -12,7 +12,6 @@ const SplashScreen = ({ onComplete }: { onComplete: () => void }) => {
   const [ready, setReady] = useState(false);
 
   const mainLogoSrc = settings.customMainLogoUrl || null;
-  const devLogoSrc = settings.customDevLogoUrl || hrsaniLabsLogo;
 
   // Fetch global settings from DB, then start animation
   useEffect(() => {
