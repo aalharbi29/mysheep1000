@@ -83,15 +83,9 @@ const SplashScreen = ({ onComplete }: { onComplete: () => void }) => {
         <div className="flex flex-col items-center gap-4 animate-fade-in text-center">
           <p className="text-xl opacity-80">{settings.phase2Line1}</p>
           {settings.devLogoVisible && (
-            <img
-              src={devLogoSrc}
-              alt="Al-Hrsani Labs"
-              className="object-contain"
-              style={{
-                height: `${settings.devLogoSize}px`,
-                filter: `brightness(${settings.devLogoBrightness / 100})${settings.devLogoGlow ? ` drop-shadow(0 0 ${settings.devLogoGlowIntensity / 3}px ${settings.devLogoGlowColor})` : ''}`,
-                animation: settings.devLogoGlow ? 'glow-pulse 2.5s ease-in-out infinite' : 'none',
-              }}
+            <AlHrsaniLabsAnimation
+              width={Math.min(660, settings.devLogoSize * 6)}
+              height={settings.devLogoSize * 4}
             />
           )}
           <p className="text-sm opacity-60 mt-2">{settings.phase2Line3}</p>
