@@ -303,8 +303,8 @@ const SplashSettingsCard = () => {
                   <p className="text-lg opacity-80">{settings.phase2Line1}</p>
                   {settings.devLogoVisible && (
                     <AlHrsaniLabsAnimation
-                      width={Math.min(400, settings.devLogoSize * 4)}
-                      height={settings.devLogoSize * 2.5}
+                      width={Math.min(400, settings.devAnimationWidth * 0.6)}
+                      height={settings.devAnimationHeight * 0.5}
                     />
                   )}
                   <p className="text-sm opacity-60">{settings.phase2Line3}</p>
