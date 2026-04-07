@@ -49,7 +49,7 @@ const Dashboard = () => {
             <LogOut className="w-7 h-7" />
             خروج
           </button>
-          <div className="absolute right-0 top-6 flex items-center gap-[2px] border border-solid border-accent bg-inherit rounded-2xl">
+          <div className="absolute right-0 top-6 flex items-center gap-[2px] border border-solid border-accent bg-inherit rounded-2xl z-10">
             <button onClick={() => navigate('/settings')} className="p-2" title="الإعدادات">
               <Settings className="text-muted-foreground h-[20px] w-[20px]" />
             </button>
