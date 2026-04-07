@@ -84,8 +84,8 @@ const SplashScreen = ({ onComplete }: { onComplete: () => void }) => {
           <p className="text-xl opacity-80">{settings.phase2Line1}</p>
           {settings.devLogoVisible && (
             <AlHrsaniLabsAnimation
-              width={Math.min(660, settings.devLogoSize * 6)}
-              height={settings.devLogoSize * 4}
+              width={settings.devAnimationWidth}
+              height={settings.devAnimationHeight}
             />
           )}
           <p className="text-sm opacity-60 mt-2">{settings.phase2Line3}</p>

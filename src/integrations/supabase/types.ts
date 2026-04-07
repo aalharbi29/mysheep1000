@@ -529,6 +529,8 @@ export type Database = {
           custom_main_logo_url: string | null
           dashboard_logo_height: number
           dashboard_logo_width: number
+          dev_animation_height: number
+          dev_animation_width: number
           dev_logo_brightness: number
           dev_logo_glow: boolean
           dev_logo_glow_color: string
@@ -559,6 +561,8 @@ export type Database = {
           custom_main_logo_url?: string | null
           dashboard_logo_height?: number
           dashboard_logo_width?: number
+          dev_animation_height?: number
+          dev_animation_width?: number
           dev_logo_brightness?: number
           dev_logo_glow?: boolean
           dev_logo_glow_color?: string
@@ -589,6 +593,8 @@ export type Database = {
           custom_main_logo_url?: string | null
           dashboard_logo_height?: number
           dashboard_logo_width?: number
+          dev_animation_height?: number
+          dev_animation_width?: number
           dev_logo_brightness?: number
           dev_logo_glow?: boolean
           dev_logo_glow_color?: string

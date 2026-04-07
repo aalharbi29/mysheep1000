@@ -17,6 +17,8 @@ export interface SplashSettings {
   devLogoGlow: boolean;
   devLogoGlowColor: string;
   devLogoGlowIntensity: number;
+  devAnimationWidth: number;
+  devAnimationHeight: number;
   customMainLogoUrl: string | null;
   customDevLogoUrl: string | null;
   splashLogoWidth: number;
@@ -44,6 +46,8 @@ export const defaultSplashSettings: SplashSettings = {
   devLogoGlow: true,
   devLogoGlowColor: '#ffffff',
   devLogoGlowIntensity: 30,
+  devAnimationWidth: 660,
+  devAnimationHeight: 450,
   customMainLogoUrl: null,
   customDevLogoUrl: null,
   splashLogoWidth: 192,
@@ -72,6 +76,8 @@ function rowToSettings(row: any): SplashSettings {
     devLogoGlow: row.dev_logo_glow ?? true,
     devLogoGlowColor: row.dev_logo_glow_color ?? '#ffffff',
     devLogoGlowIntensity: row.dev_logo_glow_intensity ?? 30,
+    devAnimationWidth: row.dev_animation_width ?? 660,
+    devAnimationHeight: row.dev_animation_height ?? 450,
     customMainLogoUrl: row.custom_main_logo_url ?? null,
     customDevLogoUrl: row.custom_dev_logo_url ?? null,
     splashLogoWidth: row.splash_logo_width ?? 192,
@@ -102,6 +108,8 @@ function settingsToRow(settings: SplashSettings, userId: string) {
     dev_logo_glow: settings.devLogoGlow,
     dev_logo_glow_color: settings.devLogoGlowColor,
     dev_logo_glow_intensity: settings.devLogoGlowIntensity,
+    dev_animation_width: settings.devAnimationWidth,
+    dev_animation_height: settings.devAnimationHeight,
     custom_main_logo_url: settings.customMainLogoUrl,
     custom_dev_logo_url: settings.customDevLogoUrl,
     splash_logo_width: settings.splashLogoWidth,
@@ -114,7 +122,6 @@ function settingsToRow(settings: SplashSettings, userId: string) {
 }
 
 export async function fetchSplashSettings(userId?: string): Promise<SplashSettings> {
-  // Try to fetch global settings (most recently updated)
   const { data } = await supabase
     .from('splash_settings')
     .select('*')
@@ -140,7 +147,6 @@ export async function saveSplashSettingsToDb(settings: SplashSettings, userId: s
   }
 }
 
-// Keep localStorage fallback for splash screen (shown before auth)
 const STORAGE_KEY = 'splash_settings';
 
 export function getSplashSettings(): SplashSettings {
