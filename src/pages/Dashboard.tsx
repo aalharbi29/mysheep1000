@@ -59,7 +59,7 @@ const Dashboard = () => {
             <NotificationBell />
           </div>
           {customMainLogo ? (
-            <img src={customMainLogo} alt="شعار التطبيق" className="animate-[pulse_3s_cubic-bezier(0.4,0,0.6,1)_infinite] mb-[10px] mx-auto" style={{ width: splashSettings.dashboardLogoWidth, height: splashSettings.dashboardLogoHeight }} />
+            <img src={customMainLogo} alt="شعار التطبيق" className="animate-[pulse_3s_cubic-bezier(0.4,0,0.6,1)_infinite] mb-[10px] mx-auto pointer-events-none" style={{ width: splashSettings.dashboardLogoWidth, height: splashSettings.dashboardLogoHeight }} />
           ) : (
             <div className="relative inline-flex animate-[pulse_3s_cubic-bezier(0.4,0,0.6,1)_infinite] mb-[10px]" style={{ width: splashSettings.dashboardLogoWidth, height: splashSettings.dashboardLogoHeight }}>
               <img src={logoSvg} alt="شعار التطبيق" className="absolute invert" style={{ inset: '-3px', width: 'calc(100% + 6px)', height: 'calc(100% + 6px)' }} />
