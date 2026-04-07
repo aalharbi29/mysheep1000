@@ -41,7 +41,7 @@ const Dashboard = () => {
   return (
     <div className="min-h-screen p-4 sm:p-6 bg-[sidebar-accent-foreground] text-popover pt-0 pb-0 border-8 border-solid border-slate-500 bg-emerald-950">
       <div className="max-w-2xl mx-auto">
-        <header className="text-center relative mb-[15px] pt-[15px]">
+        <header className="text-center relative mt-0 pt-[40px] pb-0 mb-0">
           <button
             onClick={signOut}
             className="absolute left-0 top-6 flex items-center gap-2 px-4 py-2 text-destructive hover:opacity-80 transition-colors font-bold text-base rounded-lg border bg-inherit border-accent pl-[12px] pr-[12px] pb-[2px] pt-[2px]"
@@ -72,7 +72,7 @@ const Dashboard = () => {
               }} />
             </div>
           )}
-          <h1 className="font-extrabold mx-[25px] text-[#6075af] text-2xl pt-0">الحظيرة النموذجية
+          <h1 className="font-extrabold mx-[25px] text-[#6075af] text-2xl pt-0 mt-0">الحظيرة النموذجية
           </h1>
           <p className="mt-1 text-xl font-bold mx-[3px] text-[#755e1f]/[0.97]">إدارة ومتابعة القطيع</p>
         </header>
