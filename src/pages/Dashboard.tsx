@@ -49,7 +49,7 @@ const Dashboard = () => {
             <LogOut className="w-7 h-7" />
             خروج
           </button>
-          <div className="absolute right-0 top-6 flex items-center gap-[2px] border border-solid border-accent bg-inherit rounded-2xl">
+          <div className="absolute right-0 top-6 flex items-center gap-[2px] border border-solid border-accent bg-inherit rounded-2xl z-10">
             <button onClick={() => navigate('/settings')} className="p-2" title="الإعدادات">
               <Settings className="text-muted-foreground h-[20px] w-[20px]" />
             </button>
@@ -59,9 +59,9 @@ const Dashboard = () => {
             <NotificationBell />
           </div>
           {customMainLogo ? (
-            <img src={customMainLogo} alt="شعار التطبيق" className="animate-[pulse_3s_cubic-bezier(0.4,0,0.6,1)_infinite] mb-[10px] mx-auto" style={{ width: splashSettings.dashboardLogoWidth, height: splashSettings.dashboardLogoHeight }} />
+            <img src={customMainLogo} alt="شعار التطبيق" className="animate-[pulse_3s_cubic-bezier(0.4,0,0.6,1)_infinite] mb-[10px] mx-auto pointer-events-none" style={{ width: splashSettings.dashboardLogoWidth, height: splashSettings.dashboardLogoHeight }} />
           ) : (
-            <div className="relative inline-flex animate-[pulse_3s_cubic-bezier(0.4,0,0.6,1)_infinite] mb-[10px]" style={{ width: splashSettings.dashboardLogoWidth, height: splashSettings.dashboardLogoHeight }}>
+            <div className="relative inline-flex animate-[pulse_3s_cubic-bezier(0.4,0,0.6,1)_infinite] mb-[10px] pointer-events-none" style={{ width: splashSettings.dashboardLogoWidth, height: splashSettings.dashboardLogoHeight }}>
               <img src={logoSvg} alt="شعار التطبيق" className="absolute invert" style={{ inset: '-3px', width: 'calc(100% + 6px)', height: 'calc(100% + 6px)' }} />
               <div className="absolute inset-0 w-full h-full" style={{
                 WebkitMaskImage: `url(${logoSvg})`, maskImage: `url(${logoSvg})`,
