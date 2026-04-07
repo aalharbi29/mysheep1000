@@ -264,8 +264,12 @@ const SplashSettingsCard = () => {
                 {settings.devLogoVisible && (
                   <>
                     <div className="space-y-2">
-                      <Label className="text-sm">الحجم: {settings.devLogoSize}px</Label>
-                      <Slider value={[settings.devLogoSize]} onValueChange={([v]) => update({ devLogoSize: v })} min={40} max={300} step={4} />
+                      <Label className="text-sm">عرض الأنيميشن: {settings.devAnimationWidth}px</Label>
+                      <Slider value={[settings.devAnimationWidth]} onValueChange={([v]) => update({ devAnimationWidth: v })} min={200} max={900} step={10} />
+                    </div>
+                    <div className="space-y-2">
+                      <Label className="text-sm">ارتفاع الأنيميشن: {settings.devAnimationHeight}px</Label>
+                      <Slider value={[settings.devAnimationHeight]} onValueChange={([v]) => update({ devAnimationHeight: v })} min={150} max={700} step={10} />
                     </div>
                     <div className="space-y-2">
                       <Label className="text-sm">السطوع: {settings.devLogoBrightness}%</Label>
