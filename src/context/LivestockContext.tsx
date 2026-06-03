@@ -273,16 +273,8 @@ export function LivestockProvider({ children }: { children: ReactNode }) {
 
         if (animalsRes.data && animalsRes.data.length > 0) {
           setAnimals(animalsRes.data.map(dbToAnimal));
-        } else if (!initialized) {
-          // First time user - seed with initial animals
-          const initial = generateInitialAnimals();
-          setAnimals(initial);
-          // Insert in batches
-          const rows = initial.map(a => animalToDb(a, userId));
-          for (let i = 0; i < rows.length; i += 500) {
-            await supabase.from('animals').insert(rows.slice(i, i + 500));
-          }
         }
+        // No initial seeding - owner adds animals manually one by one
 
         if (expensesRes.data) setExpenses(expensesRes.data.map(dbToExpense));
         if (salesRes.data) setSales(salesRes.data.map(dbToSale));
