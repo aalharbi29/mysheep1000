@@ -159,8 +159,8 @@ const AnimalGrid = ({ breed, category, subCategory }: AnimalGridProps) => {
                 </div>
               }
 
-              {/* Delete button for young animals only */}
-              {animal.subCategory === 'young' &&
+              {/* Delete button for young and mothers */}
+              {(animal.subCategory === 'young' || animal.subCategory === 'mothers') &&
               <div
                 className="absolute top-1 right-1 w-5 h-5 rounded-full flex items-center justify-center cursor-pointer transition-colors"
                 style={{ backgroundColor: 'rgba(229,62,62,0.15)' }}
