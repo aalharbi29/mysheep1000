@@ -16,9 +16,34 @@ import {
   Fence, Receipt, TrendingUp, ShoppingCart, Syringe 
 } from 'lucide-react';
 import SplashSettingsCard from '@/components/SplashSettingsCard';
+import { useIsAdmin } from '@/hooks/useIsAdmin';
 
 const SettingsPage = () => {
   const { user, signOut } = useAuth();
+  const { isAdmin } = useIsAdmin();
+  const [deletingAccount, setDeletingAccount] = useState(false);
+
+  const handleDeleteAccount = async () => {
+    setDeletingAccount(true);
+    const { data: { session } } = await supabase.auth.getSession();
+    try {
+      const res = await fetch(`${import.meta.env.VITE_SUPABASE_URL}/functions/v1/delete-account`, {
+        method: 'POST',
+        headers: {
+          'Authorization': `Bearer ${session?.access_token}`,
+          'Content-Type': 'application/json',
+        },
+      });
+      const json = await res.json();
+      if (!res.ok) throw new Error(json.error || 'فشل الحذف');
+      toast({ title: 'تم حذف الحساب بنجاح' });
+      await supabase.auth.signOut();
+      window.location.href = '/';
+    } catch (e: any) {
+      toast({ title: 'حدث خطأ: ' + e.message, variant: 'destructive' });
+      setDeletingAccount(false);
+    }
+  };
 
   // Password change
   const [newPassword, setNewPassword] = useState('');
@@ -196,8 +221,8 @@ const SettingsPage = () => {
             </CardContent>
           </Card>
 
-          {/* Splash Screen Settings */}
-          <SplashSettingsCard />
+          {/* Splash Screen Settings — Admin only */}
+          {isAdmin && <SplashSettingsCard />}
 
           {/* Delete Data Sections */}
           <Card>
@@ -260,6 +285,30 @@ const SettingsPage = () => {
             <LogOut className="w-5 h-5 ml-2" />
             تسجيل الخروج
           </Button>
+
+          {/* Delete Account */}
+          <AlertDialog>
+            <AlertDialogTrigger asChild>
+              <Button variant="outline" className="w-full border-destructive text-destructive hover:bg-destructive/10" size="lg" disabled={deletingAccount}>
+                {deletingAccount ? <Loader2 className="w-5 h-5 animate-spin ml-2" /> : <Trash2 className="w-5 h-5 ml-2" />}
+                حذف الحساب نهائياً
+              </Button>
+            </AlertDialogTrigger>
+            <AlertDialogContent dir="rtl">
+              <AlertDialogHeader>
+                <AlertDialogTitle>حذف الحساب نهائياً؟</AlertDialogTitle>
+                <AlertDialogDescription>
+                  سيتم حذف حسابك وجميع بياناتك نهائياً ولا يمكن استرجاعها. هل أنت متأكد؟
+                </AlertDialogDescription>
+              </AlertDialogHeader>
+              <AlertDialogFooter className="flex-row-reverse gap-2">
+                <AlertDialogCancel>إلغاء</AlertDialogCancel>
+                <AlertDialogAction onClick={handleDeleteAccount} className="bg-destructive hover:bg-destructive/90">
+                  حذف الحساب
+                </AlertDialogAction>
+              </AlertDialogFooter>
+            </AlertDialogContent>
+          </AlertDialog>
         </div>
       </div>
     </div>
