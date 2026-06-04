@@ -285,6 +285,30 @@ const SettingsPage = () => {
             <LogOut className="w-5 h-5 ml-2" />
             تسجيل الخروج
           </Button>
+
+          {/* Delete Account */}
+          <AlertDialog>
+            <AlertDialogTrigger asChild>
+              <Button variant="outline" className="w-full border-destructive text-destructive hover:bg-destructive/10" size="lg" disabled={deletingAccount}>
+                {deletingAccount ? <Loader2 className="w-5 h-5 animate-spin ml-2" /> : <Trash2 className="w-5 h-5 ml-2" />}
+                حذف الحساب نهائياً
+              </Button>
+            </AlertDialogTrigger>
+            <AlertDialogContent dir="rtl">
+              <AlertDialogHeader>
+                <AlertDialogTitle>حذف الحساب نهائياً؟</AlertDialogTitle>
+                <AlertDialogDescription>
+                  سيتم حذف حسابك وجميع بياناتك نهائياً ولا يمكن استرجاعها. هل أنت متأكد؟
+                </AlertDialogDescription>
+              </AlertDialogHeader>
+              <AlertDialogFooter className="flex-row-reverse gap-2">
+                <AlertDialogCancel>إلغاء</AlertDialogCancel>
+                <AlertDialogAction onClick={handleDeleteAccount} className="bg-destructive hover:bg-destructive/90">
+                  حذف الحساب
+                </AlertDialogAction>
+              </AlertDialogFooter>
+            </AlertDialogContent>
+          </AlertDialog>
         </div>
       </div>
     </div>
