@@ -221,8 +221,8 @@ const SettingsPage = () => {
             </CardContent>
           </Card>
 
-          {/* Splash Screen Settings */}
-          <SplashSettingsCard />
+          {/* Splash Screen Settings — Admin only */}
+          {isAdmin && <SplashSettingsCard />}
 
           {/* Delete Data Sections */}
           <Card>
