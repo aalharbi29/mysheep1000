@@ -16,9 +16,34 @@ import {
   Fence, Receipt, TrendingUp, ShoppingCart, Syringe 
 } from 'lucide-react';
 import SplashSettingsCard from '@/components/SplashSettingsCard';
+import { useIsAdmin } from '@/hooks/useIsAdmin';
 
 const SettingsPage = () => {
   const { user, signOut } = useAuth();
+  const { isAdmin } = useIsAdmin();
+  const [deletingAccount, setDeletingAccount] = useState(false);
+
+  const handleDeleteAccount = async () => {
+    setDeletingAccount(true);
+    const { data: { session } } = await supabase.auth.getSession();
+    try {
+      const res = await fetch(`${import.meta.env.VITE_SUPABASE_URL}/functions/v1/delete-account`, {
+        method: 'POST',
+        headers: {
+          'Authorization': `Bearer ${session?.access_token}`,
+          'Content-Type': 'application/json',
+        },
+      });
+      const json = await res.json();
+      if (!res.ok) throw new Error(json.error || 'فشل الحذف');
+      toast({ title: 'تم حذف الحساب بنجاح' });
+      await supabase.auth.signOut();
+      window.location.href = '/';
+    } catch (e: any) {
+      toast({ title: 'حدث خطأ: ' + e.message, variant: 'destructive' });
+      setDeletingAccount(false);
+    }
+  };
 
   // Password change
   const [newPassword, setNewPassword] = useState('');
