@@ -60,7 +60,7 @@ const AnimalCardsPage = () => {
       birthDate: '',
       birthRecords: [],
       status: 'alive',
-      confirmed: isYoung ? true : undefined
+      confirmed: true
     });
 
     toast({ title: '✅ تمت الإضافة', description: `بطاقة رقم ${num} - ${subLabel}` });
